@@ -30,6 +30,13 @@ export function register() {
     default: true,
   });
 
+  R.Config("enable_force_unlock", {
+    name: "Unlock all songs",
+    desc: "Force unlocking all songs (Lapistoria and later).",
+    type: "boolean",
+    default: true,
+  });
+
   R.WebUIEvent('importPnmData', importPnmData);
 
   R.WebUIEvent('updatePnmPlayerInfo', async (data: any) => {

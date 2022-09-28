@@ -462,6 +462,18 @@ const getProfile = async (refid: string, version: string, name?: string) => {
         });
     }
 
+    if(U.GetConfig("enable_force_unlock")) {
+        for(let i = 1; i <= GAME_MAX_MUSIC_ID[version]; i++) {
+            player.item.push({
+                type: K.ITEM('u8', 0),
+                id: K.ITEM('u16', i),
+                param: K.ITEM('u16', 15),
+                is_new: K.ITEM('bool', 0),
+                get_time: K.ITEM('u64', BigInt(0)),
+            });
+        }
+    }
+
     // Usaneko events
     if (version == 'v24') {        
         const date = new Date();
