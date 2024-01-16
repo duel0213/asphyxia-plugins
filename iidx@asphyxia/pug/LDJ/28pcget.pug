@@ -1,0 +1,93 @@
+IIDX28pc(status="0")
+  pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach mode=pcdata.mode pmode=pcdata.pmode ngrade=pcdata.ngrade rtype=pcdata.rtype sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 gpos=pcdata.gpos s_sorttype=pcdata.s_sorttype d_sorttype=pcdata.d_sorttype s_pace=pcdata.s_pace d_pace=pcdata.d_pace s_gno=pcdata.s_gno d_gno=pcdata.d_gno s_sub_gno=pcdata.d_sub_gno d_sub_gno=pcdata.d_sub_gno s_gtype=pcdata.s_gtype d_gtype=pcdata.d_gtype s_sdlen=pcdata.s_sdlen d_sdlen=pcdata.d_sdlen s_sdtype=pcdata.s_sdtype d_sdtype=pcdata.d_sdtype s_timing=pcdata.s_timing d_timing=pcdata.d_timing s_notes=pcdata.s_notes d_notes=pcdata.d_notes s_judge=pcdata.s_judge d_judge=pcdata.d_judge s_judgeAdj=pcdata.s_judgeAdj d_judgeAdj=pcdata.d_judgeAdj s_hispeed=pcdata.s_hispeed d_hispeed=pcdata.d_hispeed s_liflen=pcdata.s_liflen d_liflen=pcdata.d_liflen s_disp_judge=pcdata.s_disp_judge d_disp_judge=pcdata.d_disp_judge s_opstyle=pcdata.s_opstyle d_opstyle=pcdata.d_opstyle s_graph_score=pcdata.s_graph_score d_graph_score=pcdata.d_graph_score s_auto_scrach=pcdata.s_auto_scrach d_auto_scrach=pcdata.d_auto_scrach s_gauge_disp=pcdata.s_gauge_disp d_gauge_disp=pcdata.d_gauge_disp s_lane_brignt=pcdata.s_lane_brignt d_lane_brignt=pcdata.d_lane_brignt s_camera_layout=pcdata.s_camera_layout d_camera_layout=pcdata.d_camera_layout s_ghost_score=pcdata.s_ghost_score d_ghost_score=pcdata.d_ghost_score s_tsujigiri_disp=pcdata.s_tsujigiri_disp d_tsujigiri_disp=pcdata.d_tsujigiri_disp)
+  lightning_play_data(dpnum=lm_playdata.dp_num spnum=lm_playdata.sp_num)
+  lightning_setting(headphone_vol=lm_settings.headphone_vol resistance_dp_left=lm_settings.resistance_dp_left resistance_dp_right=lm_settings.resistance_dp_right resistance_sp_left=lm_settings.resistance_sp_left resistance_sp_right=lm_settings.resistance_sp_right skin_0="0" flg_skin_0="-1")
+    slider(__type="s32" __count="7") #{lm_settings.slider[0]} #{lm_settings.slider[1]} #{lm_settings.slider[2]} #{lm_settings.slider[3]} #{lm_settings.slider[4]} #{lm_settings.slider[5]} #{lm_settings.slider[6]}
+    light(__type="bool" __count="6") #{lm_settings.light[0]} #{lm_settings.light[1]} #{lm_settings.light[2]} #{lm_settings.light[3]} #{lm_settings.light[4]} #{lm_settings.light[5]}
+    concentration(__type="bool") #{lm_settings.concentration}
+  spdp_rival(flg="-1")
+  bind_eaappli
+  ea_premium_course
+  enable_qr_reward
+  secret
+    flg1(__type="s64" __count="3") -1 -1 -1
+    flg2(__type="s64" __count="3") -1 -1 -1
+    flg3(__type="s64" __count="3") -1 -1 -1
+    flg4(__type="s64" __count="3") -1 -1 -1
+  leggendaria
+    flg1(__type="s64" __count="3") -1 -1 -1
+  music_memo
+    - for (let m of mArray)
+      music(index=m.music_idx play_style=m.play_style music_id=m.music_id)
+  qpro_secret
+    head(__type="s64" __count="7") #{custom.qpro_secret_head[0]} #{custom.qpro_secret_head[1]} #{custom.qpro_secret_head[2]} #{custom.qpro_secret_head[3]} #{custom.qpro_secret_head[4]} #{custom.qpro_secret_head[5]} #{custom.qpro_secret_head[6]}
+    hair(__type="s64" __count="7") #{custom.qpro_secret_hair[0]} #{custom.qpro_secret_hair[1]} #{custom.qpro_secret_hair[2]} #{custom.qpro_secret_hair[3]} #{custom.qpro_secret_hair[4]} #{custom.qpro_secret_hair[5]} #{custom.qpro_secret_hair[6]}
+    face(__type="s64" __count="7") #{custom.qpro_secret_face[0]} #{custom.qpro_secret_face[1]} #{custom.qpro_secret_face[2]} #{custom.qpro_secret_face[3]} #{custom.qpro_secret_face[4]} #{custom.qpro_secret_face[5]} #{custom.qpro_secret_face[6]}
+    body(__type="s64" __count="7") #{custom.qpro_secret_body[0]} #{custom.qpro_secret_body[1]} #{custom.qpro_secret_body[2]} #{custom.qpro_secret_body[3]} #{custom.qpro_secret_body[4]} #{custom.qpro_secret_body[5]} #{custom.qpro_secret_body[6]}
+    hand(__type="s64" __count="7") #{custom.qpro_secret_hand[0]} #{custom.qpro_secret_hand[1]} #{custom.qpro_secret_hand[2]} #{custom.qpro_secret_hand[3]} #{custom.qpro_secret_hand[4]} #{custom.qpro_secret_hand[5]} #{custom.qpro_secret_hand[6]}
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid)
+    - for (let d of dArray)
+      g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
+  eisei_grade_data
+    - for (let ed of eArray)
+      detail(grade_type=ed.grade_type grade_id=ed.grade_id stage_num=ed.stage_num clear_type=ed.clear_type)
+        past(__type="s32" __count="5") #{ed.past[0]} #{ed.past[1]} #{ed.past[2]} #{ed.past[3]} #{ed.past[4]}
+        selected_course(__type="s32" __count="5") #{ed.selected_course[0]} #{ed.selected_course[1]} #{ed.selected_course[2]} #{ed.selected_course[3]} #{ed.selected_course[4]}
+        max_past(__type="s32" __count="5") #{ed.max_past[0]} #{ed.max_past[1]} #{ed.max_past[2]} #{ed.max_past[3]} #{ed.max_past[4]}
+        max_selected_course(__type="s32" __count="5") #{ed.max_selected_course[0]} #{ed.max_selected_course[1]} #{ed.max_selected_course[2]} #{ed.max_selected_course[3]} #{ed.max_selected_course[4]}
+  skin(__type="s16" __count="20") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} #{custom.note_beam} #{custom.judge_font} 0 #{custom.disable_musicpreview} #{custom.pacemaker_cover} #{custom.vefx_lock} #{custom.effect} #{custom.bomb_size} #{custom.disable_hcn_color} #{custom.first_note_preview}
+  qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
+  rlist
+    - for (let rd of rArray)
+      rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
+        is_robo(__type="bool") 0
+        qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
+        shop(name="CORE")
+  dj_rank(style="0")
+    rank(__type="s32" __count="15") #{pcdata.dr_sprank[0]} #{pcdata.dr_sprank[1]} #{pcdata.dr_sprank[2]} #{pcdata.dr_sprank[3]} #{pcdata.dr_sprank[4]} #{pcdata.dr_sprank[5]} #{pcdata.dr_sprank[6]} #{pcdata.dr_sprank[7]} #{pcdata.dr_sprank[8]} #{pcdata.dr_sprank[9]} #{pcdata.dr_sprank[10]} #{pcdata.dr_sprank[11]} #{pcdata.dr_sprank[12]} #{pcdata.dr_sprank[13]} #{pcdata.dr_sprank[14]}
+    point(__type="s32" __count="15") #{pcdata.dr_sppoint[0]} #{pcdata.dr_sppoint[1]} #{pcdata.dr_sppoint[2]} #{pcdata.dr_sppoint[3]} #{pcdata.dr_sppoint[4]} #{pcdata.dr_sppoint[5]} #{pcdata.dr_sppoint[6]} #{pcdata.dr_sppoint[7]} #{pcdata.dr_sppoint[8]} #{pcdata.dr_sppoint[9]} #{pcdata.dr_sppoint[10]} #{pcdata.dr_sppoint[11]} #{pcdata.dr_sppoint[12]} #{pcdata.dr_sppoint[13]} #{pcdata.dr_sppoint[14]}
+  dj_rank(style="1")
+    rank(__type="s32" __count="15") #{pcdata.dr_dprank[0]} #{pcdata.dr_dprank[1]} #{pcdata.dr_dprank[2]} #{pcdata.dr_dprank[3]} #{pcdata.dr_dprank[4]} #{pcdata.dr_dprank[5]} #{pcdata.dr_dprank[6]} #{pcdata.dr_dprank[7]} #{pcdata.dr_dprank[8]} #{pcdata.dr_dprank[9]} #{pcdata.dr_dprank[10]} #{pcdata.dr_dprank[11]} #{pcdata.dr_dprank[12]} #{pcdata.dr_dprank[13]} #{pcdata.dr_dprank[14]}
+    point(__type="s32" __count="15") #{pcdata.dr_dppoint[0]} #{pcdata.dr_dppoint[1]} #{pcdata.dr_dppoint[2]} #{pcdata.dr_dppoint[3]} #{pcdata.dr_dppoint[4]} #{pcdata.dr_dppoint[5]} #{pcdata.dr_dppoint[6]} #{pcdata.dr_dppoint[7]} #{pcdata.dr_dppoint[8]} #{pcdata.dr_dppoint[9]} #{pcdata.dr_dppoint[10]} #{pcdata.dr_dppoint[11]} #{pcdata.dr_dppoint[12]} #{pcdata.dr_dppoint[13]} #{pcdata.dr_dppoint[14]}
+  notes_radar(style="0")
+    radar_score(__type="s32" __count="6") #{pcdata.nr_spradar[0]} #{pcdata.nr_spradar[1]} #{pcdata.nr_spradar[2]} #{pcdata.nr_spradar[3]} #{pcdata.nr_spradar[4]} #{pcdata.nr_spradar[5]}
+  notes_radar(style="1")
+    radar_score(__type="s32" __count="6") #{pcdata.nr_dpradar[0]} #{pcdata.nr_dpradar[1]} #{pcdata.nr_dpradar[2]} #{pcdata.nr_dpradar[3]} #{pcdata.nr_dpradar[4]} #{pcdata.nr_dpradar[5]}
+  step(dp_clear_mission_clear=pcdata.st_dp_clear_mission_clear dp_clear_mission_level=pcdata.st_dp_clear_mission_level dp_dj_mission_clear=pcdata.st_dp_dj_mission_clear dp_dj_mission_level=pcdata.st_dp_dj_mission_level dp_level=pcdata.st_dp_level dp_mission_point=pcdata.st_dp_mission_point dp_mplay=pcdata.st_dp_mplay enemy_damage=pcdata.st_enemy_damage progress=pcdata.st_progress sp_clear_mission_clear=pcdata.st_sp_clear_mission_clear sp_clear_mission_level=pcdata.st_sp_clear_mission_level sp_dj_mission_clear=pcdata.st_sp_dj_mission_clear sp_dj_mission_level=pcdata.st_sp_dj_mission_level sp_level=pcdata.st_sp_level sp_mission_point=pcdata.st_sp_mission_point sp_mplay=pcdata.st_sp_mplay tips_read_list=pcdata.st_tips_read_list)
+    is_track_ticket(__type="bool") #{pcdata.st_is_track_ticket}
+  achievements(last_weekly=pcdata.achi_lastweekly pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp rival_crush=pcdata.achi_rivalcrush visit_flg=pcdata.achi_visitflg weekly_num=pcdata.achi_weeklynum)
+    trophy(__type="s64" __count="20") #{pcdata.achi_trophy[0]} #{pcdata.achi_trophy[1]} #{pcdata.achi_trophy[2]} #{pcdata.achi_trophy[3]} #{pcdata.achi_trophy[4]} #{pcdata.achi_trophy[5]} #{pcdata.achi_trophy[6]} #{pcdata.achi_trophy[7]} #{pcdata.achi_trophy[8]} #{pcdata.achi_trophy[9]} #{pcdata.achi_trophy[10]} #{pcdata.achi_trophy[11]} #{pcdata.achi_trophy[12]} #{pcdata.achi_trophy[13]} #{pcdata.achi_trophy[14]} #{pcdata.achi_trophy[15]} #{pcdata.achi_trophy[16]} #{pcdata.achi_trophy[17]} #{pcdata.achi_trophy[18]} #{pcdata.achi_trophy[19]}
+  deller(deller=pcdata.deller rate="1")
+  orb_data(rest_orb=pcdata.orb present_orb=pcdata.present_orb)
+  arena_data(play_num="2" play_num_dp="1" play_num_sp="1" prev_best_class_sp="20" prev_best_class_dp="20")
+    achieve_data(arena_class="20" best_top_class_continuing="0" now_top_class_continuing="0" counterattack_num="0" play_style="0" rating_value="20")
+    achieve_data(arena_class="20" best_top_class_continuing="0" now_top_class_continuing="0" counterattack_num="0" play_style="1" rating_value="20")
+    cube_data(cube="0" season_id="0")
+    chat_data(chat_type_0="CHAT CUSTOM 1" chat_type_1="CHAT CUSTOM 2" chat_type_2="CHAT CUSTOM 3" chat_type_3="CHAT CUSTOM 4")
+      is_chat_0(__type="bool") 1
+      is_chat_1(__type="bool") 1
+      is_chat_2(__type="bool") 1
+      is_chat_3(__type="bool") 1
+  skin_customize_flg(skin_frame_flg="-1" skin_bgm_flg="-1")
+  event_1(event_play_num=pcdata.event_play_num story_prog=pcdata.event_story_prog last_select_area_id=pcdata.event_last_select_id failed_num=pcdata.event_failed_num)
+    - for (let evt of evtArray)
+      area_data(area_id=evt.area_id play_num=evt.play_num recipe_prog0=evt.recipe_prog0 recipe_prog1=evt.recipe_prog1 recipe_prog2=evt.recipe_prog2 recipe_prog3=evt.recipe_prog3 recipe_prog4=evt.recipe_prog4 operation_num=evt.operation_num operation_prog=evt.operation_prog last_select_recipe=evt.last_select_recipe area_prog=evt.area_prog)
+        is_complete(__type="bool") #{evt.is_complete}
+  floor_infection4(music_list="-1")
+  bemani_vote(music_list="-1")
+  bemani_janken_meeting(music_list="-1")
+  bemani_rush(music_list_ichika="-1" music_list_nono="-1")
+  ultimate_mobile_link(music_list="-1")
+    link_flag
+  bemani_musiq_fes(music_list="-1")
+  busou_linkage(music_list="-1")
+  busou_linkage_2(music_list="-1")
+  valkyrie_linkage_data(progress="100")
+  bemani_song_battle(music_list="-1")
+  language_setting(language=profile.language)
+  movie_agreement(agreement_version="1")
+  extra_boss_event(key_orb="0" boss_orb_0="0" boss_orb_1="0" boss_orb_2="0" boss_orb_3="0" boss_orb_4="0" boss_orb_5="0" boss_orb_6="0" boss_orb_7="0")
+  world_tourism
+    - for (let wd of wArray)
+      tour_data(tour_id=wd.tour_id progress=wd.progress)
+  world_tourism_secret(music_list="-1")

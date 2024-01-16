@@ -1,0 +1,34 @@
+pc(status="0")
+  pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach sflg0=pcdata.sflg0 sflg1=pcdata.sflg1 help=pcdata.help gno=pcdata.gno timing=pcdata.timing sdhd=pcdata.sdhd sdtype=pcdata.sdtype notes=pcdata.notes pase=pcdata.pase sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 mode=pcdata.mode pmode=pcdata.pmode liflen=pcdata.liflen)
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid)
+    - for (let d of dArray)
+      g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
+  ex
+  skin(__type="s16" __count="14") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} 0 #{custom.disable_musicpreview} 0 0
+  qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
+  rlist
+    - for (let rd of rArray)
+      rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
+        qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
+  ocrs
+  weekly(wid="-1" mid="-1")
+  visitor(anum="0" snum="0" pnum="0" vs_flg="1")
+  attack(a0="0" a1="0" a2="0" a3="0" a4="0" a5="0")
+  fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
+  step(sp_ach=pcdata.st_sp_ach dp_ach=pcdata.st_dp_ach sp_dif=pcdata.st_sp_dif dp_dif=pcdata.st_dp_dif)
+  lincle(comflg="1" flg1="1" flg2="1" flg3="1" flg4="1" flg5="1" flg6="1" flg7="1")
+  reflec(tf="1" br="1" ssc="1" sr="1" wu="1" sg="1" tb="1")
+  jubeat(point="0" bonus="0" jbonus=pcdata.jpoint open="1")
+  if event != null
+    kingdom(level=event.level exp=event.exp deller=event.deller place=event.place tower=event.tower boss=event.boss combo=event.combo jewel=event.jewel generic=event.generic)
+      cf(__type="bin") #{event.cf}
+      qcf(__type="bin") #{event.qcf}
+      piece(__type="bin") #{event.piece}
+  history
+    type(__type="u8" __count="30") #{pcdata.type[0]} #{pcdata.type[1]} #{pcdata.type[2]} #{pcdata.type[3]} #{pcdata.type[4]} #{pcdata.type[5]} #{pcdata.type[6]} #{pcdata.type[7]} #{pcdata.type[8]} #{pcdata.type[9]} #{pcdata.type[10]} #{pcdata.type[11]} #{pcdata.type[12]} #{pcdata.type[13]} #{pcdata.type[14]} #{pcdata.type[15]} #{pcdata.type[16]} #{pcdata.type[17]} #{pcdata.type[18]} #{pcdata.type[19]} #{pcdata.type[20]} #{pcdata.type[21]} #{pcdata.type[22]} #{pcdata.type[23]} #{pcdata.type[24]} #{pcdata.type[25]} #{pcdata.type[26]} #{pcdata.type[27]} #{pcdata.type[28]} #{pcdata.type[29]}
+    time(__type="time" __count="30") #{pcdata.time[0]} #{pcdata.time[1]} #{pcdata.time[2]} #{pcdata.time[3]} #{pcdata.time[4]} #{pcdata.time[5]} #{pcdata.time[6]} #{pcdata.time[7]} #{pcdata.time[8]} #{pcdata.time[9]} #{pcdata.time[10]} #{pcdata.time[11]} #{pcdata.time[12]} #{pcdata.time[13]} #{pcdata.time[14]} #{pcdata.time[15]} #{pcdata.time[16]} #{pcdata.time[17]} #{pcdata.time[18]} #{pcdata.time[19]} #{pcdata.time[20]} #{pcdata.time[21]} #{pcdata.time[22]} #{pcdata.time[23]} #{pcdata.time[24]} #{pcdata.time[25]} #{pcdata.time[26]} #{pcdata.time[27]} #{pcdata.time[28]} #{pcdata.time[29]}
+    param0(__type="s32" __count="30") #{pcdata.p0[0]} #{pcdata.p0[1]} #{pcdata.p0[2]} #{pcdata.p0[3]} #{pcdata.p0[4]} #{pcdata.p0[5]} #{pcdata.p0[6]} #{pcdata.p0[7]} #{pcdata.p0[8]} #{pcdata.p0[9]} #{pcdata.p0[10]} #{pcdata.p0[11]} #{pcdata.p0[12]} #{pcdata.p0[13]} #{pcdata.p0[14]} #{pcdata.p0[15]} #{pcdata.p0[16]} #{pcdata.p0[17]} #{pcdata.p0[18]} #{pcdata.p0[19]} #{pcdata.p0[20]} #{pcdata.p0[21]} #{pcdata.p0[22]} #{pcdata.p0[23]} #{pcdata.p0[24]} #{pcdata.p0[25]} #{pcdata.p0[26]} #{pcdata.p0[27]} #{pcdata.p0[28]} #{pcdata.p0[29]}
+    param1(__type="s32" __count="30") #{pcdata.p1[0]} #{pcdata.p1[1]} #{pcdata.p1[2]} #{pcdata.p1[3]} #{pcdata.p1[4]} #{pcdata.p1[5]} #{pcdata.p1[6]} #{pcdata.p1[7]} #{pcdata.p1[8]} #{pcdata.p1[9]} #{pcdata.p1[10]} #{pcdata.p1[11]} #{pcdata.p1[12]} #{pcdata.p1[13]} #{pcdata.p1[14]} #{pcdata.p1[15]} #{pcdata.p1[16]} #{pcdata.p1[17]} #{pcdata.p1[18]} #{pcdata.p1[19]} #{pcdata.p1[20]} #{pcdata.p1[21]} #{pcdata.p1[22]} #{pcdata.p1[23]} #{pcdata.p1[24]} #{pcdata.p1[25]} #{pcdata.p1[26]} #{pcdata.p1[27]} #{pcdata.p1[28]} #{pcdata.p1[29]}
+    param2(__type="s32" __count="30") #{pcdata.p2[0]} #{pcdata.p2[1]} #{pcdata.p2[2]} #{pcdata.p2[3]} #{pcdata.p2[4]} #{pcdata.p2[5]} #{pcdata.p2[6]} #{pcdata.p2[7]} #{pcdata.p2[8]} #{pcdata.p2[9]} #{pcdata.p2[10]} #{pcdata.p2[11]} #{pcdata.p2[12]} #{pcdata.p2[13]} #{pcdata.p2[14]} #{pcdata.p2[15]} #{pcdata.p2[16]} #{pcdata.p2[17]} #{pcdata.p2[18]} #{pcdata.p2[19]} #{pcdata.p2[20]} #{pcdata.p2[21]} #{pcdata.p2[22]} #{pcdata.p2[23]} #{pcdata.p2[24]} #{pcdata.p2[25]} #{pcdata.p2[26]} #{pcdata.p2[27]} #{pcdata.p2[28]} #{pcdata.p2[29]}
+    param3(__type="s32" __count="30") #{pcdata.p3[0]} #{pcdata.p3[1]} #{pcdata.p3[2]} #{pcdata.p3[3]} #{pcdata.p3[4]} #{pcdata.p3[5]} #{pcdata.p3[6]} #{pcdata.p3[7]} #{pcdata.p3[8]} #{pcdata.p3[9]} #{pcdata.p3[10]} #{pcdata.p3[11]} #{pcdata.p3[12]} #{pcdata.p3[13]} #{pcdata.p3[14]} #{pcdata.p3[15]} #{pcdata.p3[16]} #{pcdata.p3[17]} #{pcdata.p3[18]} #{pcdata.p3[19]} #{pcdata.p3[20]} #{pcdata.p3[21]} #{pcdata.p3[22]} #{pcdata.p3[23]} #{pcdata.p3[24]} #{pcdata.p3[25]} #{pcdata.p3[26]} #{pcdata.p3[27]} #{pcdata.p3[28]} #{pcdata.p3[29]}
+    param4(__type="s32" __count="30") #{pcdata.p4[0]} #{pcdata.p4[1]} #{pcdata.p4[2]} #{pcdata.p4[3]} #{pcdata.p4[4]} #{pcdata.p4[5]} #{pcdata.p4[6]} #{pcdata.p4[7]} #{pcdata.p4[8]} #{pcdata.p4[9]} #{pcdata.p4[10]} #{pcdata.p4[11]} #{pcdata.p4[12]} #{pcdata.p4[13]} #{pcdata.p4[14]} #{pcdata.p4[15]} #{pcdata.p4[16]} #{pcdata.p4[17]} #{pcdata.p4[18]} #{pcdata.p4[19]} #{pcdata.p4[20]} #{pcdata.p4[21]} #{pcdata.p4[22]} #{pcdata.p4[23]} #{pcdata.p4[24]} #{pcdata.p4[25]} #{pcdata.p4[26]} #{pcdata.p4[27]} #{pcdata.p4[28]} #{pcdata.p4[29]}
