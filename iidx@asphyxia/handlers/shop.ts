@@ -2,7 +2,7 @@
   return send.object(
     K.ATTR({
       status: "0",
-      opname: "ＣＯＲＥ",
+      opname: "CORE",
       pid: "57",
       cls_opt: "0",
       hr: "0",

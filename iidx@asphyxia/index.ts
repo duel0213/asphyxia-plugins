@@ -13,6 +13,7 @@ export function register() {
 
   R.Contributor("duel0213");
 
+  R.GameCode("JDZ");
   R.GameCode("KDZ");
   R.GameCode("LDJ");
 

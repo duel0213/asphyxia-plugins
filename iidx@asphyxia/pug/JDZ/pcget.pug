@@ -1,0 +1,18 @@
+pc(status="0")
+  pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach sflg0=pcdata.sflg0 sflg1=pcdata.sflg1 gno=pcdata.gno timing=pcdata.timing sdhd=pcdata.sdhd sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 mcomb=pcdata.mcomb ncomb=pcdata.ncomb mode=pcdata.mode pmode=pcdata.pmode liflen=pcdata.liflen)
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid)
+    - for (let d of dArray)
+      g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
+  ex
+  skin(__type="u16" __count="12") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} 0 0 0
+  rlist
+    - for (let rd of rArray)
+      rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
+  lincle(comflg="1" flg1="-1" flg2="-1" flg3="-1" flg4="-1" flg5="-1" flg6="-1" flg7="-1" refcomp="1")
+  reflec(tf="1" br="1" ssc="1" sr="1" wu="1" sg="1" tb="1")
+  jubeat(jflg_0="-1" jflg_1="-1" jflg_2="-1" jflg_3="-1")
+  if event != null
+    tour(pt=event.pt rsv=event.rsv r0=event.r0 r1=event.r1 r2=event.r2 r3=event.r3 r4=event.r4 r5=event.r5 r6=event.r6 r7=event.r7)
+      cf(__type="bin") #{event.cf}
+      pf(__type="bin") #{event.pf}
+      mf(__type="bin") #{event.mf}

@@ -3,30 +3,33 @@ export interface pcdata {
 
   version: number;
 
-  spnum: number; // attributes (Lincle) //
+  spnum: number; 
   dpnum: number;
   sach: number;
   dach: number;
   sflg0: number;
   sflg1: number;
-  help: number;
   gno: number;
   timing: number;
   sdhd: number;
-  sdtype: number;
-  notes: number;
-  pase: number;
   sp_opt: number;
   dp_opt: number;
   dp_opt2: number;
+  mcomb: number;
+  ncomb: number;
   mode: number;
   pmode: number;
-  ngrade: number; // <- attribute (BISTROVER) //
-  fcombo: number[];
   liflen: number;
 
-  rtype: number; // attributes (Heroic Verse) //
+  notes: number; // attribute (Lincle) //
+  pase: number;
+  sdtype: number;
+  help: number;
+  fcombo: number[]; 
+  ngrade: number; // attribute (BISTROVER) //
+  rtype: number; // attribute (Heroic Verse) //
   gpos: number;
+
   s_sorttype: number;
   d_sorttype: number;
   s_pace: number;
@@ -165,6 +168,31 @@ export interface pcdata {
 
   tourism_secret_flg1: string[];
   tourism_secret_flg2: string[];
+}
+
+export const JDZ_pcdata = {
+  version: 18,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  sflg0: 0,
+  sflg1: 0,
+  gno: 0,
+  timing: 0,
+  sdhd: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mcomb: 0,
+  ncomb: 0,
+  mode: 0,
+  pmode: 0,
+  liflen: 0,
+
+  sgid: -1,
+  dgid: -1,
 }
 
 export const KDZ_pcdata = {

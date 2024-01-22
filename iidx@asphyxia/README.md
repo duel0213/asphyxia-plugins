@@ -1,11 +1,12 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.4**
+Plugin Version: **v0.1.5**
 
 ---
 
 Supported Versions
 
+  - beatmaniaIIDX 18 Resort Anthem
   - beatmaniaIIDX 19 Lincle
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
@@ -46,3 +47,8 @@ Changelogs
 
 **v0.1.4**
   - Added Initial support for RESIDENT
+
+**v0.1.5**
+  - Added Initial support for Resort Anthem
+    -  BEGINNER, LEAGUE, STORY does not work yet.
+  - Fixed s_hispeed/d_hispeed doesn't save correctly.

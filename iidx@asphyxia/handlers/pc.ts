@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -10,7 +10,37 @@ import { world_tourism } from "../models/worldtourism";
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
-  if (version == 19) {
+  if (version == 18) {
+    return send.object({
+      "@attr": {
+        expire: 600,
+      },
+      ir: K.ATTR({
+        beat: String(U.GetConfig("BeatPhase")),
+      }),
+      cmd: K.ATTR({
+        gmbl: "1",
+        gmbla: "1",
+        regl: "1",
+        rndp: "1",
+        hrnd: "1",
+        alls: "1",
+      }),
+      lg: K.ATTR({
+        lea: "0",
+      }),
+      lf: K.ATTR({
+        life: "0",
+      }),
+      ev: K.ATTR({
+        pha: "3",
+      }),
+      lincle: K.ATTR({
+        phase: "1",
+      })
+    });
+  }
+  else if (version == 19) {
     return send.object({
       "@attr": {
         expire: 600,
@@ -31,11 +61,13 @@ export const pccommon: EPR = async (info, data, send) => {
         flg: String(-1),
       }),
     });
-  } else if (version >= 27) {
+  }
+  else if (version >= 27) {
     return send.pugFile(`pug/LDJ/${version}pccommon.pug`, {
       beat: U.GetConfig("BeatPhase"),
     });
-  } else {
+  }
+  else {
     return send.deny();
   }
 };
@@ -50,6 +82,9 @@ export const pcreg: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 18:
+      pcdata = JDZ_pcdata;
+      break;
     case 19:
       pcdata = KDZ_pcdata;
       break;
@@ -237,7 +272,26 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, event_1, event_1s, evtArray = [], evtArray2 = [];
-  if (version == 19) {
+  if (version == 18) {
+    event = await DB.FindOne(refid, { collection: "event_1", version: version });
+
+    if (!_.isNil(event)) {
+      event.cf = Base64toBuffer(event.cf);
+      event.pf = Base64toBuffer(event.pf);
+      event.mf = Base64toBuffer(event.mf);
+    }
+
+    return send.pugFile("pug/JDZ/pcget.pug", {
+      profile,
+      pcdata,
+      dArray,
+      appendsettings,
+      custom,
+      rArray,
+      event,
+    });
+  }
+  else if (version == 19) {
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
 
     if (!_.isNil(event)) {
@@ -413,6 +467,9 @@ export const pctakeover: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 18:
+      pcdata = JDZ_pcdata;
+      break;
     case 19:
       pcdata = KDZ_pcdata;
       break;
@@ -553,7 +610,56 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = parseInt($(data).attr().mode);
   pcdata.pmode = parseInt($(data).attr().pmode);
 
-  if (version == 19) {
+  if (version == 18) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    } else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.timing = parseInt($(data).attr().timing);
+    pcdata.sflg0 = parseInt($(data).attr().sflg0);
+    pcdata.sflg1 = parseInt($(data).attr().sflg1);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.ncomb = parseInt($(data).attr().ncomb);
+    pcdata.mcomb = parseInt($(data).attr().mcomb);
+    pcdata.liflen = parseInt($(data).attr().lift);
+
+    // TODO:: STORY/LEAGUE //
+
+    if (!_.isNil($(data).element("tour"))) {
+      let event_data = {
+        cf: $(data).element("tour").buffer("cf").toString("base64"),
+        pf: $(data).element("tour").buffer("pf").toString("base64"),
+        mf: $(data).element("tour").buffer("mf").toString("base64"),
+        pt: parseInt($(data).attr("tour").pt),
+        rsv: parseInt($(data).attr("tour").rsv),
+        r0: parseInt($(data).attr("tour").r0),
+        r1: parseInt($(data).attr("tour").r1),
+        r2: parseInt($(data).attr("tour").r2),
+        r3: parseInt($(data).attr("tour").r3),
+        r4: parseInt($(data).attr("tour").r4),
+        r5: parseInt($(data).attr("tour").r5),
+        r6: parseInt($(data).attr("tour").r6),
+        r7: parseInt($(data).attr("tour").r7),
+      }
+
+      DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+  }
+  else if (version == 19) {
     if (cltype == 0) {
       pcdata.sach = parseInt($(data).attr().achi);
       pcdata.sp_opt = parseInt($(data).attr().opt);
@@ -628,7 +734,8 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.p3 = $(data).element("history").numbers("p3");
       pcdata.p4 = $(data).element("history").numbers("p4");
     }
-  } else if (version >= 27) {
+  }
+  else if (version >= 27) {
     // lid bookkeep cid ctype ccode
     pcdata.rtype = parseInt($(data).attr().d_sdtype);
     pcdata.sach = parseInt($(data).attr().s_achi);
@@ -659,8 +766,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_judge = parseInt($(data).attr().d_judge);
     pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
     pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
-    pcdata.s_hispeed = parseInt($(data).attr().s_hispeed);
-    pcdata.d_hispeed = parseInt($(data).attr().d_hispeed);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
     pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
     pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
     pcdata.s_graph_score = parseInt($(data).attr().s_graph_score);

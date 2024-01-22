@@ -23,7 +23,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  if (version == 19) {
+  if (version == 18 || version == 19) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
@@ -131,7 +131,7 @@ export const musicappoint: EPR = async (info, data, send) => {
   let clid = parseInt($(data).attr().clid);
   
   const mapping = [1, 2, 3, 6, 7, 8];
-  if (version == 19) {
+  if (version == 18 || version == 19) {
     mid = OldMidToNewMid(mid);
     clid = mapping[clid];
   }
@@ -187,7 +187,7 @@ export const musicreg: EPR = async (info, data, send) => {
 
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version == -1) return send.deny();
-  else if (version == 19) {
+  else if (version == 18 || version == 19) {
     mid = OldMidToNewMid(mid);
     if (mid == -1) return send.deny();
 
@@ -213,7 +213,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
 
-  if (version >= 19) ghost = $(data).buffer("ghost").toString("base64");
+  if (version >= 18) ghost = $(data).buffer("ghost").toString("base64");
   
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
@@ -260,7 +260,7 @@ export const musicreg: EPR = async (info, data, send) => {
     cArray[clid] = Math.max(cArray[clid], cflg);
   }
 
-  if (version >= 27) {
+  if (version >= 27) { // TODO:: support old version //
     const score_top: score_top | null = await DB.FindOne<score_top>(null, {
       collection: "score_top",
       play_style: style,
@@ -310,7 +310,6 @@ export const musicreg: EPR = async (info, data, send) => {
       }
     );
   }
-  
 
   await DB.Upsert<score>(
     refid,
