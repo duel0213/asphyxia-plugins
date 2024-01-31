@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.5**
+Plugin Version: **v0.1.6**
 
 ---
 
@@ -8,6 +8,7 @@ Supported Versions
 
   - beatmaniaIIDX 18 Resort Anthem
   - beatmaniaIIDX 19 Lincle
+  - beatmaniaIIDX 20 tricoro
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
   - beatmaniaIIDX 29 CastHour
@@ -33,9 +34,10 @@ Changelogs
 
 **v0.1.1**
   - Added Initial support for HEROIC VERSE
-  - Expanded score array to adapting newer difficulty, (SPN ~ DPA [6] -> SPB ~ DPL [10])
+  - Expanded score array to adapting newer difficulty (SPN ~ DPA [6] -> SPB ~ DPL [10])
     - This borked previous score datas recorded with v0.1.0
-    - All score data now shared with all version. as it doesn't have music_id conversion, it will display incorrect data on certain versions.
+    - All score data now shared with all version.
+      - as it doesn't have music_id conversion, it will display incorrect data on certain versions.
   - Added Initial customize support (no webui)
 
 **v0.1.2**
@@ -52,3 +54,9 @@ Changelogs
   - Added Initial support for Resort Anthem
     -  BEGINNER, LEAGUE, STORY does not work yet.
   - Fixed s_hispeed/d_hispeed doesn't save correctly.
+ 
+**v0.1.6**
+  - Added Initial support for tricoro
+    - Event savings are broken
+  - Added movie_upload url setting on plugin setting (BISTROVER ~)
+    - This uses JSON instead of XML and this requires additional setup. (can't test or implement this as I don't own NVIDIA GPU)

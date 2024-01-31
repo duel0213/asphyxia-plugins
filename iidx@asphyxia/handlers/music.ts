@@ -23,7 +23,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  if (version == 18 || version == 19) {
+  if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
@@ -58,7 +58,38 @@ export const musicgetrank: EPR = async (info, data, send) => {
         m.push(K.ARRAY("s16", score_data));
       });
     }
-  } else if (version >= 27) {
+  }
+  else if (version > 19 && version < 27) {
+    indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+    music_data.forEach((res: score) => {
+      if (cltype == 0) {
+        score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      } else {
+        score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      }
+
+      m.push(K.ARRAY("s16", score_data));
+    });
+
+    for (let i = 0; i < rival_refids.length; i++) {
+      if (_.isNaN(rival_refids[i][0])) continue;
+
+      const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
+        { collection: "score", }
+      );
+
+      rival_score.forEach((res: score) => {
+        if (cltype == 0) {
+          score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+        } else {
+          score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+        }
+
+        m.push(K.ARRAY("s16", score_data));
+      });
+    }
+  }
+  else if (version >= 27) {
     indices = cltype === 0 ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
     music_data.forEach((res: score) => {
       if (cltype == 0) {
@@ -131,8 +162,11 @@ export const musicappoint: EPR = async (info, data, send) => {
   let clid = parseInt($(data).attr().clid);
   
   const mapping = [1, 2, 3, 6, 7, 8];
-  if (version == 18 || version == 19) {
+  if (version < 20) {
     mid = OldMidToNewMid(mid);
+    clid = mapping[clid];
+  }
+  else if (version < 27) {
     clid = mapping[clid];
   }
   
@@ -187,10 +221,13 @@ export const musicreg: EPR = async (info, data, send) => {
 
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version == -1) return send.deny();
-  else if (version == 18 || version == 19) {
+  else if (version < 20) {
     mid = OldMidToNewMid(mid);
     if (mid == -1) return send.deny();
 
+    clid = mapping[clid];
+  }
+  else if (version < 27) {
     clid = mapping[clid];
   }
 

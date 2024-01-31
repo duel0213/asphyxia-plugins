@@ -1,9 +1,10 @@
-import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcconsumelanegacha, pcdrawlanegacha } from "./handlers/pc";
+import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcconsumelanegacha, pcdrawlanegacha, pcshopregister } from "./handlers/pc";
 import { shopgetname, shopgetconvention, shopsetconvention } from "./handlers/shop";
 import { musicreg, musicgetrank, musicappoint, musicarenacpu } from "./handlers/music";
 import { graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
 import { updateRivalSettings } from "./handlers/webui";
+import { GetVersion } from "./util";
 
 export function register() {
   if (CORE_VERSION_MAJOR <= 1 && CORE_VERSION_MINOR < 31) {
@@ -21,6 +22,12 @@ export function register() {
     name: "Beat #",
     type: "integer",
     default: 3,
+  });
+
+  R.Config("MovieUpload", {
+    name: "Movie Upload URL",
+    type: "string",
+    default: "http://localhost/"
   });
 
   R.WebUIEvent("updateIIDXRivalSettings", updateRivalSettings);
@@ -41,6 +48,7 @@ export function register() {
   MultiRoute("pc.takeover", pctakeover);
   MultiRoute("pc.visit", pcvisit);
   MultiRoute("pc.save", pcsave);
+  MultiRoute("pc.shopregister", pcshopregister);
   MultiRoute("pc.getLaneGachaTicket", pcgetlanegacha);
   MultiRoute("pc.drawLaneGacha", pcdrawlanegacha);
   MultiRoute("pc.consumeLaneGachaTicket", pcconsumelanegacha);
@@ -59,7 +67,7 @@ export function register() {
   MultiRoute("gameSystem.systemInfo", gssysteminfo);
 
   R.Unhandled((req: EamuseInfo, data: any, send: EamuseSend) => {
-    console.warn(`Unhandled Request : ${req.module}.${req.method}`);
+    console.warn(`Unhandled Request : ${req.module}.${req.method} , [${GetVersion(req)}]`);
     return send.success();
   });
 }

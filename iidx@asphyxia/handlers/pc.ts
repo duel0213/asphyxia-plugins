@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -61,10 +61,42 @@ export const pccommon: EPR = async (info, data, send) => {
         flg: String(-1),
       }),
     });
+  } else if (version == 20) {
+    return send.object({
+      "@attr": {
+        expire: 600,
+      },
+      ir: K.ATTR({
+        beat: String(U.GetConfig("BeatPhase")),
+      }),
+      limit: K.ATTR({
+        phase: String(3),
+      }),
+      boss: K.ATTR({
+        phase: String(3),
+      }),
+      red: K.ATTR({
+        phase: String(3),
+      }),
+      yellow: K.ATTR({
+        phase: String(3),
+      }),
+      medal: K.ATTR({
+        phase: String(3),
+      }),
+      cafe: K.ATTR({
+        open: String(1),
+      }),
+      tricolettepark: K.ATTR({
+        open: String(1),
+      }),
+
+    });
   }
   else if (version >= 27) {
     return send.pugFile(`pug/LDJ/${version}pccommon.pug`, {
       beat: U.GetConfig("BeatPhase"),
+      movie_upload: U.GetConfig("MovieUpload"),
     });
   }
   else {
@@ -87,6 +119,9 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 19:
       pcdata = KDZ_pcdata;
+      break;
+    case 20:
+      pcdata = LDJ_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -309,7 +344,29 @@ export const pcget: EPR = async (info, data, send) => {
       rArray,
       event,
     });
-  } else if (version >= 27) {
+  }
+  else if (version == 20) {
+    if (!_.isNil(pcdata.st_help)) pcdata.st_help = Base64toBuffer(pcdata.st_help);
+
+    let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
+    let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
+    let redboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "redboss" });
+    let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
+
+    return send.pugFile("pug/LDJ/pcget.pug", {
+      profile,
+      pcdata,
+      dArray,
+      appendsettings,
+      custom,
+      rArray,
+      link5,
+      tricolettepark,
+      redboss,
+      yellowboss,
+    });
+  }
+  else if (version >= 27) {
     event_1 = await DB.Find(refid, { collection: "event_1", version: version });
     event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
 
@@ -472,6 +529,9 @@ export const pctakeover: EPR = async (info, data, send) => {
       break;
     case 19:
       pcdata = KDZ_pcdata;
+      break;
+    case 20:
+      pcdata = LDJ_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -648,7 +708,7 @@ export const pcsave: EPR = async (info, data, send) => {
         r7: parseInt($(data).attr("tour").r7),
       }
 
-      DB.Upsert(refid,
+      await DB.Upsert(refid,
         {
           collection: "event_1",
           version: version,
@@ -714,7 +774,7 @@ export const pcsave: EPR = async (info, data, send) => {
         piece: $(data).element("kingdom").buffer("piece").toString("base64"),
       }
 
-      DB.Upsert(refid,
+      await DB.Upsert(refid,
         {
           collection: "event_1",
           version: version,
@@ -733,6 +793,265 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.p2 = $(data).element("history").numbers("p2");
       pcdata.p3 = $(data).element("history").numbers("p3");
       pcdata.p4 = $(data).element("history").numbers("p4");
+    }
+  }
+  else if (version == 20) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    } else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.timing = parseInt($(data).attr().timing);
+    pcdata.help = parseInt($(data).attr().help);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.sdtype = parseInt($(data).attr().sdtype);
+    pcdata.notes = parseFloat($(data).attr().notes);
+    pcdata.pase = parseInt($(data).attr().pase);
+    pcdata.judge = parseInt($(data).attr().judge);
+    pcdata.opstyle = parseInt($(data).attr().opstyle);
+    pcdata.hispeed = parseFloat($(data).attr().hispeed);
+    pcdata.judgeAdj = parseInt($(data).attr().judgeAdj);
+    pcdata.liflen = parseInt($(data).attr().lift);
+    pcdata.fcombo[cltype] = parseInt($(data).attr().fcombo);
+
+    if (!_.isNil($(data).element("secret"))) {
+      pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
+      pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
+      pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
+    }
+
+    if (!_.isNil($(data).element("qpro_secret"))) {
+      custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
+      custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
+      custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
+      custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
+      custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+    }
+
+    if (hasStepUpData) {
+      if (cltype == 0) {
+        pcdata.st_sp_ach = parseInt($(data).attr("step").sp_ach);
+        pcdata.st_sp_hdpt = parseInt($(data).attr("step").sp_hdpt);
+        pcdata.st_sp_level = parseInt($(data).attr("step").sp_level);
+        pcdata.st_sp_round = parseInt($(data).attr("step").sp_round);
+        pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
+        
+      } else {
+        pcdata.st_dp_ach = parseInt($(data).attr("step").dp_ach);
+        pcdata.st_dp_hdpt = parseInt($(data).attr("step").dp_hdpt);
+        pcdata.st_dp_level = parseInt($(data).attr("step").dp_level);
+        pcdata.st_dp_round = parseInt($(data).attr("step").dp_round);
+        pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
+      }
+      pcdata.st_review = parseInt($(data).attr("step").review);
+      pcdata.st_help = $(data).element("step").buffer("help").toString("base64");
+    }
+    
+    if (!_.isNil($(data).element("achievements"))) {
+      // TODO:: achi_packflg, achi_packid, achi_playpack //
+      pcdata.achi_lastweekly = parseInt($(data).attr("achievements").last_weekly);
+      pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
+      pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
+      pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
+      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+    }
+
+    // TODO:: fix event saving, these event savings are broken. //
+    if (!_.isNil($(data).element("link5"))) {
+      let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
+      let event_data;
+
+      if (_.isNil(link5)) {
+        event_data = {
+          qpro: parseInt($(data).attr("link5").qpro), // add
+          glass: parseInt($(data).attr("link5").glass), // add
+          beautiful: parseInt($(data).attr("link5").beautiful),
+          quaver: parseInt($(data).attr("link5").quaver),
+          castle: parseInt($(data).attr("link5").castle),
+          flip: parseInt($(data).attr("link5").flip),
+          titans: parseInt($(data).attr("link5").titans),
+          exusia: parseInt($(data).attr("link5").exusia),
+          waxing: parseInt($(data).attr("link5").waxing),
+          sampling: parseInt($(data).attr("link5").sampling),
+          beachside: parseInt($(data).attr("link5").beachside),
+          cuvelia: parseInt($(data).attr("link5").cuvelia),
+          reunion: parseInt($(data).attr("link5").reunion),
+          bad: parseInt($(data).attr("link5").bad),
+          turii: parseInt($(data).attr("link5").turii),
+          anisakis: parseInt($(data).attr("link5").anisakis),
+          second: parseInt($(data).attr("link5").second),
+          whydidyou: parseInt($(data).attr("link5").whydidyou),
+          china: parseInt($(data).attr("link5").china),
+          fallen: parseInt($(data).attr("link5").fallen),
+          broken: parseInt($(data).attr("link5").broken),
+          summer: parseInt($(data).attr("link5").summer),
+          sakura: parseInt($(data).attr("link5").sakura),
+          wuv: parseInt($(data).attr("link5").wuv),
+          survival: parseInt($(data).attr("link5").survival),
+          thunder: parseInt($(data).attr("link5").thunder),
+        }
+      }
+      else {
+        event_data = link5;
+
+        event_data.qpro += parseInt($(data).attr("link5").qpro);
+        event_data.glass += parseInt($(data).attr("link5").glass);
+        event_data.beautiful = parseInt($(data).attr("link5").beautiful);
+        event_data.quaver = parseInt($(data).attr("link5").quaver);
+        event_data.castle = parseInt($(data).attr("link5").castle);
+        event_data.flip = parseInt($(data).attr("link5").flip);
+        event_data.titans = parseInt($(data).attr("link5").titans);
+        event_data.exusia = parseInt($(data).attr("link5").exusia);
+        event_data.waxing = parseInt($(data).attr("link5").waxing);
+        event_data.sampling = parseInt($(data).attr("link5").sampling);
+        event_data.beachside = parseInt($(data).attr("link5").beachside);
+        event_data.cuvelia = parseInt($(data).attr("link5").cuvelia);
+        event_data.reunion = parseInt($(data).attr("link5").reunion);
+        event_data.bad = parseInt($(data).attr("link5").bad);
+        event_data.turii = parseInt($(data).attr("link5").turii);
+        event_data.anisakis = parseInt($(data).attr("link5").anisakis);
+        event_data.second = parseInt($(data).attr("link5").second);
+        event_data.whydidyou = parseInt($(data).attr("link5").whydidyou);
+        event_data.china = parseInt($(data).attr("link5").china);
+        event_data.fallen = parseInt($(data).attr("link5").fallen);
+        event_data.broken = parseInt($(data).attr("link5").broken);
+        event_data.summer = parseInt($(data).attr("link5").summer);
+        event_data.sakura = parseInt($(data).attr("link5").sakura);
+        event_data.wuv = parseInt($(data).attr("link5").wuv);
+        event_data.survival = parseInt($(data).attr("link5").survival);
+        event_data.thunder = parseInt($(data).attr("link5").thunder);
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "link5",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("tricolettepark"))) {
+      let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
+      let event_data;
+
+      if (_.isNil(tricolettepark)) {
+        event_data = {
+          open_music: parseInt($(data).attr("tricolettepark").open_music),
+          boss0_damage: parseInt($(data).attr("tricolettepark").boss0_damage), // add
+          boss1_damage: parseInt($(data).attr("tricolettepark").boss1_damage),
+          boss2_damage: parseInt($(data).attr("tricolettepark").boss2_damage),
+          boss3_damage: parseInt($(data).attr("tricolettepark").boss3_damage),
+          boss0_stun: parseInt($(data).attr("tricolettepark").boss0_stun),
+          boss1_stun: parseInt($(data).attr("tricolettepark").boss1_stun),
+          boss2_stun: parseInt($(data).attr("tricolettepark").boss2_stun),
+          boss3_stun: parseInt($(data).attr("tricolettepark").boss3_stun),
+          union_magic_used: parseInt($(data).attr("tricolettepark").union_magic_used),
+        }
+      }
+      else {
+        event_data = tricolettepark;
+
+        event_data.open_music = parseInt($(data).attr("tricolettepark").open_music),
+          event_data.boss0_damage += parseInt($(data).attr("tricolettepark").boss0_damage);
+        event_data.boss1_damage += parseInt($(data).attr("tricolettepark").boss1_damage);
+        event_data.boss2_damage += parseInt($(data).attr("tricolettepark").boss2_damage);
+        event_data.boss3_damage += parseInt($(data).attr("tricolettepark").boss3_damage);
+        event_data.boss0_stun = parseInt($(data).attr("tricolettepark").boss0_stun);
+        event_data.boss1_stun = parseInt($(data).attr("tricolettepark").boss1_stun);
+        event_data.boss2_stun = parseInt($(data).attr("tricolettepark").boss2_stun);
+        event_data.boss3_stun = parseInt($(data).attr("tricolettepark").boss3_stun);
+        event_data.union_magic_used = parseInt($(data).attr("tricolettepark").union_magic_used);
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "tricolettepark",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("commonboss"))) {
+      pcdata.deller += parseInt($(data).attr("commonboss").deller);
+      pcdata.orb += parseInt($(data).attr("commonboss").orb);
+    }
+
+    if (!_.isNil($(data).element("yellowboss"))) {
+      let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
+      let event_data;
+
+      if (_.isNil(yellowboss)) {
+        event_data = {
+          level: parseInt($(data).attr("yellowboss").level),
+          heroic0: parseInt($(data).attr("yellowboss").heroic0),
+          heroic1: parseInt($(data).attr("yellowboss").heroic1),
+          critical: parseInt($(data).attr("yellowboss").critical),
+          last_select: parseInt($(data).attr("yellowboss").last_select),
+          p_attack: $(data).element("yellowboss").numbers("p_attack"),
+          pbest_attack: $(data).element("yellowboss").numbers("pbest_attack"),
+          defeat: $(data).element("yellowboss").numbers("defeat"), // <- bools //
+          first_flg: 0, // <- bool //
+        }
+      } else {
+        event_data = yellowboss;
+
+        event_data.level = parseInt($(data).attr("yellowboss").level);
+        event_data.heroic0 = parseInt($(data).attr("yellowboss").heroic0);
+        event_data.heroic1 = parseInt($(data).attr("yellowboss").heroic1);
+        event_data.critical = parseInt($(data).attr("yellowboss").critical);
+        event_data.last_select = parseInt($(data).attr("yellowboss").last_select);
+
+        let p_attack = $(data).element("yellowboss").numbers("p_attack");
+        for (let a = 0; a < 7; a++) {
+          event_data.p_attack[a] += p_attack[a];
+          event_data.pbest_attack[a] = Math.max(event_data.pbest_attack[a], p_attack[a]);
+        }
+      }
+      
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "yellowboss",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("redboss"))) {
+      let event_data = {
+        progress: parseInt($(data).attr("redboss").progress),
+        crush: parseInt($(data).attr("redboss").crush),
+        open: parseInt($(data).attr("redboss").open),
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "redboss",
+        },
+        {
+          $set: event_data,
+        }
+      );
     }
   }
   else if (version >= 27) {
@@ -1240,6 +1559,15 @@ export const pcgetlanegacha: EPR = async (info, data, send) => {
       last_page: String(0),
     }),
   });
+};
+
+export const pcshopregister: EPR = async (info, data, send) => {
+  let refid = IDtoRef(parseInt($(data).str("iidx_id")));
+  let lid = $(data).str("location_id");
+
+  // TODO //
+
+  return send.success();
 };
 
 export const pcdrawlanegacha: EPR = async (info, data, send) => {

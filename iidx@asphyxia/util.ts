@@ -61,7 +61,10 @@ export function GetVersion(info: EamuseInfo) {
   switch (info.model.substring(0, 3)) {
     case "JDZ": return 18;
     case "KDZ": return 19;
-    case "LDJ": return parseInt(info.module.substring(4, 6));
+    case "LDJ":
+      version = parseInt(info.module.substring(4, 6));
+      if (_.isNaN(version)) version = 20;
+      break;
   }
 
   return version;

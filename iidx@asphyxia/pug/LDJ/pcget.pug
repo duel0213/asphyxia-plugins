@@ -1,0 +1,48 @@
+pc(status="0")
+  pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach help=pcdata.help gno=pcdata.gno gpos=pcdata.gpos timing=pcdata.timing sdhd=pcdata.sdhd sdtype=pcdata.sdtype notes=pcdata.notes pase=pcdata.pase sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 mode=pcdata.mode pmode=pcdata.pmode liflen=pcdata.liflen judge=pcdata.judge opstyle=pcdata.opstyle hispeed=pcdata.hispeed judgeAdj=pcdata.judgeAdj)
+  secret
+    flg1(__type="s64" __count="1") -1
+    flg2(__type="s64" __count="1") -1
+    flg3(__type="s64" __count="1") -1
+  qpro_secret
+    head(__type="s64" __count="2") -1 -1
+    hair(__type="s64" __count="2") -1 -1
+    face(__type="s64" __count="2") -1 -1
+    body(__type="s64" __count="2") -1 -1
+    hand(__type="s64" __count="2") -1 -1
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid)
+    - for (let d of dArray)
+      g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
+  skin(__type="s16" __count="14") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} 0 #{custom.disable_musicpreview} 0 0
+  qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
+  rlist
+    - for (let rd of rArray)
+      rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
+        stepdata(step_sach="-1" step_dach="-1")
+        qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
+        shop(name="CORE")
+  join_shop(joinflg="1" join_cflg="1" join_id="0" join_name="CORE")
+  fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
+  step(sp_ach=pcdata.st_sp_ach dp_ach=pcdata.st_dp_ach sp_hdpt=pcdata.st_sp_hdpt dp_hdpt=pcdata.st_dp_hdpt sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_round=pcdata.st_sp_round dp_round=pcdata.st_dp_round sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay review=pcdata.st_review)
+    //-stamp(__type="bin")
+    help(__type="bin") #{pcdata.st_help}
+  achievements(last_weekly=pcdata.achi_lastweekly pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp rival_crush=pcdata.achi_rivalcrush visit_flg=pcdata.achi_visitflg weekly_num=pcdata.achi_weeklynum)
+    trophy(__type="s64" __count="10") #{pcdata.achi_trophy[0]} #{pcdata.achi_trophy[1]} #{pcdata.achi_trophy[2]} #{pcdata.achi_trophy[3]} #{pcdata.achi_trophy[4]} #{pcdata.achi_trophy[5]} #{pcdata.achi_trophy[6]} #{pcdata.achi_trophy[7]} #{pcdata.achi_trophy[8]} #{pcdata.achi_trophy[9]}
+  if link5 != null
+    link5(qpro=link5.qpro glass=link5.glass treasure="0" beautiful=link5.beautiful quaver=link5.quaver castle=link5.castle flip=link5.flip titans=link5.titans exusia=link5.exusia waxing=link5.waxing sampling=link5.sampling beachside=link5.beachside cuvelia=link5.cuvelia reunion=link5.reunion bad=link5.bad turii=link5.turii anisakis=link5.anisakis second=link5.second whydidyou=link5.whydidyou china=link5.china fallen=link5.fallen broken=link5.broken summer=link5.summer sakura=link5.sakura wuv=link5.wuv survival=link5.survival thunder=link5.thunder qproflg="0" glassflg="0" reflec_data="0")
+  //-cafe(food pastry rainbow beastie astraia beachimp holysnow trueblue ledvsscu service is_first)
+  gakuen(music_list="-1")
+  if tricolettepark != null
+    tricolettepark(open_music=tricolettepark.open_music boss0_damage=tricolettepark.boss0_damage boss1_damage=tricolettepark.boss1_damage boss2_damage=tricolettepark.boss2_damage boss3_damage=tricolettepark.boss3_damage boss0_stun=tricolettepark.boss0_stun boss1_stun=tricolettepark.boss1_stun boss2_stun=tricolettepark.boss2_stun boss3_stun=tricolettepark.boss3_stun magic_gauge="0" party="0" is_union="0" attack_rate="1")
+  commonboss(deller=pcdata.deller orb=pcdata.orb baron="0")
+  if redboss != null
+    redboss(progress=redboss.progress crush=redboss.crush open=redboss.open)
+  //-blueboss(level gauge item item_flg column0 column1 sector first_flg general)
+  if yellowboss != null
+    yellowboss(join_num="1" first_flg=yellowboss.first_flg level=yellowboss.level heroic0=yellowboss.heroic0 heroic1=yellowboss.heroic1 critical=yellowboss.critical destiny="0" last_select=yellowboss.last_select shop_message="SHOP MESSAGE" special_move="SPECIAL MOVE")
+      //-shop_damage(__type="s32" __count="7")
+      p_attack(__type="s32" __count="7") #{yellowboss.p_attack[0]} #{yellowboss.p_attack[1]} #{yellowboss.p_attack[2]} #{yellowboss.p_attack[3]} #{yellowboss.p_attack[4]} #{yellowboss.p_attack[5]} #{yellowboss.p_attack[6]}
+      pbest_attack(__type="s32" __count="7") #{yellowboss.pbest_attack[0]} #{yellowboss.pbest_attack[1]} #{yellowboss.pbest_attack[2]} #{yellowboss.pbest_attack[3]} #{yellowboss.pbest_attack[4]} #{yellowboss.pbest_attack[5]} #{yellowboss.pbest_attack[6]}
+      defeat(__type="bool" __count="7") #{yellowboss.defeat[0]} #{yellowboss.defeat[1]} #{yellowboss.defeat[2]} #{yellowboss.defeat[3]} #{yellowboss.defeat[4]} #{yellowboss.defeat[5]} #{yellowboss.defeat[6]}
+      //-contribution(bno rank contribution head_parts hair_parts face_parts body_parts hand_parts myflg message name) (loop)
+      //-random_qpro(head_parts hair_parts face_parts body_parts hand_parts) (loop)

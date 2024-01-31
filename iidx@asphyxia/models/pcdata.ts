@@ -20,6 +20,10 @@ export interface pcdata {
   mode: number;
   pmode: number;
   liflen: number;
+  judge: number; // attribute (tricoro) //
+  opstyle: number;
+  hispeed: number;
+  judgeAdj: number;
 
   notes: number; // attribute (Lincle) //
   pase: number;
@@ -102,7 +106,7 @@ export interface pcdata {
   achi_rivalcrush: number;
   achi_visitflg: number;
   achi_weeklynum: number;
-  achi_trophy: string[]; // for somewhat reason save throws 160 elements but anything above 20 will rejected //
+  achi_trophy: string[]; // for somewhat reason save throws lots of elements but sending it as-is throws error //
 
   deller: number; // in-game currency (heroic verse) //
   orb: number;
@@ -117,6 +121,13 @@ export interface pcdata {
   st_sp_dif: number;
   st_dp_ach: number;
   st_dp_dif: number;
+
+  st_sp_hdpt: number; // step (tricoro) //
+  st_dp_hdpt: number;
+  st_sp_round: number;
+  st_dp_round: number;
+  st_review: number;
+  st_help: any; // save as base64 string, sent as buffer //
 
   st_enemy_damage: number; // step (Heroic Verse) //
   st_progress: number;
@@ -236,6 +247,61 @@ export const KDZ_pcdata = {
   p2: Array<number>(30).fill(-1),
   p3: Array<number>(30).fill(-1),
   p4: Array<number>(30).fill(-1),
+}
+
+export const LDJ_pcdata = {
+  version: 20,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  help: 0,
+  gno: 0,
+  gpos: 0,
+  timing: 0,
+  sdhd: 0,
+  sdtype: 0,
+  notes: 0,
+  pase: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mode: 0,
+  pmode: 0,
+  liflen: 0,
+  judge: 0,
+  opstyle: 0,
+  hispeed: 0,
+  judgeAdj: 0,
+  fcombo: Array<number>(2).fill(0),
+
+  sgid: -1,
+  dgid: -1,
+
+  st_sp_ach: 0,
+  st_sp_hdpt: 0,
+  st_sp_level: 0,
+  st_sp_round: 0,
+  st_sp_mplay: 0,
+  st_dp_ach: 0,
+  st_dp_hdpt: 0,
+  st_dp_level: 0,
+  st_dp_round: 0,
+  st_dp_mplay: 0,
+  st_review: 0,
+  st_help: "",
+
+  achi_lastweekly: 0,
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_rivalcrush: 0,
+  achi_visitflg: 0,
+  achi_weeklynum: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
 }
 
 export const IIDX27_pcdata = {
