@@ -129,11 +129,21 @@ export interface pcdata {
   st_review: number;
   st_help: any; // save as base64 string, sent as buffer //
 
+  st_damage: number; // step (spada) //
+  st_defeat: number;
+  st_round: number;
+  st_sp_mission: number;
+  st_dp_mission: number;
+  st_sp_level: number;
+  st_dp_level: number;
+  st_sp_mplay: number;
+  st_dp_mplay: number;
+  st_last_select: number;
+  st_album: any;
+
   st_enemy_damage: number; // step (Heroic Verse) //
   st_progress: number;
   st_is_track_ticket: boolean;
-  st_sp_level: number;
-  st_dp_level: number;
   st_sp_mission_point: number;
   st_dp_mission_point: number;
   st_sp_dj_mission_level: number;
@@ -144,8 +154,6 @@ export interface pcdata {
   st_dp_dj_mission_clear: number;
   st_sp_clear_mission_clear: number;
   st_dp_clear_mission_clear: number;
-  st_sp_mplay: number;
-  st_dp_mplay: number;
   st_tips_read_list: number; 
   st_total_point: number; // CastHour //
   st_enemy_defeat_flg: number;
@@ -166,6 +174,11 @@ export interface pcdata {
   p2: number[];
   p3: number[];
   p4: number[];
+
+  sp_mlist: any; // favorite (SPADA), save as base64 string, sent as buffer //
+  sp_clist: any;
+  dp_mlist: any;
+  dp_clist: any;
 
   eb_keyorb: number; // extra boss (Heroic Verse) //
   eb_bossorb0: number;
@@ -298,6 +311,83 @@ export const LDJ_pcdata = {
   achi_rivalcrush: 0,
   achi_visitflg: 0,
   achi_weeklynum: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
+}
+
+export const IIDX21_pcdata = {
+  version: 21,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  mode: 0,
+  pmode: 0,
+  rtype: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  s_sorttype: 0,
+  d_sorttype: 0,
+  s_pace: 0,
+  d_pace: 0,
+  s_gno: 0,
+  d_gno: 0,
+  s_sub_gno: 0,
+  d_sub_gno: 0,
+  s_gtype: 0,
+  d_gtype: 0,
+  s_sdlen: 0,
+  d_sdlen: 0,
+  s_sdtype: 0,
+  d_sdtype: 0,
+  s_timing: 0,
+  d_timing: 0,
+  s_notes: 0,
+  d_notes: 0,
+  s_judge: 0,
+  d_judge: 0,
+  s_judgeAdj: 0,
+  d_judgeAdj: 0,
+  s_hispeed: 0,
+  d_hispeed: 0,
+  s_liflen: 0,
+  d_liflen: 0,
+  s_disp_judge: 0,
+  d_disp_judge: 0,
+  s_opstyle: 0,
+  d_opstyle: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+
+  sgid: -1,
+  dgid: -1,
+
+  st_damage: 0,
+  st_defeat: 0,
+  st_progress: 0,
+  st_round: 0,
+  st_sp_mission: 0,
+  st_dp_mission: 0,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+  st_last_select: 0,
+  st_album: "",
+
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_lastweekly: 0,
+  achi_weeklynum: 0,
+  achi_visitflg: 0,
+  achi_rivalcrush: 0,
   achi_trophy: Array<string>(20).fill("0"),
 
   deller: 0,

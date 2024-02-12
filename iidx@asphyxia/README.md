@@ -9,6 +9,7 @@ Supported Versions
   - beatmaniaIIDX 18 Resort Anthem
   - beatmaniaIIDX 19 Lincle
   - beatmaniaIIDX 20 tricoro
+  - beatmaniaIIDX 21 SPADA
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
   - beatmaniaIIDX 29 CastHour
@@ -60,3 +61,8 @@ Changelogs
     - Event savings are broken
   - Added movie_upload url setting on plugin setting (BISTROVER ~)
     - This uses JSON instead of XML and this requires additional setup. (can't test or implement this as I don't own NVIDIA GPU)
+
+**v0.1.7**
+  - Added Initial support for SPADA
+    - Event savings are broken
+  - Fixed rtype didn't save correctly. (BISTROVER ~)
