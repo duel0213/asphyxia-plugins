@@ -35,6 +35,7 @@ export function register() {
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`${method}`, handler);
     R.Route(`IIDX21${method}`, handler);
+    R.Route(`IIDX22${method}`, handler);
     R.Route(`IIDX27${method}`, handler);
     R.Route(`IIDX28${method}`, handler);
     R.Route(`IIDX29${method}`, handler);

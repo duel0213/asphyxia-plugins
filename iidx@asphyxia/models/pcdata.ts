@@ -64,6 +64,10 @@ export interface pcdata {
   d_disp_judge: number;
   s_opstyle: number;
   d_opstyle: number;
+  s_exscore: number; // PENDUAL //
+  d_exscore: number;
+  s_largejudge: number;
+  d_largejudge: number;
   s_graph_score: number;
   d_graph_score: number;
   s_auto_scrach: number;
@@ -140,6 +144,10 @@ export interface pcdata {
   st_dp_mplay: number;
   st_last_select: number;
   st_album: any;
+  st_is_secret: number; // step (PENDUAL) //
+  st_age_list: number;
+  st_is_present: number;
+  st_is_future: number;
 
   st_enemy_damage: number; // step (Heroic Verse) //
   st_progress: number;
@@ -380,7 +388,88 @@ export const IIDX21_pcdata = {
   st_sp_mplay: 0,
   st_dp_mplay: 0,
   st_last_select: 0,
-  st_album: "",
+  st_album: null,
+
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_lastweekly: 0,
+  achi_weeklynum: 0,
+  achi_visitflg: 0,
+  achi_rivalcrush: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
+}
+
+export const IIDX22_pcdata = {
+  version: 22,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  mode: 0,
+  pmode: 0,
+  rtype: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  s_sorttype: 0,
+  d_sorttype: 0,
+  s_pace: 0,
+  d_pace: 0,
+  s_gno: 0,
+  d_gno: 0,
+  s_gtype: 0,
+  d_gtype: 0,
+  s_sdlen: 0,
+  d_sdlen: 0,
+  s_sdtype: 0,
+  d_sdtype: 0,
+  s_timing: 0,
+  d_timing: 0,
+  s_notes: 0,
+  d_notes: 0,
+  s_judge: 0,
+  d_judge: 0,
+  s_judgeAdj: 0,
+  d_judgeAdj: 0,
+  s_hispeed: 0,
+  d_hispeed: 0,
+  s_liflen: 0,
+  d_liflen: 0,
+  s_disp_judge: 0,
+  d_disp_judge: 0,
+  s_opstyle: 0,
+  d_opstyle: 0,
+  s_exscore: 0,
+  d_exscore: 0,
+  s_largejudge: 0,
+  d_largejudge: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+
+  sgid: -1,
+  dgid: -1,
+
+  st_damage: 0,
+  st_defeat: 0,
+  st_progress: 0,
+  st_sp_mission: 0,
+  st_dp_mission: 0,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+  st_age_list: 0,
+  st_is_secret: 0,
+  st_is_present: 0,
+  st_is_future: 0,
+  st_album: null,
 
   achi_pack: 0,
   achi_packcomp: 0,

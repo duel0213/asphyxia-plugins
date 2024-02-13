@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.6**
+Plugin Version: **v0.1.8**
 
 ---
 
@@ -10,6 +10,7 @@ Supported Versions
   - beatmaniaIIDX 19 Lincle
   - beatmaniaIIDX 20 tricoro
   - beatmaniaIIDX 21 SPADA
+  - beatmaniaIIDX 22 PENDUAL
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
   - beatmaniaIIDX 29 CastHour
@@ -54,7 +55,7 @@ Changelogs
 **v0.1.5**
   - Added Initial support for Resort Anthem
     -  BEGINNER, LEAGUE, STORY does not work yet.
-  - Fixed s_hispeed/d_hispeed doesn't save correctly.
+  - Fixed where s_hispeed/d_hispeed doesn't save correctly.
  
 **v0.1.6**
   - Added Initial support for tricoro
@@ -65,4 +66,12 @@ Changelogs
 **v0.1.7**
   - Added Initial support for SPADA
     - Event savings are broken
-  - Fixed rtype didn't save correctly. (BISTROVER ~)
+  - Fixed where rtype didn't save correctly. (BISTROVER ~)
+
+**v0.1.8**
+  - Added RIVAL pacemaker support
+  - Added Initial support for PENDUAL
+    - Event savings are broken
+  - Fixed where old_linkage_secret_flg is missing on pc.get response (RESIDENT)
+  - Fixed where game could crash due to invalid rival qprodata
+  - Fixed where lift isn't saving (SPADA)

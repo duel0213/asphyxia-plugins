@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid } from "../util";
+import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 
@@ -160,6 +160,8 @@ export const musicappoint: EPR = async (info, data, send) => {
 
   // clid, ctype, grd, iidxid, lv, mid, subtype //
   const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const ctype = parseInt($(data).attr().ctype);
+  const subtype = parseInt($(data).attr().subtype);
   let mid = parseInt($(data).attr().mid);
   let clid = parseInt($(data).attr().clid);
   
@@ -171,7 +173,8 @@ export const musicappoint: EPR = async (info, data, send) => {
   else if (version < 27) {
     clid = mapping[clid];
   }
-  
+
+  // MINE //
   const music_data: score | null = await DB.FindOne<score>(refid, {
     collection: "score",
     mid: mid,
@@ -191,8 +194,82 @@ export const musicappoint: EPR = async (info, data, send) => {
   }
   else mydata = K.ITEM("bin", Base64toBuffer(music_data[clid]));
 
+  /*** ctype
+    [-1] - DEFAULT
+     [1] - RIVAL
+     [2] - ALL TOP
+     [3] - ALL AVG.
+     [4] - LOCATION TOP
+     [5] - LOCATION AVG.
+     [6] - SAME DAN TOP
+     [7] - SAME DAN AVG.
+     [8] - RIVAL TOP
+     [9] - RIVAL AVG.
+     [10] - STORE TOP
+     [13] - RIVAL NEXT
+     [14] - STORE ROTATE
+     [15] - RIVAL ROTATE
+   ***/
+
+  // OTHERS //
+  let other_refid, other_musicdata: score | null, other_pcdata, other_profile, sdata = null;
+  switch (ctype) {
+    case 1:
+      if (_.isNaN(subtype)) break;
+
+      other_refid = await IDtoRef(subtype);
+      other_profile = await ReftoProfile(other_refid);
+      other_pcdata = await ReftoPcdata(other_refid, version);
+      other_musicdata = await DB.FindOne<score>(other_refid, {
+        collection: "score",
+        mid: mid,
+        [clid]: { $exists: true },
+      });
+      if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
+
+      sdata = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
+        score: other_musicdata.esArray[clid].toString(),
+        pid: other_profile[1].toString(),
+        name: other_profile[0].toString(),
+        riidxid: other_profile[2].toString()
+      });
+      break;
+
+    default:
+      break;
+  }
+
   if (version >= 27) {
     let my_gauge_data = Base64toBuffer(music_data[clid + 10]);
+
+    if (!_.isNil(sdata)) {
+      if (_.isNil(other_musicdata.optArray)) { // temp //
+        other_musicdata.optArray = Array<number>(10).fill(0);
+        other_musicdata.opt2Array = Array<number>(10).fill(0);
+      }
+
+      let other_data = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
+        score: other_musicdata.esArray[clid].toString(),
+        achieve: other_pcdata[ClidToPlaySide(clid) + 2].toString(),
+        pid: other_profile[1].toString(),
+        name: other_profile[0].toString(),
+        riidxid: other_profile[2].toString(),
+        option: other_musicdata.optArray[clid].toString(), // CastHour //
+        option2: other_musicdata.opt2Array[clid].toString(),
+      });
+
+      sdata = {
+        ...other_data,
+        gauge_data: K.ITEM("bin", Base64toBuffer(other_musicdata[clid + 10]))
+      };
+
+      return send.object({
+        "@attr": { my_option: option, my_option2: option2 }, // CastHour //
+        mydata: K.ITEM("bin", mydata),
+        my_gauge_data: K.ITEM("bin", my_gauge_data),
+        sdata,
+      });
+    }
 
     return send.object({
       "@attr": { my_option: option, my_option2: option2 }, // CastHour //
@@ -201,8 +278,15 @@ export const musicappoint: EPR = async (info, data, send) => {
     });
   }
 
+  if (!_.isNil(sdata)) {
+    return send.object({
+      mydata,
+      sdata,
+    });
+  }
+
   return send.object({
-    mydata
+    mydata,
   });
 }
 

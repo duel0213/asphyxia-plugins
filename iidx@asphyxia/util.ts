@@ -31,6 +31,22 @@ export function NewMidToOldMid(mid: number) {
   return Number(`${numberString.slice(0, 2)}${numberString.slice(3)}`);
 }
 
+export function ClidToPlaySide(clid: number) {
+  switch (clid) {
+    case 0: // SPB //
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return 0; // SPA //
+
+    default:
+      break;
+  }
+
+  return 1;
+}
+
 export function Base64toBuffer(s: string) {
   const base64list =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -143,9 +159,10 @@ export async function ReftoPcdata(refid: string, version: number) {
 
   return p_data;
 }
-export async function ReftoQPRO(refid: string) {
+export async function ReftoQPRO(refid: string, version: number) {
   const custom = await DB.FindOne<custom>(refid, {
     collection: "custom",
+    version: version,
   });
 
   let qpro_data = [];

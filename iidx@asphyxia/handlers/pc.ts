@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -71,7 +71,7 @@ export const pccommon: EPR = async (info, data, send) => {
         beat: String(U.GetConfig("BeatPhase")),
       }),
       limit: K.ATTR({
-        phase: String(3),
+        phase: String(4),
       }),
       boss: K.ATTR({
         phase: String(3),
@@ -125,6 +125,9 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 21:
       pcdata = IIDX21_pcdata;
+      break;
+    case 22:
+      pcdata = IIDX22_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -280,7 +283,7 @@ export const pcget: EPR = async (info, data, send) => {
     for (let a = 0; a < rivals.length; a++) {
       let profile = await ReftoProfile(rivals[a].rival_refid);
       let pcdata = await ReftoPcdata(rivals[a].rival_refid, version);
-      let qprodata = await ReftoQPRO(rivals[a].rival_refid);
+      let qprodata = await ReftoQPRO(rivals[a].rival_refid, version);
 
       let rival_data: rival_data = {
         play_style: rivals[a].play_style,
@@ -370,23 +373,29 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version >= 21) {
-    let link5 = null, tricolettepark = null, boss1 = null, evtArray = [], evtArray2 = [];
-    if (version == 20 || version == 21) {
-      link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-      tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+    let link5 = null,
+      tricolettepark = null,
+      boss1 = null,
+      chrono_diver = null,
+      evtArray = [], evtArray2 = [];
+    if (version == 21 || version == 22) {
+      if (!_.isNil(pcdata.sp_mlist)) {
+        pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
+        pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
+        pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
+        pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
+      }
+
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
 
       if (version == 21) {
-        if (!_.isNil(pcdata.sp_mlist)) {
-          pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
-          pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
-          pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
-          pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
-        }
-
-        if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+        link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+        tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
 
         boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
         if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
+      } else if (version == 22) {
+        chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
       }
     }
     else {
@@ -510,6 +519,7 @@ export const pcget: EPR = async (info, data, send) => {
       boss1,
       link5,
       tricolettepark,
+      chrono_diver,
       wArray,
       bArray,
     });
@@ -566,6 +576,9 @@ export const pctakeover: EPR = async (info, data, send) => {
     case 21:
       pcdata = IIDX21_pcdata;
       break;
+    case 22:
+      pcdata = IIDX22_pcdata;
+      break;
     case 27:
       pcdata = IIDX27_pcdata;
       lightning_playdata = lm_playdata;
@@ -586,7 +599,6 @@ export const pctakeover: EPR = async (info, data, send) => {
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
       break;
-
 
     default:
       return send.deny();
@@ -1123,6 +1135,9 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
     pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
 
+    if (!_.isNil($(data).attr().s_lift)) pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    if (!_.isNil($(data).attr().d_lift)) pcdata.s_liflen = parseInt($(data).attr().d_lift);
+
     if (!_.isNil($(data).element("secret"))) {
       pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
       pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
@@ -1339,6 +1354,163 @@ export const pcsave: EPR = async (info, data, send) => {
           collection: "event_1",
           version: 20,
           event_name: "tricolettepark",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+  }
+  else if (version == 22) {
+    pcdata.rtype = parseInt($(data).attr().rtype);
+    pcdata.sach = parseInt($(data).attr().s_achi);
+    pcdata.dach = parseInt($(data).attr().d_achi);
+    pcdata.sp_opt = parseInt($(data).attr().sp_opt);
+    pcdata.dp_opt = parseInt($(data).attr().dp_opt);
+    pcdata.dp_opt2 = parseInt($(data).attr().dp_opt2);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.s_sorttype = parseInt($(data).attr().s_sorttype);
+    pcdata.d_sorttype = parseInt($(data).attr().d_sorttype);
+    pcdata.s_disp_judge = parseInt($(data).attr().s_disp_judge);
+    pcdata.d_disp_judge = parseInt($(data).attr().d_disp_judge);
+    pcdata.s_pace = parseInt($(data).attr().s_pace);
+    pcdata.d_pace = parseInt($(data).attr().d_pace);
+    pcdata.s_gno = parseInt($(data).attr().s_gno);
+    pcdata.d_gno = parseInt($(data).attr().d_gno);
+    pcdata.s_gtype = parseInt($(data).attr().s_gtype);
+    pcdata.d_gtype = parseInt($(data).attr().d_gtype);
+    pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);
+    pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
+    pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
+    pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_notes = parseFloat($(data).attr().s_notes);
+    pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.s_judge = parseInt($(data).attr().s_judge);
+    pcdata.d_judge = parseInt($(data).attr().d_judge);
+    pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
+    pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
+    pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
+    pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
+    pcdata.s_exscore = parseInt($(data).attr().s_exscore);
+    pcdata.d_exscore = parseInt($(data).attr().d_exscore);
+    pcdata.s_largejudge = parseInt($(data).attr().s_largejudge);
+    pcdata.d_largejudge = parseInt($(data).attr().d_largejudge);
+
+    if (!_.isNil($(data).attr().s_lift)) pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    if (!_.isNil($(data).attr().d_lift)) pcdata.s_liflen = parseInt($(data).attr().d_lift);
+
+    if (!_.isNil($(data).element("secret"))) {
+      pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
+      pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
+      pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
+    }
+
+    if (!_.isNil($(data).element("favorite"))) {
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+    }
+
+    if (!_.isNil($(data).element("qpro_secret"))) {
+      custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
+      custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
+      custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
+      custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
+      custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+    }
+
+    if (!_.isNil($(data).element("qpro_equip"))) {
+      custom.qpro_head = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
+      custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
+      custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+    }
+
+    if (!_.isNil($(data).element("achievements"))) {
+      // TODO:: achi_packflg, achi_packid, achi_playpack //
+      pcdata.achi_lastweekly = parseInt($(data).attr("achievements").last_weekly);
+      pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
+      pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
+      pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
+      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+    }
+
+    if (hasStepUpData) {
+      pcdata.st_damage = parseInt($(data).attr("step").damage);
+      pcdata.st_defeat = parseInt($(data).attr("step").defeat);
+      pcdata.st_progress = parseInt($(data).attr("step").progress);
+      pcdata.st_is_secret = parseInt($(data).attr("step").is_secret);
+      pcdata.st_sp_mission = parseInt($(data).attr("step").sp_mission);
+      pcdata.st_dp_mission = parseInt($(data).attr("step").dp_mission);
+      pcdata.st_sp_level = parseInt($(data).attr("step").sp_level);
+      pcdata.st_dp_level = parseInt($(data).attr("step").dp_level);
+      pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
+      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
+      pcdata.st_age_list = parseInt($(data).attr("step").age_list);
+      pcdata.st_album = $(data).buffer("step").toString("base64"); // TODO:: verify //
+      pcdata.st_is_present = parseInt($(data).attr("step").is_present);
+      pcdata.st_is_future = parseInt($(data).attr("step").is_future);
+    }
+
+    if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+    if (!_.isNil($(data).element("orb_data"))) pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
+
+    // TODO:: fix event saving, these event savings are broken. //
+    if (!_.isNil($(data).element("chrono_diver"))) {
+      let event_data = {
+        play_count: parseInt($(data).attr("chrono_diver").play_count),
+        present_unlock: parseInt($(data).attr("chrono_diver").present_unlock),
+        future_unlock: parseInt($(data).attr("chrono_diver").future_unlock),
+        success_count_0_n: parseInt($(data).attr("chrono_diver").success_count_0_n),
+        success_count_0_h: parseInt($(data).attr("chrono_diver").success_count_0_h),
+        success_count_0_a: parseInt($(data).attr("chrono_diver").success_count_0_a),
+        success_count_1_n: parseInt($(data).attr("chrono_diver").success_count_1_n),
+        success_count_1_h: parseInt($(data).attr("chrono_diver").success_count_1_h),
+        success_count_1_a: parseInt($(data).attr("chrono_diver").success_count_1_a),
+        success_count_2_n: parseInt($(data).attr("chrono_diver").success_count_2_n),
+        success_count_2_h: parseInt($(data).attr("chrono_diver").success_count_2_h),
+        success_count_2_a: parseInt($(data).attr("chrono_diver").success_count_2_a),
+        success_count_3_n: parseInt($(data).attr("chrono_diver").success_count_3_n),
+        success_count_3_h: parseInt($(data).attr("chrono_diver").success_count_3_h),
+        success_count_3_a: parseInt($(data).attr("chrono_diver").success_count_3_a),
+        story_list: parseInt($(data).attr("chrono_diver").story_list)
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "chrono_diver",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("boss_event_3"))) {
+      let boss_event_3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
+      let event_data;
+
+      if (_.isNil(boss_event_3)) {
+        event_data = {
+          point: parseInt($(data).attr().add_bonus_point)
+        }
+      }
+      else {
+        event_data = boss_event_3;
+        event_data.point += parseInt($(data).attr("boss_event_3").add_bonus_point);
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "boss_event_3",
         },
         {
           $set: event_data,
