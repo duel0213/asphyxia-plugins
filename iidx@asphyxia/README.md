@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.8**
+Plugin Version: **v0.1.9**
 
 ---
 
@@ -11,6 +11,7 @@ Supported Versions
   - beatmaniaIIDX 20 tricoro
   - beatmaniaIIDX 21 SPADA
   - beatmaniaIIDX 22 PENDUAL
+  - beatmaniaIIDX 23 copula
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
   - beatmaniaIIDX 29 CastHour
@@ -75,3 +76,8 @@ Changelogs
   - Fixed where old_linkage_secret_flg is missing on pc.get response (RESIDENT)
   - Fixed where game could crash due to invalid rival qprodata
   - Fixed where lift isn't saving (SPADA)
+
+**v0.1.9**
+  - Added Initial support for copula
+    - Event savings are broken
+  - Added shop.getconvention/shop.setconvention/shop.getname/shop.savename response

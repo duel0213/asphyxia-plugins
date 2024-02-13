@@ -228,10 +228,10 @@ export const musicappoint: EPR = async (info, data, send) => {
       if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
       sdata = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
-        score: other_musicdata.esArray[clid].toString(),
-        pid: other_profile[1].toString(),
-        name: other_profile[0].toString(),
-        riidxid: other_profile[2].toString()
+        score: String(other_musicdata.esArray[clid]),
+        pid: String(other_profile[1]),
+        name: String(other_profile[0]),
+        riidxid: String(other_profile[2])
       });
       break;
 
@@ -249,13 +249,13 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
 
       let other_data = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
-        score: other_musicdata.esArray[clid].toString(),
-        achieve: other_pcdata[ClidToPlaySide(clid) + 2].toString(),
-        pid: other_profile[1].toString(),
-        name: other_profile[0].toString(),
-        riidxid: other_profile[2].toString(),
-        option: other_musicdata.optArray[clid].toString(), // CastHour //
-        option2: other_musicdata.opt2Array[clid].toString(),
+        score: String(other_musicdata.esArray[clid]),
+        achieve: String(other_pcdata[ClidToPlaySide(clid) + 2]),
+        pid: String(other_profile[1]),
+        name: String(other_profile[0]),
+        riidxid: String(other_profile[2]),
+        option: String(other_musicdata.optArray[clid]), // CastHour //
+        option2: String(other_musicdata.opt2Array[clid]),
       });
 
       sdata = {

@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -99,9 +99,8 @@ export const pccommon: EPR = async (info, data, send) => {
       movie_upload: U.GetConfig("MovieUpload"),
     });
   }
-  else {
-    return send.deny();
-  }
+
+  return send.deny();
 };
 
 export const pcreg: EPR = async (info, data, send) => {
@@ -128,6 +127,9 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 22:
       pcdata = IIDX22_pcdata;
+      break;
+    case 23:
+      pcdata = IIDX23_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -378,41 +380,48 @@ export const pcget: EPR = async (info, data, send) => {
       boss1 = null,
       chrono_diver = null,
       evtArray = [], evtArray2 = [];
-    if (version == 21 || version == 22) {
-      if (!_.isNil(pcdata.sp_mlist)) {
-        pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
-        pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
-        pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
-        pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
-      }
 
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
-
-      if (version == 21) {
-        link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-        tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
-
-        boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-        if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
-      } else if (version == 22) {
-        chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
-      }
-    }
-    else {
-      let event_1 = await DB.Find(refid, { collection: "event_1", version: version });
-      let event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
-
-      if (event_1.length > 0) {
-        for (let evt of event_1) {
-          evtArray.push(evt);
+    switch (version) {
+      case 21:
+      case 22:
+      case 23:
+        if (!_.isNil(pcdata.sp_mlist)) {
+          pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
+          pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
+          pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
+          pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
         }
-      }
 
-      if (event_1s.length > 0) {
-        for (let evt of event_1s) {
-          evtArray2.push(evt);
+        if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+        else if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
+
+        if (version == 21) {
+          link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+          tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+
+          boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
+          if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
+        } else if (version == 22) {
+          chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
         }
-      }
+        break;
+
+      default:
+        let event_1 = await DB.Find(refid, { collection: "event_1", version: version });
+        let event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+
+        if (event_1.length > 0) {
+          for (let evt of event_1) {
+            evtArray.push(evt);
+          }
+        }
+
+        if (event_1s.length > 0) {
+          for (let evt of event_1s) {
+            evtArray2.push(evt);
+          }
+        }
+        break;
     }
 
     if (version >= 30 && lm_music_memo_new.length > 0) {
@@ -578,6 +587,9 @@ export const pctakeover: EPR = async (info, data, send) => {
       break;
     case 22:
       pcdata = IIDX22_pcdata;
+      break;
+    case 23:
+      pcdata = IIDX23_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -1518,6 +1530,104 @@ export const pcsave: EPR = async (info, data, send) => {
       );
     }
   }
+  else if (version == 23) {
+    pcdata.rtype = parseInt($(data).attr().rtype);
+    pcdata.sach = parseInt($(data).attr().s_achi);
+    pcdata.dach = parseInt($(data).attr().d_achi);
+    pcdata.sp_opt = parseInt($(data).attr().sp_opt);
+    pcdata.dp_opt = parseInt($(data).attr().dp_opt);
+    pcdata.dp_opt2 = parseInt($(data).attr().dp_opt2);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.s_sorttype = parseInt($(data).attr().s_sorttype);
+    pcdata.d_sorttype = parseInt($(data).attr().d_sorttype);
+    pcdata.s_disp_judge = parseInt($(data).attr().s_disp_judge);
+    pcdata.d_disp_judge = parseInt($(data).attr().d_disp_judge);
+    pcdata.s_pace = parseInt($(data).attr().s_pace);
+    pcdata.d_pace = parseInt($(data).attr().d_pace);
+    pcdata.s_gno = parseInt($(data).attr().s_gno);
+    pcdata.d_gno = parseInt($(data).attr().d_gno);
+    pcdata.s_gtype = parseInt($(data).attr().s_gtype);
+    pcdata.d_gtype = parseInt($(data).attr().d_gtype);
+    pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);
+    pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
+    pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
+    pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_notes = parseFloat($(data).attr().s_notes);
+    pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.s_judge = parseInt($(data).attr().s_judge);
+    pcdata.d_judge = parseInt($(data).attr().d_judge);
+    pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
+    pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
+    pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
+    pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
+    pcdata.s_exscore = parseInt($(data).attr().s_exscore);
+    pcdata.d_exscore = parseInt($(data).attr().d_exscore);
+    pcdata.s_largejudge = parseInt($(data).attr().s_largejudge);
+    pcdata.d_largejudge = parseInt($(data).attr().d_largejudge);
+
+    if (!_.isNil($(data).attr().s_lift)) pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    if (!_.isNil($(data).attr().d_lift)) pcdata.s_liflen = parseInt($(data).attr().d_lift);
+
+    if (!_.isNil($(data).element("secret"))) {
+      pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
+      pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
+      pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
+    }
+
+    if (!_.isNil($(data).element("favorite"))) {
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+    }
+
+    if (!_.isNil($(data).element("qpro_secret"))) {
+      custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
+      custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
+      custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
+      custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
+      custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+    }
+
+    if (!_.isNil($(data).element("qpro_equip"))) {
+      custom.qpro_head = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
+      custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
+      custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+    }
+
+    if (!_.isNil($(data).element("achievements"))) {
+      // TODO:: achi_packflg, achi_packid, achi_playpack //
+      pcdata.achi_lastweekly = parseInt($(data).attr("achievements").last_weekly);
+      pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
+      pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
+      pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
+      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+    }
+
+    if (hasStepUpData) {
+      pcdata.st_friendship = parseInt($(data).attr("step").friendship);
+      pcdata.st_progress = parseInt($(data).attr("step").progress);
+      pcdata.st_station_clear = parseInt($(data).attr("step").station_clear);
+      pcdata.st_station_play = parseInt($(data).attr("step").station_play);
+      pcdata.st_sp_mission = parseInt($(data).attr("step").sp_mission);
+      pcdata.st_dp_mission = parseInt($(data).attr("step").dp_mission);
+      pcdata.st_sp_level = parseInt($(data).attr("step").sp_level);
+      pcdata.st_dp_level = parseInt($(data).attr("step").dp_level);
+      pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
+      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
+      pcdata.st_mission_gauge = parseInt($(data).attr("step").mission_gauge);
+      pcdata.st_tokimeki = $(data).buffer("step").toString("base64"); // TODO:: verify //
+    }
+
+    if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+    if (!_.isNil($(data).element("orb_data"))) pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
+
+    // TODO:: fix event saving, these event savings are broken. //
+  }
   else if (version >= 27) {
     // lid bookkeep cid ctype ccode
     pcdata.rtype = parseInt($(data).attr().rtype);
@@ -2056,8 +2166,4 @@ export const pcdrawlanegacha: EPR = async (info, data, send) => {
       session_id: String(0),
     }),
   });
-};
-
-export const pcconsumelanegacha: EPR = async (info, data, send) => {
-  return send.success();
 };

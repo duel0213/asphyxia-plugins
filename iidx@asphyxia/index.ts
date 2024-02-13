@@ -1,5 +1,5 @@
-import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcconsumelanegacha, pcdrawlanegacha, pcshopregister } from "./handlers/pc";
-import { shopgetname, shopgetconvention, shopsetconvention } from "./handlers/shop";
+import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister } from "./handlers/pc";
+import { shopgetname, shopsavename, shopgetconvention, shopsetconvention } from "./handlers/shop";
 import { musicreg, musicgetrank, musicappoint, musicarenacpu } from "./handlers/music";
 import { graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
@@ -36,6 +36,7 @@ export function register() {
     R.Route(`${method}`, handler);
     R.Route(`IIDX21${method}`, handler);
     R.Route(`IIDX22${method}`, handler);
+    R.Route(`IIDX23${method}`, handler);
     R.Route(`IIDX27${method}`, handler);
     R.Route(`IIDX28${method}`, handler);
     R.Route(`IIDX29${method}`, handler);
@@ -53,9 +54,10 @@ export function register() {
   MultiRoute("pc.shopregister", pcshopregister);
   MultiRoute("pc.getLaneGachaTicket", pcgetlanegacha);
   MultiRoute("pc.drawLaneGacha", pcdrawlanegacha);
-  MultiRoute("pc.consumeLaneGachaTicket", pcconsumelanegacha);
+  MultiRoute("pc.consumeLaneGachaTicket", true);
 
   MultiRoute("shop.getname", shopgetname);
+  MultiRoute("shop.savename", shopsavename);
   MultiRoute("shop.getconvention", shopgetconvention);
   MultiRoute("shop.setconvention", shopsetconvention);
 

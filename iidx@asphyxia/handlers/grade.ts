@@ -21,7 +21,7 @@ export const graderaised: EPR = async (info, data, send) => {
     gradeId: gid,
   });
 
-  if (version >= 27) cflg = parseInt($(data).attr().cstage);
+  if (version >= 23) cflg = parseInt($(data).attr().cstage);
 
   const isTDJ = !(_.isNil($(data).element("lightning_play_data"))); // lightning model //
   const hasEiseiData = (!(_.isNil($(data).element("eisei_data"))) || !(_.isNil($(data).element("eisei_grade_data"))));;
