@@ -4,6 +4,7 @@ import { profile } from "./models/profile";
 
 export function IDtoCode(id: number) {
   const padded = _.padStart(String(id), 8);
+
   return `${padded.slice(0, 4)}-${padded.slice(4)}`;
 }
 
@@ -32,19 +33,7 @@ export function NewMidToOldMid(mid: number) {
 }
 
 export function ClidToPlaySide(clid: number) {
-  switch (clid) {
-    case 0: // SPB //
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      return 0; // SPA //
-
-    default:
-      break;
-  }
-
-  return 1;
+  return clid < 5 ? 0 : 1;
 }
 
 export function Base64toBuffer(s: string) {
@@ -159,6 +148,7 @@ export async function ReftoPcdata(refid: string, version: number) {
 
   return p_data;
 }
+
 export async function ReftoQPRO(refid: string, version: number) {
   const custom = await DB.FindOne<custom>(refid, {
     collection: "custom",

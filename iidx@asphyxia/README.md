@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.10**
+Plugin Version: **v0.1.11**
 
 ---
 
@@ -26,10 +26,10 @@ Features
 
   - STEP UP (Partial)
   - SKILL ANALYZER
-  - EVENT
-  - ARENA (Local)
+  - EVENT (Partial)
+  - ARENA (Partial)
   - RANDOME LANE TICKET
-  - SONG SELECTION NOTES
+  - FAVORITE/SONG SELECTION NOTES (Partial)
 
 ---
 
@@ -88,3 +88,8 @@ Changelogs
 **v0.1.10**
   - Added Initial support for SINOBUZ ~ Rootage
     - Converted from asphyxia_route_public
+
+**v0.1.11**
+  - Added Shop Ranking support
+  - Changed pc.common/gameSystem.systemInfo response not to use pugFile.
+    - IIDX_CPUS on models/arena.ts came from asphyxia_route_public

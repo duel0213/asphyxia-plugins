@@ -1,6 +1,7 @@
-import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide } from "../util";
+import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
+import { shop_data } from "../models/shop";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -305,6 +306,9 @@ export const musicappoint: EPR = async (info, data, send) => {
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
+  const shop_data = await DB.FindOne<shop_data>({
+    collection: "shop_data",
+  });
 
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
   const refid = await IDtoRef(parseInt($(data).attr().iidxid));
@@ -318,7 +322,8 @@ export const musicreg: EPR = async (info, data, send) => {
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0;
 
-  // TODO:: SPADA Leggendaria has seperate music_id //
+  // TODO:: Leggendaria until HEROIC VERSE has seperate music_id //
+  // TODO:: SUPER FUTURE 2323 has seperate music_id //
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version == -1) return send.deny();
   else if (version < 20) {
@@ -349,6 +354,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let esArray = Array<number>(10).fill(0); // EXSCORE //
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
+  let update = 0;
 
   if (version >= 18) ghost = $(data).buffer("ghost").toString("base64");
   
@@ -389,6 +395,7 @@ export const musicreg: EPR = async (info, data, send) => {
       esArray[clid] = Math.max(esArray[clid], exscore);
       optArray[clid] = option;
       opt2Array[clid] = option_2;
+      update = 1;
     } else {
       ghost = music_data[clid];
       if (version >= 27) ghost_gauge = music_data[clid + 10];
@@ -470,15 +477,98 @@ export const musicreg: EPR = async (info, data, send) => {
     }
   );
 
-  send.object(
-    K.ATTR({
-      status: "0",
+  let shop_rank = -1, shop_rank_data = [];
+  let scores: any[][];
+  scores = (
+    await DB.Find(null, {
+      collection: "score",
+      mid: mid,
+      cArray: { $exists: true },
+      esArray: { $exists: true },
+    })
+  ).map((r) => [r.esArray[clid], r.cArray[clid], r.__refid]);
+  scores.sort((a, b) => b[0] - a[0]);
+  shop_rank = scores.findIndex((a) => a[2] == refid);
+
+  scores = await Promise.all(
+    scores.map(async (r) => [
+      r[0],
+      r[1],
+      await ReftoProfile(r[2]),
+      await ReftoQPRO(r[2], version),
+      await ReftoPcdata(r[2], version),
+    ])
+  );
+
+  scores.forEach((rankscore, index) => {
+    if (index == shop_rank) {
+      shop_rank_data.push(
+        K.ATTR({
+          iidx_id: String(rankscore[2][2]),
+          name: String(rankscore[2][0]),
+          opname: shop_data.opname,
+          rnum: String(index + 1),
+          score: String(rankscore[0]),
+          clflg: String(rankscore[1]),
+          pid: String(rankscore[2][1]),
+          sgrade: String(rankscore[4][0]),
+          dgrade: String(rankscore[4][1]),
+          head: String(rankscore[3][1]),
+          hair: String(rankscore[3][0]),
+          face: String(rankscore[3][2]),
+          body: String(rankscore[3][3]),
+          hand: String(rankscore[3][4]),
+          myFlg: String(1),
+          s_baron: String(0),
+          p_baron: String(0),
+          achieve: String(0),
+          update: String(update),
+        })
+      );
+    }
+    else if (rankscore[0] != 0 || rankscore[1] != 0) {
+      shop_rank_data.push(
+        K.ATTR({
+          iidx_id: String(rankscore[2][2]),
+          name: String(rankscore[2][0]),
+          opname: shop_data.opname,
+          rnum: String(index + 1),
+          score: String(rankscore[0]),
+          clflg: String(rankscore[1]),
+          pid: String(rankscore[2][1]),
+          sgrade: String(rankscore[4][0]),
+          dgrade: String(rankscore[4][1]),
+          head: String(rankscore[3][1]),
+          hair: String(rankscore[3][0]),
+          face: String(rankscore[3][2]),
+          body: String(rankscore[3][3]),
+          hand: String(rankscore[3][4]),
+          myFlg: String(0),
+          s_baron: String(0),
+          p_baron: String(0),
+          achieve: String(0),
+          update: String(0),
+        })
+      );
+    }
+  });
+
+  let result: any = {
+    "@attr": {
       mid: String(mid),
       clid: String(clid),
       crate: "0",
       frate: "0",
-    })
-  );
+      rankside: String(style),
+    },
+    ranklist: {
+      "@attr": { total_user_num: String(shop_rank_data.length) },
+      data: shop_rank_data,
+    },
+    shopdata: K.ATTR({ rank: String(shop_rank) }),
+  }
+
+  return send.object(result);
 }
 
 // this is not valid response //

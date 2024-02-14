@@ -131,6 +131,7 @@ export interface pcdata {
   st_sp_round: number;
   st_dp_round: number;
   st_review: number;
+  st_stamp: any;
   st_help: any; // save as base64 string, sent as buffer //
 
   st_damage: number; // spada //
@@ -320,7 +321,8 @@ export const LDJ_pcdata = {
   st_dp_round: 0,
   st_dp_mplay: 0,
   st_review: 0,
-  st_help: "",
+  st_stamp: null,
+  st_help: null,
 
   achi_lastweekly: 0,
   achi_pack: 0,

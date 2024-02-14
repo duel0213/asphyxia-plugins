@@ -24,7 +24,7 @@ pc(status="0")
   join_shop(joinflg="1" join_cflg="1" join_id="0" join_name="CORE")
   fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
   step(sp_ach=pcdata.st_sp_ach dp_ach=pcdata.st_dp_ach sp_hdpt=pcdata.st_sp_hdpt dp_hdpt=pcdata.st_dp_hdpt sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_round=pcdata.st_sp_round dp_round=pcdata.st_dp_round sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay review=pcdata.st_review)
-    //-stamp(__type="bin")
+    stamp(__type="bin") #{pcdata.st_stamp}
     help(__type="bin") #{pcdata.st_help}
   achievements(last_weekly=pcdata.achi_lastweekly pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp rival_crush=pcdata.achi_rivalcrush visit_flg=pcdata.achi_visitflg weekly_num=pcdata.achi_weeklynum)
     trophy(__type="s64" __count="10") #{pcdata.achi_trophy[0]} #{pcdata.achi_trophy[1]} #{pcdata.achi_trophy[2]} #{pcdata.achi_trophy[3]} #{pcdata.achi_trophy[4]} #{pcdata.achi_trophy[5]} #{pcdata.achi_trophy[6]} #{pcdata.achi_trophy[7]} #{pcdata.achi_trophy[8]} #{pcdata.achi_trophy[9]}

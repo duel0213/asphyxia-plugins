@@ -10,98 +10,218 @@ import { world_tourism } from "../models/worldtourism";
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
-  if (version == 18) {
-    return send.object({
-      "@attr": {
-        expire: 600,
-      },
-      ir: K.ATTR({
-        beat: String(U.GetConfig("BeatPhase")),
-      }),
-      cmd: K.ATTR({
-        gmbl: "1",
-        gmbla: "1",
-        regl: "1",
-        rndp: "1",
-        hrnd: "1",
-        alls: "1",
-      }),
-      lg: K.ATTR({
-        lea: "0",
-      }),
-      lf: K.ATTR({
-        life: "0",
-      }),
-      ev: K.ATTR({
-        pha: "3",
-      }),
-      lincle: K.ATTR({
-        phase: "1",
-      })
-    });
-  }
-  else if (version == 19) {
-    return send.object({
-      "@attr": {
-        expire: 600,
-      },
-      ir: K.ATTR({
-        beat: String(U.GetConfig("BeatPhase")),
-      }),
-      lincle: K.ATTR({
-        phase: String(2),
-      }),
-      boss: K.ATTR({
-        phase: String(2),
-      }),
-      mr_secret: K.ATTR({
-        flg: String(-1),
-      }),
-      travel: K.ATTR({
-        flg: String(-1),
-      }),
-    });
-  }
-  else if (version == 20) {
-    return send.object({
-      "@attr": {
-        expire: 600,
-      },
-      ir: K.ATTR({
-        beat: String(U.GetConfig("BeatPhase")),
-      }),
-      limit: K.ATTR({
-        phase: String(4),
-      }),
-      boss: K.ATTR({
-        phase: String(3),
-      }),
-      red: K.ATTR({
-        phase: String(3),
-      }),
-      yellow: K.ATTR({
-        phase: String(3),
-      }),
-      medal: K.ATTR({
-        phase: String(3),
-      }),
-      cafe: K.ATTR({
-        open: String(1),
-      }),
-      tricolettepark: K.ATTR({
-        open: String(1),
-      }),
-    });
-  }
-  else if (version >= 21) {
-    return send.pugFile(`pug/LDJ/${version}pccommon.pug`, {
-      beat: U.GetConfig("BeatPhase"),
-      movie_upload: U.GetConfig("MovieUpload"),
-      system_voice_phase: Math.floor(Math.random() * 8),
-    });
+  let result: any = {
+    "@attr": {
+      expire: 300,
+    },
+    ir: K.ATTR({
+      beat: String(U.GetConfig("BeatPhase")),
+    }),
   }
 
-  return send.deny();
+  switch (version) {
+    case 18:
+      result = {
+        ...result,
+        cmd: K.ATTR({
+          gmbl: String(1),
+          gmbla: String(1),
+          regl: String(1),
+          rndp: String(1),
+          hrnd: String(1),
+          alls: String(1),
+        }),
+        lg: K.ATTR({ lea: String(0) }),
+        lf: K.ATTR({ life: String(0) }),
+        ev: K.ATTR({ pha: String(3) }),
+        lincle: K.ATTR({ phase: String(1) })
+      }
+      break;
+    case 19:
+      result = {
+        ...result,
+        lincle: K.ATTR({ phase: String(2) }),
+        boss: K.ATTR({ phase: String(2) }),
+        mr_secret: K.ATTR({ flg: String(-1) }),
+        travel: K.ATTR({ flg: String(-1) }),
+      }
+      break;
+    case 20:
+      result = {
+        ...result,
+        limit: K.ATTR({ phase: String(4) }),
+        boss: K.ATTR({ phase: String(3) }),
+        red: K.ATTR({ phase: String(3) }),
+        yellow: K.ATTR({ phase: String(3) }),
+        medal: K.ATTR({ phase: String(3) }),
+        cafe: K.ATTR({ open: String(1) }),
+        tricolettepark: K.ATTR({ open: String(1) }),
+      }
+      break;
+    case 21:
+      result = {
+        ...result,
+        limit: K.ATTR({ phase: String(4) }),
+        boss: K.ATTR({ phase: String(3) }),
+        boss1: K.ATTR({ phase: String(4) }),
+        medal: K.ATTR({ phase: String(1) }),
+        vip_pass_black: {},
+        cafe: K.ATTR({ open: String(1) }),
+        tricolettepark: K.ATTR({ open: String(1) }),
+        tricolettepark_skip: K.ATTR({ phase: String(2) }),
+        deller_bonus: K.ATTR({ open: String(1) }),
+        gumi_event: {},
+        newsong_another: K.ATTR({ open: String(1) }),
+        superstar: K.ATTR({ phase: String(2) }),
+      }
+      break;
+    case 22:
+      result = {
+        ...result,
+        pre_play: K.ATTR({ phase: String(2) }),
+        expert: K.ATTR({ phase: String(2) }),
+        toho_remix: K.ATTR({ phase: String(2) }),
+        expert_random_secret: K.ATTR({ phase: String(2) }),
+        limit: K.ATTR({ phase: String(9) }),
+        boss: K.ATTR({ phase: String(3) }),
+        chrono_diver: K.ATTR({ phase: String(3) }),
+        qpronicle_chord: K.ATTR({ phase: String(2) }),
+        vip_pass_black: {},
+        cc_collabo_event: K.ATTR({ phase: String(3) }),
+        cc_collabo_license: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        common_timeshift_phase: K.ATTR({ phase: String(0) }),
+        expert_secret_full_open: {},
+        eappli_expert: {},
+        eaorder: {},
+      }
+      break;
+    case 23:
+      result = {
+        ...result,
+        expert: K.ATTR({ phase: String(1) }),
+        expert_random_secret: K.ATTR({ phase: String(2) }),
+        boss: K.ATTR({ phase: String(3) }),
+        event1_phase: K.ATTR({ phase: String(1) }),
+        event2_phase: K.ATTR({ phase: String(2) }),
+        extra_boss_event: K.ATTR({ phase: String(30) }),
+        vip_pass_black: {},
+        event1_ranbow_ticket: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        expert_secret_full_open: {},
+        remocon_collabo: {},
+        ravemania_collabo: {},
+        djlevel_result: {},
+        virtual_coin: K.ATTR({ phase: String(1) }),
+        reflec_volzza_collabo: {},
+        bemani_summer2016: K.ATTR({ phase: String(2) }),
+      }
+      break;
+    case 24: // asphyix_route_public //
+    case 25:
+    case 26:
+      result = {
+        ...result,
+        newsong_another: K.ATTR({ open: String(1) }),
+        expert_secret_full_open: {},
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        expert: K.ATTR({ phase: String(1) })
+      }
+      break;
+    case 27:
+      result = {
+        ...result,
+        expert: K.ATTR({ phase: String(1) }),
+        expert_random_secret: K.ATTR({ phase: String(1) }),
+        boss: K.ATTR({ phase: String(1) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        expert_secret_full_open: {},
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        extra_boss_event: K.ATTR({ phase: String(1) }),
+        event1_phase: K.ATTR({ phase: String(4) }),
+        premium_area_news: K.ATTR({ open: String(1) }),
+        premium_area_qpro: K.ATTR({ open: String(1) }),
+        play_video: {},
+        display_asio_logo: {},
+      }
+      break;
+    case 28:
+      result = {
+        ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        expert: K.ATTR({ phase: String(1) }),
+        expert_random_secret: K.ATTR({ phase: String(1) }),
+        boss: K.ATTR({ phase: String(1) }),
+        vip_pass_black: {},
+        eisei: K.ATTR({ open: String(1) }),
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        expert_secret_full_open: {},
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        extra_boss_event: K.ATTR({ phase: String(1) }),
+        event1_phase: K.ATTR({ phase: String(4) }),
+        premium_area_news: K.ATTR({ open: String(1) }),
+        premium_area_qpro: K.ATTR({ open: String(1) }),
+        play_video: {},
+        world_tourism: K.ATTR({ open_list: String(-1) }),
+        bpl_battle: K.ATTR({ phase: String(1) }),
+        display_asio_logo: {},
+      }
+      break;
+    case 29:
+      result = {
+        ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        expert: K.ATTR({ phase: String(1) }),
+        expert_random_secret: K.ATTR({ phase: String(1) }),
+        boss: K.ATTR({ phase: String(1) }),
+        vip_pass_black: {},
+        eisei: K.ATTR({ open: String(1) }),
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        expert_secret_full_open: {},
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        extra_boss_event: K.ATTR({ phase: String(1) }),
+        event1_phase: K.ATTR({ phase: String(4) }),
+        premium_area_news: K.ATTR({ open: String(1) }),
+        premium_area_qpro: K.ATTR({ open: String(1) }),
+        play_video: {},
+        world_tourism: K.ATTR({ open_list: String(-1) }),
+        bpl_battle: K.ATTR({ phase: String(1) }),
+        display_asio_logo: {},
+        lane_gacha: {},
+      }
+      break;
+    case 30:
+      result = {
+        ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(1) }),
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        premium_area_news: K.ATTR({ open: String(1) }),
+        premium_area_qpro: K.ATTR({ open: String(1) }),
+        play_video: {},
+        display_asio_logo: {},
+        lane_gacha: {},
+        tourism_booster: {},
+        ameto_event: {},
+      }
+      break;
+
+    default:
+      return send.deny();
+  }
+
+  return send.object(result);
 };
 
 export const pcreg: EPR = async (info, data, send) => {
@@ -364,7 +484,10 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 20) {
+    if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = Base64toBuffer(pcdata.st_stamp).toString("hex");
     if (!_.isNil(pcdata.st_help)) pcdata.st_help = Base64toBuffer(pcdata.st_help).toString("hex");
+
+    if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // temp //
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
@@ -547,7 +670,6 @@ export const pcget: EPR = async (info, data, send) => {
   return send.deny();
 };
 
-// TODO:: migration (oldget/getname/takeover) //
 export const pcoldget: EPR = async (info, data, send) => {
   const refid = $(data).attr().rid;
   const pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata" }); // version check removed //
@@ -928,6 +1050,7 @@ export const pcsave: EPR = async (info, data, send) => {
         pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       }
       pcdata.st_review = parseInt($(data).attr("step").review);
+      pcdata.st_stamp = $(data).buffer("step").toString("base64"); // TODO:: verify //
       pcdata.st_help = $(data).element("step").buffer("help").toString("base64");
     }
     
