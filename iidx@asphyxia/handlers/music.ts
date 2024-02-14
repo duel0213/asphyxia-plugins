@@ -127,18 +127,31 @@ export const musicgetrank: EPR = async (info, data, send) => {
     });
 
     if (score_top.length > 0) {
-      score_top.forEach((res) => {
-        top.push({
-          "@attr": ({
-            name0: res.names[0],
-            name1: res.names[1],
-            name2: res.names[2],
-            name3: res.names[3],
-            name4: res.names[4],
-          }),
-          detail: K.ARRAY("s16", [res.mid, ...res.clflgs, ...res.scores])
+      if (version >= 27) {
+        score_top.forEach((res) => {
+          top.push({
+            "@attr": ({
+              name0: res.names[0],
+              name1: res.names[1],
+              name2: res.names[2],
+              name3: res.names[3],
+              name4: res.names[4],
+            }),
+            detail: K.ARRAY("s16", [res.mid, ...res.clflgs, ...res.scores])
+          });
         });
-      });
+      } else {
+        score_top.forEach((res) => {
+          top.push({
+            "@attr": ({
+              name0: res.names[1],
+              name1: res.names[2],
+              name2: res.names[3],
+            }),
+            detail: K.ARRAY("s16", [res.mid, ...indices.map(i => res.clflgs[i]), ...indices.map(i => res.scores[i])])
+          });
+        });
+      }
     }
 
     return send.object({

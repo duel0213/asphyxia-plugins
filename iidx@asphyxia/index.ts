@@ -37,6 +37,9 @@ export function register() {
     R.Route(`IIDX21${method}`, handler);
     R.Route(`IIDX22${method}`, handler);
     R.Route(`IIDX23${method}`, handler);
+    R.Route(`IIDX24${method}`, handler);
+    R.Route(`IIDX25${method}`, handler);
+    R.Route(`IIDX26${method}`, handler);
     R.Route(`IIDX27${method}`, handler);
     R.Route(`IIDX28${method}`, handler);
     R.Route(`IIDX29${method}`, handler);

@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.9**
+Plugin Version: **v0.1.10**
 
 ---
 
@@ -12,6 +12,9 @@ Supported Versions
   - beatmaniaIIDX 21 SPADA
   - beatmaniaIIDX 22 PENDUAL
   - beatmaniaIIDX 23 copula
+  - beatmaniaIIDX 24 SINOBUZ
+  - beatmaniaIIDX 25 CANNON BALLERS
+  - beatmaniaIIDX 26 Rootage
   - beatmaniaIIDX 27 HEROIC VERSE
   - beatmaniaIIDX 28 BISTROVER
   - beatmaniaIIDX 29 CastHour
@@ -81,3 +84,7 @@ Changelogs
   - Added Initial support for copula
     - Event savings are broken
   - Added shop.getconvention/shop.setconvention/shop.getname/shop.savename response
+
+**v0.1.10**
+  - Added Initial support for SINOBUZ ~ Rootage
+    - Converted from asphyxia_route_public

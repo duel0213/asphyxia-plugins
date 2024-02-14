@@ -126,14 +126,14 @@ export interface pcdata {
   st_dp_ach: number;
   st_dp_dif: number;
 
-  st_sp_hdpt: number; // step (tricoro) //
+  st_sp_hdpt: number; // tricoro //
   st_dp_hdpt: number;
   st_sp_round: number;
   st_dp_round: number;
   st_review: number;
   st_help: any; // save as base64 string, sent as buffer //
 
-  st_damage: number; // step (spada) //
+  st_damage: number; // spada //
   st_defeat: number;
   st_round: number;
   st_sp_mission: number;
@@ -144,17 +144,19 @@ export interface pcdata {
   st_dp_mplay: number;
   st_last_select: number;
   st_album: any;
-  st_is_secret: number; // step (PENDUAL) //
+
+  st_is_secret: number; // PENDUAL //
   st_age_list: number;
   st_is_present: number;
   st_is_future: number;
-  st_friendship: number; // step (copula) //
+
+  st_friendship: number; // copula //
   st_station_clear: number;
   st_station_play: number;
   st_mission_gauge: number;
   st_tokimeki: any;
 
-  st_enemy_damage: number; // step (Heroic Verse) //
+  st_enemy_damage: number; // Heroic Verse //
   st_progress: number;
   st_is_track_ticket: boolean;
   st_sp_mission_point: number;
@@ -167,10 +169,12 @@ export interface pcdata {
   st_dp_dj_mission_clear: number;
   st_sp_clear_mission_clear: number;
   st_dp_clear_mission_clear: number;
-  st_tips_read_list: number; 
+  st_tips_read_list: number;
+
   st_total_point: number; // CastHour //
   st_enemy_defeat_flg: number;
   st_mission_clear_num: number;
+
   st_sp_fluctuation: number; // RESIDENT //
   st_dp_fluctuation: number;
   
@@ -565,6 +569,282 @@ export const IIDX23_pcdata = {
 
   deller: 0,
   orb: 0,
+}
+
+export const IIDX24_pcdata = {
+  version: 24,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+
+  d_disp_judge: 0,
+  d_exscore: 0,
+  d_gno: 0,
+  d_graph_score: 0,
+  d_gtype: 0,
+  d_hispeed: 0,
+  d_judge: 0,
+  d_judgeAdj: 0,
+  d_liflen: 0,
+  d_notes: 0,
+  d_opstyle: 0,
+  d_pace: 0,
+  d_sdlen: 0,
+  d_sdtype: 0,
+  d_sorttype: 0,
+  d_timing: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  mode: 0,
+  pmode: 0,
+  rtype: 0,
+  s_disp_judge: 0,
+  s_exscore: 0,
+  s_gno: 0,
+  s_graph_score: 0,
+  s_gtype: 0,
+  s_hispeed: 0,
+  s_judge: 0,
+  s_judgeAdj: 0,
+  s_liflen: 0,
+  s_notes: 0,
+  s_opstyle: 0,
+  s_pace: 0,
+  s_sdlen: 0,
+  s_sdtype: 0,
+  s_sorttype: 0,
+  s_timing: 0,
+  sp_opt: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+
+  sgid: -1,
+  dgid: -1,
+
+  event_play_num: 0,
+  event_last_select_id: -1,
+  event2_play_num: 0,
+  event2_last_select_id: -1,
+
+  st_enemy_damage: 0,
+  st_progress: 0,
+  st_enemy_defeat_flg: 0,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_lastweekly: 0,
+  achi_weeklynum: 0,
+  achi_visitflg: 0,
+  achi_rivalcrush: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
+}
+
+export const IIDX25_pcdata = {
+  version: 25,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+
+  d_auto_scrach: 0,
+  d_camera_layout: 0,
+  d_disp_judge: 0,
+  d_exscore: 0,
+  d_gauge_disp: 0,
+  d_gno: 0,
+  d_graph_score: 0,
+  d_gtype: 0,
+  d_hispeed: 0,
+  d_judge: 0,
+  d_judgeAdj: 0,
+  d_lane_brignt: 0,
+  d_liflen: 0,
+  d_notes: 0,
+  d_opstyle: 0,
+  d_pace: 0,
+  d_sdlen: 0,
+  d_sdtype: 0,
+  d_sorttype: 0,
+  d_timing: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  mode: 0,
+  pmode: 0,
+  rtype: 0,
+  s_auto_scrach: 0,
+  s_camera_layout: 0,
+  s_disp_judge: 0,
+  s_exscore: 0,
+  s_gauge_disp: 0,
+  s_gno: 0,
+  s_graph_score: 0,
+  s_gtype: 0,
+  s_hispeed: 0,
+  s_judge: 0,
+  s_judgeAdj: 0,
+  s_lane_brignt: 0,
+  s_liflen: 0,
+  s_notes: 0,
+  s_opstyle: 0,
+  s_pace: 0,
+  s_sdlen: 0,
+  s_sdtype: 0,
+  s_sorttype: 0,
+  s_timing: 0,
+  sp_opt: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+
+  sgid: -1,
+  dgid: -1,
+
+  dr_sprank: Array<number>(15).fill(0),
+  dr_sppoint: Array<number>(15).fill(0),
+  dr_dprank: Array<number>(15).fill(0),
+  dr_dppoint: Array<number>(15).fill(0),
+
+  st_enemy_damage: 0,
+  st_progress: 0,
+  st_point: 0,
+  st_enemy_defeat_flg: 0,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+
+  achi_lastweekly: 0,
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_rivalcrush: 0,
+  achi_visitflg: 0,
+  achi_weeklynum: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
+}
+
+export const IIDX26_pcdata = {
+  version: 26,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+
+  d_auto_scrach: 0,
+  d_camera_layout: 0,
+  d_disp_judge: 0,
+  d_gauge_disp: 0,
+  d_ghost_score: 0,
+  d_gno: 0,
+  d_graph_score: 0,
+  d_gtype: 0,
+  d_hispeed: 0,
+  d_judge: 0,
+  d_judgeAdj: 0,
+  d_lane_brignt: 0,
+  d_liflen: 0,
+  d_notes: 0,
+  d_opstyle: 0,
+  d_pace: 0,
+  d_sdlen: 0,
+  d_sdtype: 0,
+  d_sorttype: 0,
+  d_timing: 0,
+  d_tsujigiri_disp: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  mode: 0,
+  pmode: 0,
+  rtype: 0,
+  s_auto_scrach: 0,
+  s_camera_layout: 0,
+  s_disp_judge: 0,
+  s_gauge_disp: 0,
+  s_ghost_score: 0,
+  s_gno: 0,
+  s_graph_score: 0,
+  s_gtype: 0,
+  s_hispeed: 0,
+  s_judge: 0,
+  s_judgeAdj: 0,
+  s_lane_brignt: 0,
+  s_liflen: 0,
+  s_notes: 0,
+  s_opstyle: 0,
+  s_pace: 0,
+  s_sdlen: 0,
+  s_sdtype: 0,
+  s_sorttype: 0,
+  s_timing: 0,
+  s_tsujigiri_disp: 0,
+  sp_opt: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+
+  sgid: -1,
+  dgid: -1,
+
+  dr_sprank: Array<number>(15).fill(0),
+  dr_sppoint: Array<number>(15).fill(0),
+  dr_dprank: Array<number>(15).fill(0),
+  dr_dppoint: Array<number>(15).fill(0),
+
+  st_enemy_damage: 0,
+  st_progress: 0,
+  st_is_track_ticket: false,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_mission_point: 0,
+  st_dp_mission_point: 0,
+  st_sp_dj_mission_level: 0,
+  st_dp_dj_mission_level: 0,
+  st_sp_clear_mission_level: 0,
+  st_dp_clear_mission_level: 0,
+  st_sp_dj_mission_clear: 0,
+  st_dp_dj_mission_clear: 0,
+  st_sp_clear_mission_clear: 0,
+  st_dp_clear_mission_clear: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+  st_tips_read_list: 0,
+
+  achi_lastweekly: 0,
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_rivalcrush: 0,
+  achi_visitflg: 0,
+  achi_weeklynum: 0,
+  achi_trophy: Array<string>(20).fill("0"),
+
+  deller: 0,
+  orb: 0,
+  present_orb: 0,
+
+  event_play_num: 0,
+  event_last_select_id: -1,
+  event2_play_num: 0,
+  event2_last_select_id: -1,
 }
 
 export const IIDX27_pcdata = {

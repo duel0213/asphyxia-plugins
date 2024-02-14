@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -97,6 +97,7 @@ export const pccommon: EPR = async (info, data, send) => {
     return send.pugFile(`pug/LDJ/${version}pccommon.pug`, {
       beat: U.GetConfig("BeatPhase"),
       movie_upload: U.GetConfig("MovieUpload"),
+      system_voice_phase: Math.floor(Math.random() * 8),
     });
   }
 
@@ -130,6 +131,15 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 23:
       pcdata = IIDX23_pcdata;
+      break;
+    case 24:
+      pcdata = IIDX24_pcdata;
+      break;
+    case 25:
+      pcdata = IIDX25_pcdata;
+      break;
+    case 26:
+      pcdata = IIDX26_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -539,9 +549,8 @@ export const pcget: EPR = async (info, data, send) => {
 
 // TODO:: migration (oldget/getname/takeover) //
 export const pcoldget: EPR = async (info, data, send) => {
-  const version = GetVersion(info) - 1;
   const refid = $(data).attr().rid;
-  const pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
+  const pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata" }); // version check removed //
 
   if (_.isNil(pcdata)) return send.deny();
 
@@ -590,6 +599,15 @@ export const pctakeover: EPR = async (info, data, send) => {
       break;
     case 23:
       pcdata = IIDX23_pcdata;
+      break;
+    case 24:
+      pcdata = IIDX24_pcdata;
+      break;
+    case 25:
+      pcdata = IIDX25_pcdata;
+      break;
+    case 26:
+      pcdata = IIDX26_pcdata;
       break;
     case 27:
       pcdata = IIDX27_pcdata;
@@ -1627,6 +1645,171 @@ export const pcsave: EPR = async (info, data, send) => {
     if (!_.isNil($(data).element("orb_data"))) pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
 
     // TODO:: fix event saving, these event savings are broken. //
+  }
+  else if (version == 24) {
+    pcdata.sach = parseInt($(data).attr().s_achi);
+    pcdata.dach = parseInt($(data).attr().d_achi);
+
+    pcdata.d_disp_judge = parseInt($(data).attr().d_disp_judge);
+    pcdata.d_exscore = parseInt($(data).attr().d_exscore);
+    pcdata.d_gno = parseInt($(data).attr().d_gno);
+    pcdata.d_graph_score = parseInt($(data).attr().d_graph_score);
+    pcdata.d_gtype = parseInt($(data).attr().d_gtype);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
+    pcdata.d_judge = parseInt($(data).attr().d_judge);
+    pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
+    pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
+    pcdata.d_pace = parseInt($(data).attr().d_pace);
+    pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
+    pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.d_sorttype = parseInt($(data).attr().d_sorttype);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
+    pcdata.dp_opt = parseInt($(data).attr().dp_opt);
+    pcdata.dp_opt2 = parseInt($(data).attr().dp_opt2);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.mode = parseInt($(data).attr().mode);
+    pcdata.pmode = parseInt($(data).attr().pmode);
+    pcdata.rtype = parseInt($(data).attr().rtype);
+    pcdata.s_disp_judge = parseInt($(data).attr().s_disp_judge);
+    pcdata.s_exscore = parseInt($(data).attr().s_exscore);
+    pcdata.s_gno = parseInt($(data).attr().s_gno);
+    pcdata.s_graph_score = parseInt($(data).attr().s_graph_score);
+    pcdata.s_gtype = parseInt($(data).attr().s_gtype);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.s_judge = parseInt($(data).attr().s_judge);
+    pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
+    pcdata.s_notes = parseFloat($(data).attr().s_notes);
+    pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
+    pcdata.s_pace = parseInt($(data).attr().s_pace);
+    pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);
+    pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
+    pcdata.s_sorttype = parseInt($(data).attr().s_sorttype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.sp_opt = parseInt($(data).attr().sp_opt);
+
+    if (cltype == 0) {
+      pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    } else {
+      pcdata.d_liflen = parseInt($(data).attr().d_lift);
+    }
+
+    if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+  }
+  else if (version == 25) {
+    pcdata.sach = parseInt($(data).attr().s_achi);
+    pcdata.dach = parseInt($(data).attr().d_achi);
+
+    pcdata.d_auto_scrach = parseInt($(data).attr().d_auto_scrach);
+    pcdata.d_camera_layout = parseInt($(data).attr().d_camera_layout);
+    pcdata.d_disp_judge = parseInt($(data).attr().d_disp_judge);
+    pcdata.d_exscore = parseInt($(data).attr().d_exscore);
+    pcdata.d_gauge_disp = parseInt($(data).attr().d_gauge_disp);
+    pcdata.d_gno = parseInt($(data).attr().d_gno);
+    pcdata.d_graph_score = parseInt($(data).attr().d_graph_score);
+    pcdata.d_gtype = parseInt($(data).attr().d_gtype);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
+    pcdata.d_judge = parseInt($(data).attr().d_judge);
+    pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
+    pcdata.d_lane_brignt = parseInt($(data).attr().d_lane_brignt);
+    pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
+    pcdata.d_pace = parseInt($(data).attr().d_pace);
+    pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
+    pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.d_sorttype = parseInt($(data).attr().d_sorttype);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
+    pcdata.dp_opt = parseInt($(data).attr().dp_opt);
+    pcdata.dp_opt2 = parseInt($(data).attr().dp_opt2);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.mode = parseInt($(data).attr().mode);
+    pcdata.pmode = parseInt($(data).attr().pmode);
+    pcdata.rtype = parseInt($(data).attr().rtype);
+    pcdata.s_auto_scrach = parseInt($(data).attr().s_auto_scrach);
+    pcdata.s_camera_layout = parseInt($(data).attr().s_camera_layout);
+    pcdata.s_disp_judge = parseInt($(data).attr().s_disp_judge);
+    pcdata.s_exscore = parseInt($(data).attr().s_exscore);
+    pcdata.s_gauge_disp = parseInt($(data).attr().s_gauge_disp);
+    pcdata.s_gno = parseInt($(data).attr().s_gno);
+    pcdata.s_graph_score = parseInt($(data).attr().s_graph_score);
+    pcdata.s_gtype = parseInt($(data).attr().s_gtype);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.s_judge = parseInt($(data).attr().s_judge);
+    pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
+    pcdata.s_lane_brignt = parseInt($(data).attr().s_lane_brignt);
+    pcdata.s_notes = parseFloat($(data).attr().s_notes);
+    pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
+    pcdata.s_pace = parseInt($(data).attr().s_pace);
+    pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);
+    pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
+    pcdata.s_sorttype = parseInt($(data).attr().s_sorttype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.sp_opt = parseInt($(data).attr().sp_opt);
+
+    if (cltype == 0) {
+      pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    } else {
+      pcdata.d_liflen = parseInt($(data).attr().d_lift);
+    }
+
+    if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+  }
+  else if (version == 26) {
+    pcdata.rtype = parseInt($(data).attr().rtype);
+    pcdata.sach = parseInt($(data).attr().s_achi);
+    pcdata.dach = parseInt($(data).attr().d_achi);
+    pcdata.sp_opt = parseInt($(data).attr().sp_opt);
+    pcdata.dp_opt = parseInt($(data).attr().dp_opt);
+    pcdata.dp_opt2 = parseInt($(data).attr().dp_opt2);
+    pcdata.gpos = parseInt($(data).attr().gpos);
+    pcdata.s_sorttype = parseInt($(data).attr().s_sorttype);
+    pcdata.d_sorttype = parseInt($(data).attr().d_sorttype);
+    pcdata.s_disp_judge = parseInt($(data).attr().s_disp_judge);
+    pcdata.d_disp_judge = parseInt($(data).attr().d_disp_judge);
+    pcdata.s_pace = parseInt($(data).attr().s_pace);
+    pcdata.d_pace = parseInt($(data).attr().d_pace);
+    pcdata.s_gno = parseInt($(data).attr().s_gno);
+    pcdata.d_gno = parseInt($(data).attr().d_gno);
+    pcdata.s_sub_gno = parseInt($(data).attr().s_sub_gno);
+    pcdata.d_sub_gno = parseInt($(data).attr().d_sub_gno);
+    pcdata.s_gtype = parseInt($(data).attr().s_gtype);
+    pcdata.d_gtype = parseInt($(data).attr().d_gtype);
+    pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);
+    pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
+    pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
+    pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_notes = parseFloat($(data).attr().s_notes);
+    pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.s_judge = parseInt($(data).attr().s_judge);
+    pcdata.d_judge = parseInt($(data).attr().d_judge);
+    pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
+    pcdata.d_judgeAdj = parseInt($(data).attr().d_judgeAdj);
+    pcdata.s_hispeed = parseFloat($(data).attr().s_hispeed);
+    pcdata.d_hispeed = parseFloat($(data).attr().d_hispeed);
+    pcdata.s_opstyle = parseInt($(data).attr().s_opstyle);
+    pcdata.d_opstyle = parseInt($(data).attr().d_opstyle);
+    pcdata.s_graph_score = parseInt($(data).attr().s_graph_score);
+    pcdata.d_graph_score = parseInt($(data).attr().d_graph_score);
+    pcdata.s_auto_scrach = parseInt($(data).attr().s_auto_scrach);
+    pcdata.d_auto_scrach = parseInt($(data).attr().d_auto_scrach);
+    pcdata.s_gauge_disp = parseInt($(data).attr().s_gauge_disp);
+    pcdata.d_gauge_disp = parseInt($(data).attr().d_gauge_disp);
+    pcdata.s_lane_brignt = parseInt($(data).attr().s_lane_brignt);
+    pcdata.d_lane_brignt = parseInt($(data).attr().d_lane_brignt);
+    pcdata.s_camera_layout = parseInt($(data).attr().s_camera_layout);
+    pcdata.d_camera_layout = parseInt($(data).attr().d_camera_layout);
+    pcdata.s_ghost_score = parseInt($(data).attr().s_ghost_score);
+    pcdata.d_ghost_score = parseInt($(data).attr().d_ghost_score);
+    pcdata.s_tsujigiri_disp = parseInt($(data).attr().s_tsujigiri_disp);
+    pcdata.d_tsujigiri_disp = parseInt($(data).attr().d_tsujigiri_disp);
+
+    if (cltype == 0) {
+      pcdata.s_liflen = parseInt($(data).attr().s_lift);
+    } else {
+      pcdata.d_liflen = parseInt($(data).attr().d_lift);
+    }
+
+    if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
   }
   else if (version >= 27) {
     // lid bookkeep cid ctype ccode
