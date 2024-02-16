@@ -19,29 +19,31 @@ export const pccommon: EPR = async (info, data, send) => {
     }),
   }
 
+  // have no idea what some of attribute or value does //
+  // exposing these to plugin setting or use static value //
   switch (version) {
     case 18:
       result = {
         ...result,
         cmd: K.ATTR({
-          gmbl: String(1),
-          gmbla: String(1),
-          regl: String(1),
-          rndp: String(1),
-          hrnd: String(1),
-          alls: String(1),
+          gmbl: String(Number(U.GetConfig("ra_cmd_gmbl"))),
+          gmbla: String(Number(U.GetConfig("ra_cmd_gmbla"))),
+          regl: String(Number(U.GetConfig("ra_cmd_regl"))),
+          rndp: String(Number(U.GetConfig("ra_cmd_rndp"))),
+          hrnd: String(Number(U.GetConfig("ra_cmd_hrnd"))),
+          alls: String(Number(U.GetConfig("ra_cmd_alls"))),
         }),
-        lg: K.ATTR({ lea: String(0) }),
-        lf: K.ATTR({ life: String(0) }),
-        ev: K.ATTR({ pha: String(3) }),
-        lincle: K.ATTR({ phase: String(1) })
+        lg: K.ATTR({ lea: String(U.GetConfig("ra_league")) }),
+        lf: K.ATTR({ life: String(U.GetConfig("ra_story")) }),
+        ev: K.ATTR({ pha: String(U.GetConfig("ra_event")) }),
+        lincle: K.ATTR({ phase: String(U.GetConfig("ra_lincle")) })
       }
       break;
     case 19:
       result = {
         ...result,
-        lincle: K.ATTR({ phase: String(2) }),
-        boss: K.ATTR({ phase: String(2) }),
+        lincle: K.ATTR({ phase: String(U.GetConfig("lc_lincle")) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("lc_boss")) }),
         mr_secret: K.ATTR({ flg: String(-1) }),
         travel: K.ATTR({ flg: String(-1) }),
       }
@@ -49,13 +51,13 @@ export const pccommon: EPR = async (info, data, send) => {
     case 20:
       result = {
         ...result,
-        limit: K.ATTR({ phase: String(4) }),
-        boss: K.ATTR({ phase: String(3) }),
-        red: K.ATTR({ phase: String(3) }),
-        yellow: K.ATTR({ phase: String(3) }),
-        medal: K.ATTR({ phase: String(3) }),
-        cafe: K.ATTR({ open: String(1) }),
-        tricolettepark: K.ATTR({ open: String(1) }),
+        limit: K.ATTR({ phase: String(U.GetConfig("tr_limit")) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("tr_boss")) }),
+        red: K.ATTR({ phase: String(U.GetConfig("tr_red")) }),
+        yellow: K.ATTR({ phase: String(U.GetConfig("tr_yellow")) }),
+        medal: K.ATTR({ phase: String(U.GetConfig("tr_medal")) }),
+        cafe: K.ATTR({ open: String(Number(U.GetConfig("tr_cafe"))) }),
+        tricolettepark: K.ATTR({ open: String(Number(U.GetConfig("tr_tripark"))) }),
       }
       break;
     case 21:
@@ -119,7 +121,7 @@ export const pccommon: EPR = async (info, data, send) => {
         bemani_summer2016: K.ATTR({ phase: String(2) }),
       }
       break;
-    case 24: // asphyix_route_public //
+    case 24: // asphyxia_route_public //
     case 25:
     case 26:
       result = {
@@ -153,7 +155,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
         expert: K.ATTR({ phase: String(1) }),
         expert_random_secret: K.ATTR({ phase: String(1) }),
         boss: K.ATTR({ phase: String(1) }),
@@ -177,7 +179,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
         expert: K.ATTR({ phase: String(1) }),
         expert_random_secret: K.ATTR({ phase: String(1) }),
         boss: K.ATTR({ phase: String(1) }),
@@ -202,7 +204,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
         newsong_another: K.ATTR({ open: String(1) }),

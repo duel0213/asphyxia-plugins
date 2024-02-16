@@ -21,7 +21,7 @@ export interface custom {
   effect: number;
   bomb_size: number;
   disable_hcn_color: boolean;
-  first_note_preview: boolean;
+  first_note_preview: number;
 
   // appendsettings
   rank_folder: boolean;
@@ -70,7 +70,7 @@ export const default_custom = {
   effect: 0,
   bomb_size: 0,
   disable_hcn_color: false,
-  first_note_preview: false,
+  first_note_preview: 0,
 
   rank_folder: true,
   clear_folder: true,

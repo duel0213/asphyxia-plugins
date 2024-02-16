@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.11**
+Plugin Version: **v0.1.12**
 
 ---
 
@@ -93,3 +93,7 @@ Changelogs
   - Added Shop Ranking support
   - Changed pc.common/gameSystem.systemInfo response not to use pugFile.
     - IIDX_CPUS on models/arena.ts came from asphyxia_route_public
+
+**v0.1.12**
+  - Exposed some of pc.common attributes to plugin settings (WIP)
+  - Added Experimental WebUI (WIP)

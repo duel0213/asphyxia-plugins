@@ -1,0 +1,60 @@
+//DATA//
+  profile: DB.FindOne(refid, { collection: 'profile' })
+  pcdata: DB.FindOne(refid, { collection: 'pcdata' })
+
+-
+  const version = [
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+  ];
+
+div
+  .card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-account-edit
+        | Profile 
+    .card-content
+      .field
+            label.label Version
+            .ver-select
+              .control
+                .select
+                  select(name="version")
+                    each i in version
+                      option(selected=(i==pcdata.version)) #{i}
+      .field
+        label.label Name
+        .body
+          body #{profile.name}
+      .field
+        label.label IIDX ID
+        .body
+          body #{profile.idstr}
+      .field
+        label.label SP Grade
+        .body
+        - const a = pcdata.sgid
+          if a==-1
+            body ----
+          else
+            body #{pcdata.sgid}
+      .field
+        label.label DP Grade
+        .body
+        - const b = pcdata.dgid
+          if b==-1
+            body ----
+          else
+            body #{pcdata.dgid}

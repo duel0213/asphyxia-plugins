@@ -1,0 +1,190 @@
+//DATA//
+  profile: DB.FindOne(refid, { collection: "profile" })
+  pcdata: DB.FindOne(refid, { collection: "pcdata" })
+  custom: DB.FindOne(refid, { collection: "custom" })
+
+-
+  const version = [
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30
+  ];
+
+div
+  .card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-account-edit
+        | Settings
+    .card-content
+      form(method="post" action="/emit/updateIIDXCustom")
+        .field
+          input(type="text" name="refid", value=refid readonly hidden)
+          label.label IIDX ID
+          .control
+            input.input(type="text" name="iidxid", value=profile.idstr readonly)
+        .field
+          label.label Version
+          .control
+            .select
+              select(name="version")
+                each i in version
+                  option(selected=(i==pcdata.version)) #{i}
+        .field
+          label.label Name
+          .control
+            input.input(type="text" name="name", value=profile.name)
+        //- SKIN
+        .field
+          label.label Frame
+          .control
+            input.input(type="number" name="frame", value=custom.frame)
+        .field
+          label.label Turntable
+          .control
+            input.input(type="number" name="turntable", value=custom.turntable)
+        .field
+          label.label Note Burst
+          .control
+            input.input(type="number" name="note_burst", value=custom.note_burst)
+        .field
+          label.label Menu Music
+          .control
+            input.input(type="number" name="menu_music", value=custom.menu_music)
+        .field
+          label.label Lane Cover
+          .control
+            input.input(type="number" name="lane_cover", value=custom.lane_cover)
+        .field
+          label.label Category Voice
+          .control
+            input.input(type="number" name="category_vox", value=custom.category_vox)
+        .field
+          label.label Note Skin
+          .control
+            input.input(type="number" name="note_skin", value=custom.note_skin)
+        .field
+          label.label Full Combo Splash
+          .control
+            input.input(type="number" name="full_combo_splash", value=custom.full_combo_splash)
+        .field
+          label.label Note Beam
+          .control
+            input.input(type="number" name="note_beam", value=custom.note_beam)
+        .field
+          label.label Judgement Font
+          .control
+            input.input(type="number" name="judge_font", value=custom.judge_font)
+        .field
+          label.label Disable Music Preview
+          .control
+            input(type="checkbox" name="disable_musicpreview", checked=Boolean(custom.disable_musicpreview))
+        .field
+          label.label Pacemaker Cover
+          .control
+            input.input(type="number" name="pacemaker_cover", value=custom.pacemaker_cover)
+        .field
+          label.label VEFX Lock
+          .control
+            input(type="checkbox" name="vefx_lock", checked=Boolean(custom.vefx_lock))
+        .field
+          label.label VEFX Lock (Effector)
+          .control
+            input.input(type="number" name="effect", value=custom.effect)
+        .field
+          label.label Note Burst Size
+          .control
+            input.input(type="number" name="bomb_size", value=custom.bomb_size)
+        .field
+          label.label Disable HCN Color
+          .control
+            input(type="checkbox" name="disable_hcn_color", checked=Boolean(custom.disable_hcn_color))
+        .field
+          label.label First Note Preview
+          .control
+            input.input(type="number" name="first_note_preview", value=custom.first_note_preview)
+        //- APPEND SETTINGS
+        .field
+          label.label Rank Folder
+          .control
+            input(type="checkbox" name="rank_folder", checked=Boolean(custom.rank_folder))
+        .field
+          label.label Clear State Folder
+          .control
+            input(type="checkbox" name="clear_folder", checked=Boolean(custom.clear_folder))
+        .field
+          label.label Difficulty Folder
+          .control
+            input(type="checkbox" name="diff_folder", checked=Boolean(custom.diff_folder))
+        .field
+          label.label Alphabet Folder
+          .control
+            input(type="checkbox" name="alpha_folder", checked=Boolean(custom.alpha_folder))
+        .field
+          label.label Rival Folder
+          .control
+            input(type="checkbox" name="rival_folder", checked=Boolean(custom.rival_folder))
+        .field
+          label.label Rival WIN/LOSE Folder
+          .control
+            input(type="checkbox" name="rival_battle_folder", checked=Boolean(custom.rival_battle_folder))
+        .field
+          label.label Rival Info / Venue Top Display
+          .control
+            input(type="checkbox" name="rival_info", checked=Boolean(custom.rival_info))
+        .field
+          label.label Hide Playcount
+          .control
+            input(type="checkbox" name="hide_playcount", checked=Boolean(custom.hide_playcount))
+        .field
+          label.label Disable Pacemaker Cut-In
+          .control
+            input(type="checkbox" name="disable_graph_cutin", checked=Boolean(custom.disable_graph_cutin))
+        .field
+          label.label Classic Hi-SPEED
+          .control
+            input(type="checkbox" name="class_hispeed", checked=Boolean(custom.class_hispeed))
+        .field
+          label.label Rival Played Folder
+          .control
+            input(type="checkbox" name="rival_played_folder", checked=Boolean(custom.rival_played_folder))
+        .field
+          label.label Hide IIDX ID
+          .control
+            input(type="checkbox" name="hide_iidxid", checked=Boolean(custom.hide_iidxid))
+        //- QPRO
+        .field
+          label.label QPRO Head
+          .control
+            input.input(type="number" name="qpro_head", value=custom.qpro_head)
+        .field
+          label.label QPRO Hair
+          .control
+            input.input(type="number" name="qpro_hair", value=custom.qpro_hair)
+        .field
+          label.label QPRO Hand
+          .control
+            input.input(type="number" name="qpro_hand", value=custom.qpro_hand)
+        .field
+          label.label QPRO Face
+          .control
+            input.input(type="number" name="qpro_face", value=custom.qpro_face)
+        .field
+          label.label QPRO Body
+          .control
+            input.input(type="number" name="qpro_body", value=custom.qpro_body)
+        .field
+          button.button.is-primary(type="submit") 
+            span.icon
+              i.mdi.mdi-check
+            span Submit
