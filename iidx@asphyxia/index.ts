@@ -1,6 +1,6 @@
 ﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister } from "./handlers/pc";
 import { shopgetname, shopsavename, shopgetconvention, shopsetconvention } from "./handlers/shop";
-import { musicreg, musicgetrank, musicappoint, musicarenacpu } from "./handlers/music";
+import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg } from "./handlers/music";
 import { graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
 import { updateRivalSettings, updateCustomSettings } from "./handlers/webui";
@@ -180,9 +180,11 @@ export function register() {
   MultiRoute("shop.getconvention", shopgetconvention);
   MultiRoute("shop.setconvention", shopsetconvention);
 
+  MultiRoute("music.crate", musiccrate);
   MultiRoute("music.getrank", musicgetrank);
   MultiRoute("music.appoint", musicappoint);
   MultiRoute("music.reg", musicreg);
+  MultiRoute("music.breg", musicbreg);
   MultiRoute("music.arenaCPU", musicarenacpu);
 
   MultiRoute("grade.raised", graderaised);

@@ -33,6 +33,13 @@ Features
 
 ---
 
+Known Issues
+
+  - Clear Lamps may display invalid lamps due to missing conversion code
+  - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due missing conversion code
+
+---
+
 Changelogs
 
 **v0.1.0**
@@ -42,8 +49,8 @@ Changelogs
   - Added Initial support for HEROIC VERSE
   - Expanded score array to adapting newer difficulty (SPN ~ DPA [6] -> SPB ~ DPL [10])
     - This borked previous score datas recorded with v0.1.0
-    - All score data now shared with all version.
-      - as it doesn't have music_id conversion, it will display incorrect data on certain versions.
+    - All score data now shared with all version
+      - as it doesn't have music_id conversion, it will display incorrect data on certain versions
   - Added Initial customize support (no webui)
 
 **v0.1.2**
@@ -58,19 +65,19 @@ Changelogs
 
 **v0.1.5**
   - Added Initial support for Resort Anthem
-    -  BEGINNER, LEAGUE, STORY does not work yet.
-  - Fixed where s_hispeed/d_hispeed doesn't save correctly.
+    -  BEGINNER, LEAGUE, STORY does not work yet
+  - Fixed where s_hispeed/d_hispeed doesn't save correctly
  
 **v0.1.6**
   - Added Initial support for tricoro
     - Event savings are broken
   - Added movie_upload url setting on plugin setting (BISTROVER ~)
-    - This uses JSON instead of XML and this requires additional setup. (can't test or implement this as I don't own NVIDIA GPU)
+    - This uses JSON instead of XML and this requires additional setup (can't test or implement this as I don't own NVIDIA GPU)
 
 **v0.1.7**
   - Added Initial support for SPADA
     - Event savings are broken
-  - Fixed where rtype didn't save correctly. (BISTROVER ~)
+  - Fixed where rtype didn't save correctly (BISTROVER ~)
 
 **v0.1.8**
   - Added RIVAL pacemaker support
@@ -91,9 +98,11 @@ Changelogs
 
 **v0.1.11**
   - Added Shop Ranking support
-  - Changed pc.common/gameSystem.systemInfo response not to use pugFile.
+  - Changed pc.common/gameSystem.systemInfo response not to use pugFile
     - IIDX_CPUS on models/arena.ts came from asphyxia_route_public
 
 **v0.1.12**
   - Exposed some of pc.common attributes to plugin settings (WIP)
   - Added Experimental WebUI (WIP)
+  - Added music.crate/music.breg response
+  - Fixed Venue Top didn't save correctly (BISTROVER ~)

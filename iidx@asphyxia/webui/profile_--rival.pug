@@ -4,12 +4,12 @@
   rival: DB.Find(refid, { collection: "rival" })
 
 -
-  const rival_list=[["", "None", "0000-0000"]];
+  let rival_list=[["", "None", "0000-0000"]];
   profiles.forEach((res) => {
     rival_list.push([res.refid, res.name, res.idstr])
   });
 
-  const my_sp_rival = [], my_dp_rival = [];
+  let my_sp_rival = [], my_dp_rival = [];
   rival.forEach((res) => {
     if (res.play_style == 1) my_sp_rival[res.index] = res.rival_refid;
     else if (res.play_style == 2) my_dp_rival[res.index] = res.rival_refid;
