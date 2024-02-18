@@ -24,6 +24,16 @@ export function register() {
     type: "integer",
     default: 3,
   });
+  R.Config("ExpertPhase", {
+    name: "Expert Phase",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("ExpertRandomPhase", {
+    name: "Expert Random Phase",
+    type: "integer",
+    default: 2,
+  });
 
   // Resort Anthem //
   R.Config("ra_cmd_gmbl", {
@@ -97,13 +107,13 @@ export function register() {
 
   // tricoro //
   R.Config("tr_limit", {
-    name: "Limit Burst Phase",
+    name: "Limit Burst Phase (TR)",
     type: "integer",
-    default: 4,
+    default: 24, // TODO:: verify //
   });
   R.Config("tr_boss", {
     name: "Event Phase (TR)",
-    desc: "RED/BLUE/YELLOW",
+    desc: "RED / BLUE / YELLOW",
     type: "integer",
     default: 3,
   });
@@ -137,6 +147,120 @@ export function register() {
     default: true,
   });
 
+  // SPADA //
+  R.Config("sp_limit", {
+    name: "Limit Burst Phase (SP)",
+    type: "integer",
+    default: 24,
+  });
+  R.Config("sp_boss", {
+    name: "Event Phase (SP)",
+    desc: "Spada†leggendaria Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("sp_boss1", {
+    name: "Qprogue Phase (SP)",
+    type: "integer",
+    default: 4,
+  });
+  R.Config("sp_cafe", {
+    name: "Café de Tran",
+    desc: "Enable Café de Tran Event (SPADA)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("sp_tripark", {
+    name: "Everyone's SPACEWAR!!",
+    desc: "Enable クプロ・ミミニャミ・パステルくんのみんなで宇宙戦争!! Event (SPADA)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("sp_triparkskip", {
+    name: "Everyone's SPACEWAR!! Skip",
+    desc: "Skips クプロ・ミミニャミ・パステルくんのみんなで宇宙戦争!! Event Scenes", 
+    type: "integer",
+    default: 2,
+  });
+  R.Config("sp_superstar", {
+    name: "SUPER STAR -MITSURU-",
+    desc: "SUPER STAR 満 -MITSURU- 完全復活祭 Phase",
+    type: "integer",
+    default: 2,
+  });
+
+  // PENDUAL //
+  R.Config("pd_preplay", {
+    name: "SUPER FUTURE 2323 Phase",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("pd_tohoremix", {
+    name: "BEMANI X TOHO",
+    desc: "BEMANI×TOHO REITAISAI 2015 project Phase",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("pd_limit", {
+    name: "Chrono Chaser Phase",
+    type: "integer",
+    default: 9,
+  });
+  R.Config("pd_boss", {
+    name: "Event Phase (SP)",
+    desc: "Chrono Seeker / Qpronicle Chord / PENDUAL TALISMAN",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("pd_chronodiver", {
+    name: "Chrono Seeker",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("pd_qproniclechord", {
+    name: "Qpronicle Chord",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("pd_cccollabo", {
+    name: "Coca-Cola×BEMANI",
+    desc: "Coca-Cola×BEMANI 店舗限定ロケテスト Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("pd_timephase", {
+    name: "Time Phase",
+    type: "integer",
+    desc: "Default / Present / Future",
+    default: 0,
+  });
+
+  // copula //
+  R.Config("cp_boss", {
+    name: "Event Phase (CP)",
+    desc: "開通！とことこライン / Mystery Line",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("cp_event1", {
+    name: "開通！とことこライン",
+    desc: "開通！とことこライン Phase",
+    type: "integer",
+    default: 1,
+  });
+  R.Config("cp_event2", {
+    name: "Mystery Line",
+    desc: "Mystery Line Phase",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("cp_bemanisummer", {
+    name: "BEMANI Summer 2016",
+    desc: "NEW Generation 夏の流星フェスタ2016 Phase",
+    type: "integer",
+    default: 2,
+  });
+
   // BISTROVER ~ (common) //
   R.Config("bo_movieupload", {
     name: "Movie Upload URL",
@@ -144,7 +268,7 @@ export function register() {
     default: "http://localhost/"
   });
 
-  // TODO:: Reflect data when version dropdown menu has been changed
+  // TODO:: Reflect data when version dropdown menu has been changed //
   R.WebUIEvent("updateIIDXRival", updateRivalSettings);
   R.WebUIEvent("updateIIDXCustom", updateCustomSettings);
 

@@ -38,12 +38,13 @@ IIDX23pc(status="0")
   qpronicle_love(music_list="-1")
   achievements(pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp last_weekly=pcdata.achi_lastweekly weekly_num=pcdata.achi_weeklynum visit_flg=pcdata.achi_visitflg rival_crush=pcdata.achi_rivalcrush)
     trophy(__type="s64" __count="10") #{pcdata.achi_trophy[0]} #{pcdata.achi_trophy[1]} #{pcdata.achi_trophy[2]} #{pcdata.achi_trophy[3]} #{pcdata.achi_trophy[4]} #{pcdata.achi_trophy[5]} #{pcdata.achi_trophy[6]} #{pcdata.achi_trophy[7]} #{pcdata.achi_trophy[8]} #{pcdata.achi_trophy[9]}
-  //-
-    event1_data(point_map_0 point_map_1 point_map_2 point_map_3 point_map_4 last_map hold_point rank_point tips_list gift_point)
-    event1_assist(iidx_id iidx_id_str name hair head face body hand)
-    event2_data(play_num now_area now_note_grade stop_area_time)
-      event2_area_data(area_no area_play normal_point hyper_point another_point)
-    onemore_data(defeat_0 defeat_1 defeat_2 defeat_3 defeat_4 defeat_5 challenge_num_n challenge_num_h challenge_num_a)
+  if open_tokotoko != null
+    event1_data(point_map_0=open_tokotoko.point_map_0 point_map_1=open_tokotoko.point_map_1 point_map_2=open_tokotoko.point_map_2 point_map_3=open_tokotoko.point_map_3 point_map_4=open_tokotoko.point_map_4 last_map=open_tokotoko.last_map hold_point=open_tokotoko.hold_point rank_point=open_tokotoko.rank_point tips_list=open_tokotoko.tips_list gift_point="0")
+  //-event1_assist(iidx_id iidx_id_str name hair head face body hand)
+  if mystery_line != null
+    event2_data(play_num=mystery_line.play_num now_area=mystery_line.now_stay_area now_note_grade=mystery_line.now_stay_note_grade stop_area_time=mystery_line.stop_area_time)
+    //-event2_area_data(area_no area_play normal_point hyper_point another_point)
+  //-onemore_data(defeat_0 defeat_1 defeat_2 defeat_3 defeat_4 defeat_5 challenge_num_n challenge_num_h challenge_num_a)
   reflec_collabo(phase1_music_list="-1" phase2_music_list="-1")
   destiny_catharsis(music_bit="-1")
   bemani_summer_collabo(music_bit="-1")

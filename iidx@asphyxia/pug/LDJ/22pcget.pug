@@ -36,11 +36,13 @@ IIDX22pc(status="0")
   //-step_assist(iidx_id iidx_id_str name hair head face body hand)
   if chrono_diver != null
     chrono_diver(play_count=chrono_diver.play_count present_unlock=chrono_diver.present_unlock future_unlock=chrono_diver.future_unlock success_count_0_n=chrono_diver.success_count_0_n success_count_0_h=chrono_diver.success_count_0_h success_count_0_a=chrono_diver.success_count_0_a success_count_1_n=chrono_diver.success_count_1_n success_count_1_h=chrono_diver.success_count_1_h success_count_1_a=chrono_diver.success_count_1_a success_count_2_n=chrono_diver.success_count_2_n success_count_2_h=chrono_diver.success_count_2_h success_count_2_a=chrono_diver.success_count_2_a success_count_3_n=chrono_diver.success_count_3_n success_count_3_h=chrono_diver.success_count_3_h success_count_3_a=chrono_diver.success_count_3_a story_list=chrono_diver.story_list)
-  //-qpronicle_chord(is_first_select_map last_select_map story_view_list is_login_bonus patona_leader patona_sub_1 patona_sub_2 rare_enemy_damage1 rare_enemy_damage2 rare_enemy_damage3 rare_enemy_damage4 rare_enemy_damage5)
-      patona_data(patona_no level exp affection dissatisfaction)
-  //-qpronicle_phase3(stairs_num flame_list lane_list map0_select map1_select map2_select map3_select map5_select map6_select is_love_scene_skip)
+  if qpronicle_chord != null
+    qpronicle_chord(is_first_select_map=qpronicle_chord.is_first_select_map last_select_map=qpronicle_chord.last_select_map story_view_list=qpronicle_chord.story_view_list is_login_bonus=qpronicle_chord.is_use_login_bonus patona_leader=qpronicle_chord.patona_leader patona_sub_1=qpronicle_chord.patona_sub_1 patona_sub_2=qpronicle_chord.patona_sub_2 rare_enemy_damage1=qpronicle_chord.rare_enemy_damage1 rare_enemy_damage2=qpronicle_chord.rare_enemy_damage2 rare_enemy_damage3=qpronicle_chord.rare_enemy_damage3 rare_enemy_damage4=qpronicle_chord.rare_enemy_damage4 rare_enemy_damage5=qpronicle_chord.rare_enemy_damage5)
+      //-patona_data(patona_no level exp affection dissatisfaction)
+  if qpronicle_phase3 != null
+    qpronicle_phase3(stairs_num=qpronicle_phase3.stairs_num flame_list=qpronicle_phase3.flame_list lane_list=qpronicle_phase3.lane_list map0_select=qpronicle_phase3.map0_select map1_select=qpronicle_phase3.map1_select map2_select=qpronicle_phase3.map2_select map3_select=qpronicle_phase3.map3_select map4_select=qpronicle_phase3.map4_select map5_select=qpronicle_phase3.map5_select map6_select=qpronicle_phase3.map6_select is_love_scene_skip="1")
   qpronicle_love(music_list="-1")
-  boss_event_3(music_list="-1" bonus_point="0")
+  boss_event_3(music_list="-1" bonus_point=pendual_talis.point)
   //-chaser(phase attack exist_age summon_gate success failed damage_point boss_hp)
     ues_music(__type="u32" __count="40")
   achievements(pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp last_weekly=pcdata.achi_lastweekly weekly_num=pcdata.achi_weeklynum visit_flg=pcdata.achi_visitflg rival_crush=pcdata.achi_rivalcrush)

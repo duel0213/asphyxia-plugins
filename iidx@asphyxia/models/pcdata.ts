@@ -178,8 +178,8 @@ export interface pcdata {
 
   st_sp_fluctuation: number; // RESIDENT //
   st_dp_fluctuation: number;
-  
-  event_play_num: number; // event (Heroic Verse) / /
+
+  event_play_num: number; // event (HEROIC VERSE) //
   event_last_select_id: number;
   event_last_select_type: number; // CastHour //
   event_story_prog: number; // BISTROVER //

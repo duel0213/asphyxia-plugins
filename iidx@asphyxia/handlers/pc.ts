@@ -11,12 +11,10 @@ export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   let result: any = {
-    "@attr": {
-      expire: 300,
-    },
-    ir: K.ATTR({
-      beat: String(U.GetConfig("BeatPhase")),
-    }),
+    "@attr": { expire: 300 },
+    ir: K.ATTR({ beat: String(U.GetConfig("BeatPhase")) }),
+    expert: K.ATTR({ phase: String(U.GetConfig("ExpertPhase")) }),
+    expert_random_secret: K.ATTR({ phase: String(U.GetConfig("ExpertRandomPhase")) }),
   }
 
   // have no idea what some of attribute or value does //
@@ -63,37 +61,35 @@ export const pccommon: EPR = async (info, data, send) => {
     case 21:
       result = {
         ...result,
-        limit: K.ATTR({ phase: String(4) }),
-        boss: K.ATTR({ phase: String(3) }),
-        boss1: K.ATTR({ phase: String(4) }),
+        limit: K.ATTR({ phase: String(U.GetConfig("sp_limit")) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("sp_boss")) }),
+        boss1: K.ATTR({ phase: String(U.GetConfig("sp_boss1")) }),
         medal: K.ATTR({ phase: String(1) }),
         vip_pass_black: {},
-        cafe: K.ATTR({ open: String(1) }),
-        tricolettepark: K.ATTR({ open: String(1) }),
-        tricolettepark_skip: K.ATTR({ phase: String(2) }),
+        cafe: K.ATTR({ open: String(Number(U.GetConfig("sp_cafe"))) }),
+        tricolettepark: K.ATTR({ open: String(Number(U.GetConfig("sp_tripark"))) }),
+        tricolettepark_skip: K.ATTR({ phase: String(U.GetConfig("sp_triparkskip")) }),
         deller_bonus: K.ATTR({ open: String(1) }),
         gumi_event: {},
         newsong_another: K.ATTR({ open: String(1) }),
-        superstar: K.ATTR({ phase: String(2) }),
+        superstar: K.ATTR({ phase: String(U.GetConfig("sp_superstar")) }),
       }
       break;
     case 22:
       result = {
         ...result,
-        pre_play: K.ATTR({ phase: String(2) }),
-        expert: K.ATTR({ phase: String(2) }),
-        toho_remix: K.ATTR({ phase: String(2) }),
-        expert_random_secret: K.ATTR({ phase: String(2) }),
-        limit: K.ATTR({ phase: String(9) }),
-        boss: K.ATTR({ phase: String(3) }),
-        chrono_diver: K.ATTR({ phase: String(3) }),
-        qpronicle_chord: K.ATTR({ phase: String(2) }),
+        pre_play: K.ATTR({ phase: String(U.GetConfig("pd_preplay")) }),
+        toho_remix: K.ATTR({ phase: String(U.GetConfig("pd_tohoremix")) }),
+        limit: K.ATTR({ phase: String(U.GetConfig("pd_limit")) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("pd_boss")) }),
+        chrono_diver: K.ATTR({ phase: String(U.GetConfig("pd_chronodiver")) }),
+        qpronicle_chord: K.ATTR({ phase: String(U.GetConfig("pd_qproniclechord")) }),
         vip_pass_black: {},
-        cc_collabo_event: K.ATTR({ phase: String(3) }),
+        cc_collabo_event: K.ATTR({ phase: String(U.GetConfig("pd_cccollabo")) }),
         cc_collabo_license: {},
         deller_bonus: K.ATTR({ open: String(1) }),
         newsong_another: K.ATTR({ open: String(1) }),
-        common_timeshift_phase: K.ATTR({ phase: String(0) }),
+        common_timeshift_phase: K.ATTR({ phase: String(U.GetConfig("pd_timephase")) }),
         expert_secret_full_open: {},
         eappli_expert: {},
         eaorder: {},
@@ -102,12 +98,10 @@ export const pccommon: EPR = async (info, data, send) => {
     case 23:
       result = {
         ...result,
-        expert: K.ATTR({ phase: String(1) }),
-        expert_random_secret: K.ATTR({ phase: String(2) }),
-        boss: K.ATTR({ phase: String(3) }),
-        event1_phase: K.ATTR({ phase: String(1) }),
-        event2_phase: K.ATTR({ phase: String(2) }),
-        extra_boss_event: K.ATTR({ phase: String(30) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("cp_boss")) }),
+        event1_phase: K.ATTR({ phase: String(U.GetConfig("cp_event1")) }),
+        event2_phase: K.ATTR({ phase: String(U.GetConfig("cp_event2")) }),
+        extra_boss_event: K.ATTR({ phase: String(30) }), // TODO:: verify //
         vip_pass_black: {},
         event1_ranbow_ticket: {},
         deller_bonus: K.ATTR({ open: String(1) }),
@@ -118,7 +112,7 @@ export const pccommon: EPR = async (info, data, send) => {
         djlevel_result: {},
         virtual_coin: K.ATTR({ phase: String(1) }),
         reflec_volzza_collabo: {},
-        bemani_summer2016: K.ATTR({ phase: String(2) }),
+        bemani_summer2016: K.ATTR({ phase: String(U.GetConfig("cp_bemanisummer")) }),
       }
       break;
     case 24: // asphyxia_route_public //
@@ -129,14 +123,11 @@ export const pccommon: EPR = async (info, data, send) => {
         newsong_another: K.ATTR({ open: String(1) }),
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
-        expert: K.ATTR({ phase: String(1) })
       }
       break;
     case 27:
       result = {
         ...result,
-        expert: K.ATTR({ phase: String(1) }),
-        expert_random_secret: K.ATTR({ phase: String(1) }),
         boss: K.ATTR({ phase: String(1) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
@@ -156,8 +147,6 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
-        expert: K.ATTR({ phase: String(1) }),
-        expert_random_secret: K.ATTR({ phase: String(1) }),
         boss: K.ATTR({ phase: String(1) }),
         vip_pass_black: {},
         eisei: K.ATTR({ open: String(1) }),
@@ -180,8 +169,6 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
-        expert: K.ATTR({ phase: String(1) }),
-        expert_random_secret: K.ATTR({ phase: String(1) }),
         boss: K.ATTR({ phase: String(1) }),
         vip_pass_black: {},
         eisei: K.ATTR({ open: String(1) }),
@@ -514,11 +501,29 @@ export const pcget: EPR = async (info, data, send) => {
       tricolettepark = null,
       boss1 = null,
       chrono_diver = null,
+      qpronicle_chord = null,
+      qpronicle_phase3 = null,
+      pendual_talis = null,
+      open_tokotoko = null,
+      mystery_line = null,
+      event_1 = null,
+      event_1s = null,
       evtArray = [], evtArray2 = [];
 
     switch (version) {
       case 21:
+        link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+        tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+
+        boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
+        if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
       case 22:
+        chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
+        pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
+        if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
+
+        qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
+        qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
       case 23:
         if (!_.isNil(pcdata.sp_mlist)) {
           pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
@@ -530,20 +535,13 @@ export const pcget: EPR = async (info, data, send) => {
         if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
         else if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
 
-        if (version == 21) {
-          link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-          tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
-
-          boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-          if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
-        } else if (version == 22) {
-          chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
-        }
+        open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+        mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
         break;
 
       default:
-        let event_1 = await DB.Find(refid, { collection: "event_1", version: version });
-        let event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+        event_1 = await DB.Find(refid, { collection: "event_1", version: version });
+        event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
 
         if (event_1.length > 0) {
           for (let evt of event_1) {
@@ -664,6 +662,11 @@ export const pcget: EPR = async (info, data, send) => {
       link5,
       tricolettepark,
       chrono_diver,
+      qpronicle_chord,
+      qpronicle_phase3,
+      pendual_talis,
+      open_tokotoko,
+      mystery_line,
       wArray,
       bArray,
     });
@@ -1647,6 +1650,62 @@ export const pcsave: EPR = async (info, data, send) => {
       );
     }
 
+    if (!_.isNil($(data).element("qpronicle_chord"))) {
+      let event_data = {
+        is_first_select_map: parseInt($(data).attr("qpronicle_chord").is_first_select_map),
+        last_select_map: parseInt($(data).attr("qpronicle_chord").last_select_map),
+        story_view_list: parseInt($(data).attr("qpronicle_chord").story_view_list),
+        is_use_login_bonus: parseInt($(data).attr("qpronicle_chord").is_use_login_bonus),
+        patona_leader: parseInt($(data).attr("qpronicle_chord").patona_leader),
+        patona_sub_1: parseInt($(data).attr("qpronicle_chord").patona_sub_1),
+        patona_sub_2: parseInt($(data).attr("qpronicle_chord").patona_sub_2),
+        rare_enemy_damage1: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage1),
+        rare_enemy_damage2: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage2),
+        rare_enemy_damage3: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage3),
+        rare_enemy_damage4: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage4),
+        rare_enemy_damage5: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage5),
+      };
+
+      // TODO:: patona_data //
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "qpronicle_chord",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("qpronicle_phase3"))) {
+      let event_data = {
+        stairs_num: parseInt($(data).attr("qpronicle_phase3").stairs_num),
+        flame_list: parseInt($(data).attr("qpronicle_phase3").flame_list),
+        lane_list: parseInt($(data).attr("qpronicle_phase3").lane_list),
+        map0_select: parseInt($(data).attr("qpronicle_phase3").map0_select),
+        map1_select: parseInt($(data).attr("qpronicle_phase3").map1_select),
+        map2_select: parseInt($(data).attr("qpronicle_phase3").map2_select),
+        map3_select: parseInt($(data).attr("qpronicle_phase3").map3_select),
+        map4_select: parseInt($(data).attr("qpronicle_phase3").map4_select),
+        map5_select: parseInt($(data).attr("qpronicle_phase3").map5_select),
+        map6_select: parseInt($(data).attr("qpronicle_phase3").map6_select),
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "qpronicle_phase3",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
     if (!_.isNil($(data).element("boss_event_3"))) {
       let boss_event_3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
       let event_data;
@@ -1770,6 +1829,53 @@ export const pcsave: EPR = async (info, data, send) => {
     if (!_.isNil($(data).element("orb_data"))) pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
 
     // TODO:: fix event saving, these event savings are broken. //
+    if (!_.isNil($(data).element("event1_data"))) {
+      let event_data = {
+        point_map_0: parseInt($(data).attr("event1_data").point_map_0),
+        point_map_1: parseInt($(data).attr("event1_data").point_map_1),
+        point_map_2: parseInt($(data).attr("event1_data").point_map_2),
+        point_map_3: parseInt($(data).attr("event1_data").point_map_3),
+        point_map_4: parseInt($(data).attr("event1_data").point_map_4),
+        last_map: parseInt($(data).attr("event1_data").last_map),
+        hold_point: parseInt($(data).attr("event1_data").hold_point),
+        rank_point: parseInt($(data).attr("event1_data").rank_point),
+        tips_list: parseInt($(data).attr("event1_data").tips_list),
+        use_gift_point: $(data).element("event1_data").bool("use_gift_point"),
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event1_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("event2_data"))) {
+      let event_data = {
+        now_stay_area: parseInt($(data).attr("event2_data").now_stay_area),
+        now_stay_note_grade: parseInt($(data).attr("event2_data").now_stay_note_grade),
+        play_num: parseInt($(data).attr("event2_data").play_num),
+        stop_area_time: parseInt($(data).attr("event2_data").stop_area_time),
+      };
+
+      // TODO:: event2_area_data //
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event2_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
   }
   else if (version == 24) {
     pcdata.sach = parseInt($(data).attr().s_achi);
