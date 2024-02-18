@@ -21,9 +21,18 @@ export function register() {
   // common //
   R.Config("BeatPhase", {
     name: "Beat #",
+    desc: "1 / 2 / 3 / FREE",
     type: "integer",
-    default: 3,
+    default: 3, // BEAT FREE //
   });
+  // SPADA ~ (common) //
+  R.Config("NewSongAnother12", {
+    name: "New Song Another",
+    desc: "Enables ANOTHER difficulty of current version's new songs that has Level 12",
+    type: "boolean",
+    default: true,
+  });
+  // PENDUAL ~ (common) //
   R.Config("ExpertPhase", {
     name: "Expert Phase",
     type: "integer",
@@ -34,6 +43,32 @@ export function register() {
     type: "integer",
     default: 2,
   });
+  // HEROIC VERSE ~ (common) //
+  R.Config("ArenaPhase", {
+    name: "ARENA Phase",
+    type: "integer",
+    default: 2, // ADVERTISE //
+  });
+  // BISTROVER ~ (common) //
+  R.Config("MovieUpload", {
+    name: "Movie Upload URL",
+    type: "string",
+    desc: "API address for play video uploading feature (JSON)",
+    default: "http://localhost/"
+  });
+  R.Config("Eisei", {
+    name: "Eisei Dan Courses",
+    desc: "Enable EISEI DAN Courses",
+    type: "boolean",
+    default: true,
+  });
+  // CastHour ~ RESIDENT (common) //
+  R.Config("Grade", {
+    name: "Grade Open Phase",
+    desc: "RED / KAIDEN",
+    type: "integer",
+    default: 2,
+  })
 
   // Resort Anthem //
   R.Config("ra_cmd_gmbl", {
@@ -261,11 +296,71 @@ export function register() {
     default: 2,
   });
 
-  // BISTROVER ~ (common) //
-  R.Config("bo_movieupload", {
-    name: "Movie Upload URL",
-    type: "string",
-    default: "http://localhost/"
+  // HEROIC VERSE //
+  R.Config("hv_boss", {
+    name: "Event Phase (HV)",
+    desc: "HEROIC WORKOUT!!",
+    type: "integer",
+    default: 1,
+  });
+  R.Config("hv_event", {
+    name: "HEROIC WORKOUT!!",
+    desc: "HEROIC WORKOUT!! Phase",
+    type: "integer",
+    default: 4
+  });
+  R.Config("hv_extraboss",
+  {
+    name: "SHADOW REBELLION",
+    desc: "SHADOW REBELLION Phase",
+    type: "integer",
+    default: 1
+  });
+
+  // BISTROVER //
+  R.Config("bo_boss", {
+    name: "Event Phase (BO)",
+    desc: "召しませ！BISTROVER",
+    type: "integer",
+    default: 1
+  });
+  R.Config("bo_extraboss", {
+    name: "BISTRO LANDING",
+    desc: "BISTRO LANDING Phase",
+    type: "integer",
+    default: 1
+  });
+  R.Config("bo_event", {
+    name: "召しませ！BISTROVER",
+    desc: "召しませ！BISTROVER Phase",
+    type: "integer",
+    default: 1
+  });
+
+  // CastHour //
+  R.Config("ch_event", {
+    name: "CastHour Space",
+    desc: "CastHour Space Phase",
+    type: "integer",
+    default: 5,
+  });
+  R.Config("ch_extraboss", {
+    name: "Extra Boss Phase (CH)",
+    type: "integer",
+    default: 3,
+  });
+
+  // RESIDENT //
+  R.Config("rs_event", {
+    name: "RESIDENT PARTY",
+    desc: "RESIDENT PARTY Phase",
+    type: "integer",
+    default: 5,
+  });
+  R.Config("rs_extraboss", {
+    name: "Extra Boss Phase (RS)",
+    type: "integer",
+    default: 3,
   });
 
   // TODO:: Reflect data when version dropdown menu has been changed //

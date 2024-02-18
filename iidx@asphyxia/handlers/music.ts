@@ -170,18 +170,18 @@ export const musicappoint: EPR = async (info, data, send) => {
     [clid]: { $exists: true },
   });
 
-  if (_.isNil(music_data)) return send.success();
-
   let mydata, option = 0, option2 = 0;
-  if (version >= 27) {
-    if (!_.isNil(music_data.optArray) && version > 27) {
-      option = music_data.optArray[clid];
-      option2 = music_data.opt2Array[clid];
-    }
+  if (!_.isNil(music_data)) {
+    if (version >= 27) {
+      if (!_.isNil(music_data.optArray) && version > 27) {
+        option = music_data.optArray[clid];
+        option2 = music_data.opt2Array[clid];
+      }
 
-    mydata = Base64toBuffer(music_data[clid]);
+      mydata = Base64toBuffer(music_data[clid]);
+    }
+    else mydata = K.ITEM("bin", Base64toBuffer(music_data[clid]));
   }
-  else mydata = K.ITEM("bin", Base64toBuffer(music_data[clid]));
 
   /*** ctype
     [-1] - DEFAULT
@@ -202,34 +202,35 @@ export const musicappoint: EPR = async (info, data, send) => {
 
   // OTHERS //
   let other_refid, other_musicdata: score | null, other_pcdata, other_profile, sdata = null;
-  switch (ctype) {
-    case 1:
-      if (_.isNaN(subtype)) break;
+  if (!_.isNaN(subtype)) {
+    switch (ctype) {
+      case 1:
+        other_refid = await IDtoRef(subtype);
+        other_profile = await ReftoProfile(other_refid);
+        other_pcdata = await ReftoPcdata(other_refid, version);
+        other_musicdata = await DB.FindOne<score>(other_refid, {
+          collection: "score",
+          mid: mid,
+          [clid]: { $exists: true },
+        });
+        if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
-      other_refid = await IDtoRef(subtype);
-      other_profile = await ReftoProfile(other_refid);
-      other_pcdata = await ReftoPcdata(other_refid, version);
-      other_musicdata = await DB.FindOne<score>(other_refid, {
-        collection: "score",
-        mid: mid,
-        [clid]: { $exists: true },
-      });
-      if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
+        sdata = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
+          score: String(other_musicdata.esArray[clid]),
+          pid: String(other_profile[1]),
+          name: String(other_profile[0]),
+          riidxid: String(other_profile[2])
+        });
+        break;
 
-      sdata = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
-        score: String(other_musicdata.esArray[clid]),
-        pid: String(other_profile[1]),
-        name: String(other_profile[0]),
-        riidxid: String(other_profile[2])
-      });
-      break;
-
-    default:
-      break;
+      default:
+        break;
+    }
   }
 
   if (version >= 27) {
-    let my_gauge_data = Base64toBuffer(music_data[clid + 10]);
+    let my_gauge_data = null;
+    if (!_.isNil(music_data)) my_gauge_data = Base64toBuffer(music_data[clid + 10]);
 
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // temp //
@@ -252,6 +253,14 @@ export const musicappoint: EPR = async (info, data, send) => {
         gauge_data: K.ITEM("bin", Base64toBuffer(other_musicdata[clid + 10]))
       };
 
+      if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
+
+      if (_.isNil(mydata)) {
+        return send.object({
+          sdata,
+        });
+      }
+
       return send.object({
         "@attr": { my_option: option, my_option2: option2 }, // CastHour //
         mydata: K.ITEM("bin", mydata),
@@ -260,12 +269,16 @@ export const musicappoint: EPR = async (info, data, send) => {
       });
     }
 
+    if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
+
     return send.object({
       "@attr": { my_option: option, my_option2: option2 }, // CastHour //
       mydata: K.ITEM("bin", mydata),
       my_gauge_data: K.ITEM("bin", my_gauge_data),
     });
   }
+
+  if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
 
   if (!_.isNil(sdata)) {
     return send.object({

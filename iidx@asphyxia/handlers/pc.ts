@@ -71,7 +71,7 @@ export const pccommon: EPR = async (info, data, send) => {
         tricolettepark_skip: K.ATTR({ phase: String(U.GetConfig("sp_triparkskip")) }),
         deller_bonus: K.ATTR({ open: String(1) }),
         gumi_event: {},
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         superstar: K.ATTR({ phase: String(U.GetConfig("sp_superstar")) }),
       }
       break;
@@ -88,7 +88,7 @@ export const pccommon: EPR = async (info, data, send) => {
         cc_collabo_event: K.ATTR({ phase: String(U.GetConfig("pd_cccollabo")) }),
         cc_collabo_license: {},
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         common_timeshift_phase: K.ATTR({ phase: String(U.GetConfig("pd_timephase")) }),
         expert_secret_full_open: {},
         eappli_expert: {},
@@ -105,7 +105,7 @@ export const pccommon: EPR = async (info, data, send) => {
         vip_pass_black: {},
         event1_ranbow_ticket: {},
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
         remocon_collabo: {},
         ravemania_collabo: {},
@@ -120,7 +120,7 @@ export const pccommon: EPR = async (info, data, send) => {
     case 26:
       result = {
         ...result,
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
       }
@@ -128,14 +128,14 @@ export const pccommon: EPR = async (info, data, send) => {
     case 27:
       result = {
         ...result,
-        boss: K.ATTR({ phase: String(1) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("hv_boss")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
-        extra_boss_event: K.ATTR({ phase: String(1) }),
-        event1_phase: K.ATTR({ phase: String(4) }),
+        extra_boss_event: K.ATTR({ phase: String(U.GetConfig("hv_extraboss")) }),
+        event1_phase: K.ATTR({ phase: String(U.GetConfig("hv_event")) }),
         premium_area_news: K.ATTR({ open: String(1) }),
         premium_area_qpro: K.ATTR({ open: String(1) }),
         play_video: {},
@@ -146,16 +146,16 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
-        boss: K.ATTR({ phase: String(1) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        boss: K.ATTR({ phase: String(U.GetConfig("bo_boss")) }),
         vip_pass_black: {},
-        eisei: K.ATTR({ open: String(1) }),
+        eisei: K.ATTR({ open: String(Number(U.GetConfig("Eisei"))) }),
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
-        extra_boss_event: K.ATTR({ phase: String(1) }),
-        event1_phase: K.ATTR({ phase: String(4) }),
+        extra_boss_event: K.ATTR({ phase: String(U.GetConfig("bo_extraboss")) }),
+        event1_phase: K.ATTR({ phase: String(U.GetConfig("bo_event")) }),
         premium_area_news: K.ATTR({ open: String(1) }),
         premium_area_qpro: K.ATTR({ open: String(1) }),
         play_video: {},
@@ -168,16 +168,16 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
-        boss: K.ATTR({ phase: String(1) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        boss: K.ATTR({ phase: String(1) }), // TODO:: verify //
         vip_pass_black: {},
-        eisei: K.ATTR({ open: String(1) }),
+        eisei: K.ATTR({ open: String(Number(U.GetConfig("Eisei"))) }), // TODO:: verify //
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }), // TODO:: verify //
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
-        extra_boss_event: K.ATTR({ phase: String(1) }),
-        event1_phase: K.ATTR({ phase: String(4) }),
+        extra_boss_event: K.ATTR({ phase: String(1) }), // TODO:: verify //
+        event1_phase: K.ATTR({ phase: String(4) }), // TODO:: verify //
         premium_area_news: K.ATTR({ open: String(1) }),
         premium_area_qpro: K.ATTR({ open: String(1) }),
         play_video: {},
@@ -191,10 +191,10 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
-        movie_upload: K.ATTR({ url: String(U.GetConfig("bo_movieupload")) }),
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
         premium_area_news: K.ATTR({ open: String(1) }),
         premium_area_qpro: K.ATTR({ open: String(1) }),

@@ -105,4 +105,5 @@ Changelogs
   - Exposed some of pc.common attributes to plugin settings (WIP)
   - Added Experimental WebUI (WIP)
   - Added music.crate/music.breg response
-  - Fixed Venue Top didn't save correctly (BISTROVER ~)
+  - Fixed where Venue Top didn't save correctly (BISTROVER ~)
+  - Fixed where music.appoint send empty response even rival has score data when player doesn't have score data

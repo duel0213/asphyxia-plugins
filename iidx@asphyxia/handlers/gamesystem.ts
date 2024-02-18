@@ -7,7 +7,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
 
   let result: any = {
     arena_schedule: {
-      phase: K.ITEM("u8", 2),
+      phase: K.ITEM("u8", U.GetConfig("ArenaPhase")),
       start: K.ITEM("u32", 1605784800),
       end: K.ITEM("u32", 4102326000)
     },
@@ -50,11 +50,11 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       result = {
         ...result,
         CommonBossPhase: K.ATTR({ val: String(3) }),
-        Event1InternalPhase: K.ATTR({ val: String(5) }),
-        ExtraBossEventPhase: K.ATTR({ val: String(3) }),
-        isNewSongAnother12OpenFlg: K.ATTR({ val: String(1) }),
-        gradeOpenPhase: K.ATTR({ val: String(2) }),
-        isEiseiOpenFlg: K.ATTR({ val: String(1) }),
+        Event1InternalPhase: K.ATTR({ val: String(U.GetConfig("ch_event")) }),
+        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("ch_extraboss")) }),
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        gradeOpenPhase: K.ATTR({ val: String(U.GetConfig("Grade")) }),
+        isEiseiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
       }
@@ -63,11 +63,11 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       result = {
         ...result,
         CommonBossPhase: K.ATTR({ val: String(3) }),
-        Event1InternalPhase: K.ATTR({ val: String(5) }),
-        ExtraBossEventPhase: K.ATTR({ val: String(3) }),
-        isNewSongAnother12OpenFlg: K.ATTR({ val: String(1) }),
-        gradeOpenPhase: K.ATTR({ val: String(2) }),
-        isEiseiOpenFlg: K.ATTR({ val: String(1) }),
+        Event1InternalPhase: K.ATTR({ val: String(U.GetConfig("rs_event")) }),
+        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("rs_extraboss")) }),
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        gradeOpenPhase: K.ATTR({ val: String(U.GetConfig("Grade")) }),
+        isEiseiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
       }
