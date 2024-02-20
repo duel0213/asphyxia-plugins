@@ -7,6 +7,14 @@ export const shopgetname: EPR = async (info, data, send) => {
   });
 
   if (_.isNil(shop_data)) {
+    await DB.Insert<shop_data>({
+      collection: "shop_data",
+
+      opname: "CORE",
+      pid: 57,
+      cls_opt: 0,
+    });
+
     return send.object(
       K.ATTR({
         status: "0",

@@ -6,6 +6,7 @@ import { eisei_grade, eisei_grade_data, lightning_musicmemo, lightning_musicmemo
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
 import { world_tourism } from "../models/worldtourism";
+import { shop_data } from "../models/shop";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -360,6 +361,7 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_eisei_grade = await DB.Find<eisei_grade>(refid, { collection: "eisei_grade", version: version });
   const lm_music_memo = await DB.Find<lightning_musicmemo>(refid, { collection: "lightning_musicmemo", version: version });
   const lm_music_memo_new = await DB.Find<lightning_musicmemo_new>(refid, { collection: "lightning_musicmemo_new", version: version });
+  const shop_data = await DB.FindOne<shop_data>({ collection: "shop_data" });
 
   if (_.isNil(pcdata)) return send.deny();
 
@@ -494,6 +496,7 @@ export const pcget: EPR = async (info, data, send) => {
       tricolettepark,
       redboss,
       yellowboss,
+      shop_data,
     });
   }
   else if (version >= 21) {
@@ -510,51 +513,55 @@ export const pcget: EPR = async (info, data, send) => {
       event_1s = null,
       evtArray = [], evtArray2 = [];
 
-    switch (version) {
-      case 21:
-        link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-        tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+    if (version == 23) {
+      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
 
-        boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-        if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
-      case 22:
-        chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
-        pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
-        if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
+      open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+      mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+    }
+    else if (version == 22) {
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
 
-        qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
-        qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
-      case 23:
-        if (!_.isNil(pcdata.sp_mlist)) {
-          pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
-          pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
-          pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
-          pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
+      chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
+      pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
+      if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
+
+      qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
+      qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
+    }
+    else if (version == 21) {
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+
+      link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+      tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+
+      boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
+      if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
+    }
+    else {
+      event_1 = await DB.Find(refid, { collection: "event_1", version: version });
+      event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+
+      if (event_1.length > 0) {
+        for (let evt of event_1) {
+          evtArray.push(evt);
         }
+      }
 
-        if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
-        else if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
-
-        open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-        mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-        break;
-
-      default:
-        event_1 = await DB.Find(refid, { collection: "event_1", version: version });
-        event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
-
-        if (event_1.length > 0) {
-          for (let evt of event_1) {
-            evtArray.push(evt);
-          }
+      if (event_1s.length > 0) {
+        for (let evt of event_1s) {
+          evtArray2.push(evt);
         }
+      }
+    }
 
-        if (event_1s.length > 0) {
-          for (let evt of event_1s) {
-            evtArray2.push(evt);
-          }
-        }
-        break;
+    if (version == 21 || version == 22 || version == 23) {
+      if (!_.isNil(pcdata.sp_mlist)) {
+        pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
+        pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
+        pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
+        pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
+      }
     }
 
     if (version >= 30 && lm_music_memo_new.length > 0) {
@@ -669,6 +676,7 @@ export const pcget: EPR = async (info, data, send) => {
       mystery_line,
       wArray,
       bArray,
+      shop_data,
     });
   }
 

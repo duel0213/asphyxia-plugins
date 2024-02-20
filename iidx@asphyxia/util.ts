@@ -134,16 +134,41 @@ export async function ReftoPcdata(refid: string, version: number) {
   });
 
   let p_data = [];
-
   try {
-    p_data = [
-      pcdata.sgid,
-      pcdata.dgid,
-      pcdata.sach,
-      pcdata.dach,
-    ];
+    switch (version) {
+      case 20:
+      case 21:
+      case 22:
+      case 23:
+      case 24:
+      case 25:
+      case 26:
+        p_data = [
+          pcdata.sgid,
+          pcdata.dgid,
+          pcdata.sach,
+          pcdata.dach,
+          pcdata.st_sp_ach,
+          pcdata.st_dp_ach,
+        ];
+        break;
+      default:
+        p_data = [
+          pcdata.sgid,
+          pcdata.dgid,
+          pcdata.sach,
+          pcdata.dach,
+        ];
+        break;
+    }
+
+    // this seems leftover from tricoro but still being referenced until HEROIC VERSE [st_sp_ach/st_dp_ach] //
+    for (let a = 0; a < p_data.length; a++) {
+      if (_.isNil(p_data[a])) p_data[a] = 0;
+    }
+    
   } catch {
-    p_data = [0, 0, 0, 0];
+    p_data = [0, 0, 0, 0, 0, 0];
   }
 
   return p_data;

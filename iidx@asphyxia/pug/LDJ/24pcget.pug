@@ -1,6 +1,6 @@
 IIDX24pc(status="0")
   pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach mode=pcdata.mode pmode=pcdata.pmode rtype=pcdata.rtype sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 gpos=pcdata.gpos s_sorttype=pcdata.s_sorttype d_sorttype=pcdata.d_sorttype s_pace=pcdata.s_pace d_pace=pcdata.d_pace s_gno=pcdata.s_gno d_gno=pcdata.d_gno s_gtype=pcdata.s_gtype d_gtype=pcdata.d_gtype s_sdlen=pcdata.s_sdlen d_sdlen=pcdata.d_sdlen s_sdtype=pcdata.s_sdtype d_sdtype=pcdata.d_sdtype s_timing=pcdata.s_timing d_timing=pcdata.d_timing s_notes=pcdata.s_notes d_notes=pcdata.d_notes s_judge=pcdata.s_judge d_judge=pcdata.d_judge s_judgeAdj=pcdata.s_judgeAdj d_judgeAdj=pcdata.d_judgeAdj s_hispeed=pcdata.s_hispeed d_hispeed=pcdata.d_hispeed s_liflen=pcdata.s_liflen d_liflen=pcdata.d_liflen s_disp_judge=pcdata.s_disp_judge d_disp_judge=pcdata.d_disp_judge s_opstyle=pcdata.s_opstyle d_opstyle=pcdata.d_opstyle s_exscore=pcdata.s_exscore d_exscore=pcdata.d_exscore s_graph_score=pcdata.s_graph_score d_graph_score=pcdata.d_graph_score s_auto_scrach=pcdata.s_auto_scrach d_auto_scrach=pcdata.d_auto_scrach s_gauge_disp=pcdata.s_gauge_disp d_gauge_disp=pcdata.d_gauge_disp s_lane_brignt=pcdata.s_lane_brignt d_lane_brignt=pcdata.d_lane_brignt s_camera_layout=pcdata.s_camera_layout d_camera_layout=pcdata.d_camera_layout)
-  join_shop(joinflg="1" join_cflg="1" join_id="0" join_name="CORE")
+  join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
   grade(sgid=pcdata.sgid dgid=pcdata.dgid)
     - for (let d of dArray)
       g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
@@ -8,9 +8,9 @@ IIDX24pc(status="0")
   rlist
     - for (let rd of rArray)
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
-        stepdata(step_sach="-1" step_dach="-1")
+        stepdata(step_sach=rd.pcdata[4] step_dach=rd.pcdata[5])
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
-        shop(name="CORE")
+        shop(name=shop_data.opname)
         is_robo(__type="bool") 0
   ir_data
   secret_course_data

@@ -27,10 +27,10 @@ IIDX23pc(status="0")
   rlist
     - for (let rd of rArray)
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
-        stepdata(step_sach="-1" step_dach="-1")
+        stepdata(step_sach=rd.pcdata[4] step_dach=rd.pcdata[5])
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
-        shop(name="CORE")
-  join_shop(joinflg="1" join_cflg="1" join_id="0" join_name="CORE")
+        shop(name=shop_data.opname)
+  join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
   if pcdata.st_tokimeki != null
     step(friendship=pcdata.st_friendship progress=pcdata.st_progress station_clear=pcdata.st_station_clear station_play=pcdata.st_station_play sp_mission=pcdata.st_sp_mission dp_mission=pcdata.st_dp_mission sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay mission_gauge=pcdata.st_mission_gauge)
       tokimeki(__type="bin") #{pcdata.st_tokimeki}
