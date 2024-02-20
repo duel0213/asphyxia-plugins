@@ -163,6 +163,8 @@ export const musicappoint: EPR = async (info, data, send) => {
     clid = mapping[clid];
   }
 
+  let result: any = {};
+
   // MINE //
   const music_data: score | null = await DB.FindOne<score>(refid, {
     collection: "score",
@@ -228,6 +230,8 @@ export const musicappoint: EPR = async (info, data, send) => {
     }
   }
 
+  if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
+
   if (version >= 27) {
     let my_gauge_data = null;
     if (!_.isNil(music_data)) my_gauge_data = Base64toBuffer(music_data[clid + 10]);
@@ -253,43 +257,31 @@ export const musicappoint: EPR = async (info, data, send) => {
         gauge_data: K.ITEM("bin", Base64toBuffer(other_musicdata[clid + 10]))
       };
 
-      if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
-
-      if (_.isNil(mydata)) {
-        return send.object({
-          sdata,
-        });
+      if (_.isNil(sdata) && !_.isNil(mydata)) {
+        result = {
+          "@attr": { my_option: option, my_option2: option2 },
+          mydata,
+          my_gauge_data: K.ITEM("bin", my_gauge_data),
+        };
       }
-
-      return send.object({
-        "@attr": { my_option: option, my_option2: option2 }, // CastHour //
-        mydata: K.ITEM("bin", mydata),
-        my_gauge_data: K.ITEM("bin", my_gauge_data),
-        sdata,
-      });
+      if (_.isNil(mydata) && !_.isNil(sdata)) result = { sdata };
+      if (!_.isNil(mydata) && !_.isNil(sdata)) {
+        result = {
+          "@attr": { my_option: option, my_option2: option2 }, // CastHour //
+          mydata,
+          my_gauge_data: K.ITEM("bin", my_gauge_data),
+          sdata,
+        };
+      }
     }
-
-    if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
-
-    return send.object({
-      "@attr": { my_option: option, my_option2: option2 }, // CastHour //
-      mydata: K.ITEM("bin", mydata),
-      my_gauge_data: K.ITEM("bin", my_gauge_data),
-    });
+  }
+  else {
+    if (_.isNil(sdata) && !_.isNil(mydata)) result = { mydata };
+    if (_.isNil(mydata) && !_.isNil(sdata)) result = { sdata };
+    if (!_.isNil(mydata) && !_.isNil(sdata)) result = { mydata, sdata };
   }
 
-  if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
-
-  if (!_.isNil(sdata)) {
-    return send.object({
-      mydata,
-      sdata,
-    });
-  }
-
-  return send.object({
-    mydata,
-  });
+  return send.object(result);
 }
 
 export const musicreg: EPR = async (info, data, send) => {
