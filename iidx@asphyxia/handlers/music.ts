@@ -2,6 +2,7 @@ import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, Re
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
+import { tutorial } from "../models/tutorial";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -21,20 +22,17 @@ export const musicgetrank: EPR = async (info, data, send) => {
     [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
   ];
 
-  let m = [], top = [], b = [];
+  let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
   if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
-      if (temp_mid > 1999) return;
+      let mVersion = Math.floor(temp_mid / 100);
+      if (mVersion > version) return;
 
-      if (cltype == 0) {
-        score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-      } else {
-        score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-      }
+      score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
       m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [temp_mid, res.cArray[0]]));
@@ -49,28 +47,34 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
       rival_score.forEach((res: score) => {
         temp_mid = NewMidToOldMid(res.mid);
-        if (temp_mid > 1999) return;
+        let mVersion = Math.floor(temp_mid / 100);
+        if (mVersion > version) return;
 
-        if (cltype == 0) {
-          score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-        } else {
-          score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-        }
+        score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
         m.push(K.ARRAY("s16", score_data));
       });
     }
+
+    // tutorial //
+    const tutorial = await DB.Find<tutorial>(refid, {
+      collection: "tutorial",
+      version: version
+    });
+    tutorial.sort((a: tutorial, b: tutorial) => a.tid - b.tid);
+    tutorial.forEach((res) => {
+      t.push(K.ARRAY("u16", [res.tid, res.clr]));
+    });
   }
   else if (version >= 20) {
     if (version >= 27) indices = cltype === 0 ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
     else indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
     music_data.forEach((res: score) => {
-      if (cltype == 0) {
-        score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-      } else {
-        score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-      }
+      let mVersion = Math.floor(res.mid / 1000);
+      if (mVersion > version) return;
+
+      score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
       m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [res.mid, res.cArray[0]]));
@@ -84,11 +88,10 @@ export const musicgetrank: EPR = async (info, data, send) => {
       );
 
       rival_score.forEach((res: score) => { // rival score //
-        if (cltype == 0) {
-          score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-        } else {
-          score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-        }
+        let mVersion = Math.floor(res.mid / 1000);
+        if (mVersion > version) return;
+
+        score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
         m.push(K.ARRAY("s16", score_data));
       });
@@ -100,8 +103,11 @@ export const musicgetrank: EPR = async (info, data, send) => {
     });
 
     if (score_top.length > 0) {
-      if (version >= 27) {
+      if (version >= 27) {	  
         score_top.forEach((res) => {
+          let mVersion = Math.floor(res.mid / 1000);
+          if (mVersion > version) return;
+		  
           top.push({
             "@attr": ({
               name0: res.names[0],
@@ -115,6 +121,9 @@ export const musicgetrank: EPR = async (info, data, send) => {
         });
       } else {
         score_top.forEach((res) => {
+          let mVersion = Math.floor(res.mid / 1000);
+          if (mVersion > version) return;
+		
           top.push({
             "@attr": ({
               name0: res.names[1],
@@ -140,7 +149,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
   return send.object({
     m,
-    b
+    b,
+    t
   });
 }
 
@@ -336,7 +346,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (version >= 18) ghost = $(data).buffer("ghost").toString("base64");
+  if (version >= 17) ghost = $(data).buffer("ghost").toString("base64");
   
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
@@ -369,10 +379,10 @@ export const musicreg: EPR = async (info, data, send) => {
 
     const pExscore = esArray[clid];
     if (exscore > pExscore) {
-      pgArray[clid] = Math.max(pgArray[clid], pgnum);
-      gArray[clid] = Math.max(gArray[clid], gnum);
-      mArray[clid] = Math.max(mArray[clid], mnum);
-      esArray[clid] = Math.max(esArray[clid], exscore);
+      pgArray[clid] = pgnum;
+      gArray[clid] = gnum;
+      mArray[clid] = mnum;
+      esArray[clid] = exscore;
       optArray[clid] = option;
       opt2Array[clid] = option_2;
       update = 1;

@@ -7,6 +7,8 @@ import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
 import { world_tourism } from "../models/worldtourism";
 import { shop_data } from "../models/shop";
+import { tutorial } from "../models/tutorial";
+import { expert } from "../models/ranking";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -378,6 +380,7 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_music_memo = await DB.Find<lightning_musicmemo>(refid, { collection: "lightning_musicmemo", version: version });
   const lm_music_memo_new = await DB.Find<lightning_musicmemo_new>(refid, { collection: "lightning_musicmemo_new", version: version });
   const shop_data = await DB.FindOne<shop_data>({ collection: "shop_data" });
+  const expert = await DB.Find<expert>(refid, { collection: "expert", version: version });
 
   if (_.isNil(pcdata)) return send.deny();
 
@@ -453,10 +456,18 @@ export const pcget: EPR = async (info, data, send) => {
 
   let event;
   if (version == 17) {
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        eArray.push([res.coid, a, res.cArray[a], res.pgArray[a], res.gArray[a]]);
+      }
+    });
+
     return send.pugFile("pug/JDJ/pcget.pug", {
       profile,
       pcdata,
       dArray,
+      eArray,
       appendsettings,
       custom,
       rArray,
@@ -870,9 +881,9 @@ export const pctakeover: EPR = async (info, data, send) => {
 export const pcvisit: EPR = async (info, data, send) => {
   return send.object(
     K.ATTR({
-      anum: "0",
-      snum: "0",
-      pnum: "0",
+      anum: "10",
+      snum: "10",
+      pnum: "10",
       aflg: "0",
       sflg: "0",
       pflg: "0",
@@ -946,6 +957,21 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.liflen = parseInt($(data).attr().lift);
     pcdata.fcombo[cltype] = parseInt($(data).attr().fcombo);
 
+    if (!_.isNil($(data).element("tutorial"))) {
+      let clr = parseInt($(data).attr("tutorial").clr);
+      await DB.Upsert<tutorial>(refid,
+        {
+          collection: "tutorial",
+          version: version,
+          tid: parseInt($(data).attr("tutorial").tid),
+        },
+        {
+          $set: {
+            clr
+          }
+        }
+      );
+    }
     if (!_.isNil($(data).element("party"))) pcdata.party = $(data).element("party").numbers("fnum");
   }
   else if (version == 18) {

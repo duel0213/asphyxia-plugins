@@ -4,6 +4,8 @@ pc(status="0")
     - for (let d of dArray)
       g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
   ex
+    - for (let e of eArray)
+      e(__type="u32" __count="5") #{e[0]} #{e[1]} #{e[2]} #{e[3]} #{e[4]}
   skin(__type="u16" __count="12") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} 0 0 0
   rlist
     - for (let rd of rArray)

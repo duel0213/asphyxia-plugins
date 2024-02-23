@@ -5,6 +5,7 @@ import { graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
 import { updateRivalSettings, updateCustomSettings } from "./handlers/webui";
 import { GetVersion } from "./util";
+import { rankingentry, rankinggetranker, rankingoentry } from "./handlers/ranking";
 
 export function register() {
   if (CORE_VERSION_MAJOR <= 1 && CORE_VERSION_MINOR < 31) {
@@ -416,6 +417,10 @@ export function register() {
   MultiRoute("music.arenaCPU", musicarenacpu);
 
   MultiRoute("grade.raised", graderaised);
+
+  MultiRoute("ranking.entry", rankingentry);
+  MultiRoute("ranking.oentry", rankingoentry);
+  MultiRoute("ranking.getranker", rankinggetranker);
 
   MultiRoute("gameSystem.systemInfo", gssysteminfo);
 
