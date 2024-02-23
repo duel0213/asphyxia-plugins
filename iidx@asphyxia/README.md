@@ -6,6 +6,7 @@ Plugin Version: **v0.1.12**
 
 Supported Versions
 
+  - beatmaniaIIDX 17 SIRIUS
   - beatmaniaIIDX 18 Resort Anthem
   - beatmaniaIIDX 19 Lincle
   - beatmaniaIIDX 20 tricoro
@@ -106,8 +107,10 @@ Changelogs
   - Added Experimental WebUI (WIP)
   - Added music.crate/music.breg response
     - CLEAR RATE and BEGINNER clear lamp may not work on certain versions
+  - Added Initial support for SIRIUS (profile only)
   - Fixed where Venue Top didn't save correctly (BISTROVER ~)
   - Fixed where music.appoint send empty response even rival has score data when player doesn't have score data
   - Fixed where FAVORITE may work only on specific version
   - Fixed where shop name always displayed as "CORE" instead of saved one
   - Fixed where rlist STEP UP achieve value was fixed value instead of saved one
+  - Fixed where fcombo isn't saving (Resort Anthem)

@@ -31,6 +31,7 @@ IIDX23pc(status="0")
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
         shop(name=shop_data.opname)
   join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
+  visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   if pcdata.st_tokimeki != null
     step(friendship=pcdata.st_friendship progress=pcdata.st_progress station_clear=pcdata.st_station_clear station_play=pcdata.st_station_play sp_mission=pcdata.st_sp_mission dp_mission=pcdata.st_dp_mission sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay mission_gauge=pcdata.st_mission_gauge)
       tokimeki(__type="bin") #{pcdata.st_tokimeki}

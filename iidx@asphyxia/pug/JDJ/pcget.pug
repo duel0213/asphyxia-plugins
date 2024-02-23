@@ -10,11 +10,6 @@ pc(status="0")
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
   visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
-  lincle(comflg="1" flg1="-1" flg2="-1" flg3="-1" flg4="-1" flg5="-1" flg6="-1" flg7="-1" refcomp="1")
-  reflec(tf="1" br="1" ssc="1" sr="1" wu="1" sg="1" tb="1")
+  party
+    fnum(__type="s32" __count="24") #{pcdata.party[0]} #{pcdata.party[1]} #{pcdata.party[2]} #{pcdata.party[3]} #{pcdata.party[4]} #{pcdata.party[5]} #{pcdata.party[6]} #{pcdata.party[7]} #{pcdata.party[8]} #{pcdata.party[9]} #{pcdata.party[10]} #{pcdata.party[11]} #{pcdata.party[12]} #{pcdata.party[13]} #{pcdata.party[14]} #{pcdata.party[15]} #{pcdata.party[16]} #{pcdata.party[17]} #{pcdata.party[18]} #{pcdata.party[19]} #{pcdata.party[20]} #{pcdata.party[21]} #{pcdata.party[22]} #{pcdata.party[23]}
   jubeat(jflg_0="-1" jflg_1="-1" jflg_2="-1" jflg_3="-1")
-  if event != null
-    tour(pt=event.pt rsv=event.rsv r0=event.r0 r1=event.r1 r2=event.r2 r3=event.r3 r4=event.r4 r5=event.r5 r6=event.r6 r7=event.r7)
-      cf(__type="bin") #{event.cf}
-      pf(__type="bin") #{event.pf}
-      mf(__type="bin") #{event.mf}

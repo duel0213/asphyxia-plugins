@@ -119,6 +119,8 @@ export interface pcdata {
   sgid: number; // grade //
   dgid: number;
 
+  party: number[];
+
   jpoint: number; // jpoint (lincle) //
 
   st_sp_ach: number; // step (lincle) //
@@ -212,6 +214,34 @@ export interface pcdata {
   tourism_secret_flg2: string[];
 }
 
+export const JDJ_pcdata = {
+  version: 17,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  sflg0: 0,
+  sflg1: 0,
+  gno: 0,
+  timing: 0,
+  sdhd: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mcomb: 0,
+  ncomb: 0,
+  mode: 0,
+  pmode: 0,
+  liflen: 0,
+
+  fcombo: Array<number>(2).fill(0),
+  party: Array<number>(24).fill(0),
+
+  sgid: -1,
+  dgid: -1,
+}
+
 export const JDZ_pcdata = {
   version: 18,
 
@@ -232,6 +262,8 @@ export const JDZ_pcdata = {
   mode: 0,
   pmode: 0,
   liflen: 0,
+
+  fcombo: Array<number>(2).fill(0),
 
   sgid: -1,
   dgid: -1,

@@ -689,7 +689,7 @@ export const musiccrate: EPR = async (info, data, send) => {
         K.ARRAY("s32", [...cRate, ...fcRate], { mid: key }),
       );
     } else {
-      if (version < 20) { // TODO:: figure out why this doesn't work in Resort Anthem //
+      if (version < 20) { // TODO:: figure out why this doesn't work in older than Lincle //
         c.push(
           K.ARRAY("u8", [...indices.map(i => cRate[i])], { mid: String(NewMidToOldMid(Number(key))) }),
         );

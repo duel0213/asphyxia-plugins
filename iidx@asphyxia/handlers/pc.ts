@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
@@ -21,16 +21,29 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 17:
+      result = {
+        ...result,
+        cmd: K.ATTR({
+          gmbl: String(Number(U.GetConfig("cmd_gmbl"))),
+          gmbla: String(Number(U.GetConfig("cmd_gmbla"))),
+          regl: String(Number(U.GetConfig("cmd_regl"))),
+          rndp: String(Number(U.GetConfig("cmd_rndp"))),
+          hrnd: String(Number(U.GetConfig("cmd_hrnd"))),
+          alls: String(Number(U.GetConfig("cmd_alls"))),
+        }),
+        lg: K.ATTR({ lea: String(U.GetConfig("sr_league")) }),
+      }
     case 18:
       result = {
         ...result,
         cmd: K.ATTR({
-          gmbl: String(Number(U.GetConfig("ra_cmd_gmbl"))),
-          gmbla: String(Number(U.GetConfig("ra_cmd_gmbla"))),
-          regl: String(Number(U.GetConfig("ra_cmd_regl"))),
-          rndp: String(Number(U.GetConfig("ra_cmd_rndp"))),
-          hrnd: String(Number(U.GetConfig("ra_cmd_hrnd"))),
-          alls: String(Number(U.GetConfig("ra_cmd_alls"))),
+          gmbl: String(Number(U.GetConfig("cmd_gmbl"))),
+          gmbla: String(Number(U.GetConfig("cmd_gmbla"))),
+          regl: String(Number(U.GetConfig("cmd_regl"))),
+          rndp: String(Number(U.GetConfig("cmd_rndp"))),
+          hrnd: String(Number(U.GetConfig("cmd_hrnd"))),
+          alls: String(Number(U.GetConfig("cmd_alls"))),
         }),
         lg: K.ATTR({ lea: String(U.GetConfig("ra_league")) }),
         lf: K.ATTR({ life: String(U.GetConfig("ra_story")) }),
@@ -224,6 +237,9 @@ export const pcreg: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 17:
+      pcdata = JDJ_pcdata;
+      break;
     case 18:
       pcdata = JDZ_pcdata;
       break;
@@ -436,9 +452,35 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event;
-  if (version == 18) {
-    event = await DB.FindOne(refid, { collection: "event_1", version: version });
+  if (version == 17) {
+    return send.pugFile("pug/JDJ/pcget.pug", {
+      profile,
+      pcdata,
+      dArray,
+      appendsettings,
+      custom,
+      rArray,
+    });
+  }
+  else if (version == 18) {
+    if (_.isNil(pcdata.fcombo)) { // temp //
+      pcdata.fcombo = Array<number>(2).fill(0);
 
+      await DB.Upsert<pcdata>(
+        refid,
+        {
+          collection: "pcdata",
+          version: version,
+        },
+        {
+          $set: {
+            fcombo: Array<number>(2).fill(0),
+          }
+        }
+      );
+    }
+
+    event = await DB.FindOne(refid, { collection: "event_1", version: version });
     if (!_.isNil(event)) {
       event.cf = Base64toBuffer(event.cf).toString("hex");
       event.pf = Base64toBuffer(event.pf).toString("hex");
@@ -717,6 +759,9 @@ export const pctakeover: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 17:
+      pcdata = JDJ_pcdata;
+      break;
     case 18:
       pcdata = JDZ_pcdata;
       break;
@@ -880,7 +925,7 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = parseInt($(data).attr().mode);
   pcdata.pmode = parseInt($(data).attr().pmode);
 
-  if (version == 18) {
+  if (version == 17) {
     if (cltype == 0) {
       pcdata.sach = parseInt($(data).attr().achi);
       pcdata.sp_opt = parseInt($(data).attr().opt);
@@ -899,6 +944,30 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.ncomb = parseInt($(data).attr().ncomb);
     pcdata.mcomb = parseInt($(data).attr().mcomb);
     pcdata.liflen = parseInt($(data).attr().lift);
+    pcdata.fcombo[cltype] = parseInt($(data).attr().fcombo);
+
+    if (!_.isNil($(data).element("party"))) pcdata.party = $(data).element("party").numbers("fnum");
+  }
+  else if (version == 18) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    }
+    else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.timing = parseInt($(data).attr().timing);
+    pcdata.sflg0 = parseInt($(data).attr().sflg0);
+    pcdata.sflg1 = parseInt($(data).attr().sflg1);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.ncomb = parseInt($(data).attr().ncomb);
+    pcdata.mcomb = parseInt($(data).attr().mcomb);
+    pcdata.liflen = parseInt($(data).attr().lift);
+    pcdata.fcombo[cltype] = parseInt($(data).attr().fcombo);
 
     // TODO:: STORY/LEAGUE //
 

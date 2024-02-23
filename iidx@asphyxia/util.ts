@@ -64,6 +64,7 @@ export function Base64toBuffer(s: string) {
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
   switch (info.model.substring(0, 3)) {
+    case "JDJ": return 17;
     case "JDZ": return 18;
     case "KDZ": return 19;
     case "LDJ":

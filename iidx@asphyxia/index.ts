@@ -14,6 +14,7 @@ export function register() {
 
   R.Contributor("duel0213");
 
+  R.GameCode("JDJ");
   R.GameCode("JDZ");
   R.GameCode("KDZ");
   R.GameCode("LDJ");
@@ -21,9 +22,46 @@ export function register() {
   // common //
   R.Config("BeatPhase", {
     name: "Beat #",
-    desc: "1 / 2 / 3 / FREE",
+    desc: "1 / 2 / 3 / FREE", // This can be event phase on old versions //
     type: "integer",
     default: 3, // BEAT FREE //
+  });
+  // ~ Resort Anthem (common) / /
+  R.Config("cmd_gmbl", {
+    name: "G.JUDGE",
+    desc: "Enable G.JUDGE Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("cmd_gmbla", {
+    name: "G.JUDGE-A",
+    desc: "Enable G.JUDGE-A Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("cmd_regl", {
+    name: "REGUL-SPEED",
+    desc: "Enable REGUL-SPEED Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("cmd_rndp", {
+    name: "RANDOM+",
+    desc: "Enable RANDOM+ Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("cmd_hrnd", {
+    name: "H-RANDOM",
+    desc: "Enable H-RANDOM Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
+  });
+  R.Config("cmd_alls", {
+    name: "ALL-SCRATCH",
+    desc: "Enable ALL-SCRATCH Command (~ Resort Anthem)",
+    type: "boolean",
+    default: true,
   });
   // SPADA ~ (common) //
   R.Config("NewSongAnother12", {
@@ -70,43 +108,14 @@ export function register() {
     default: 2,
   })
 
+  // SIRIUS //
+  R.Config("sr_league", {
+    name: "League Phase (SR)",
+    type: "integer",
+    default: 0,
+  });
+
   // Resort Anthem //
-  R.Config("ra_cmd_gmbl", {
-    name: "G.JUDGE",
-    desc: "Enable G.JUDGE Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
-  R.Config("ra_cmd_gmbla", {
-    name: "G.JUDGE-A",
-    desc: "Enable G.JUDGE-A Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
-  R.Config("ra_cmd_regl", {
-    name: "REGUL-SPEED",
-    desc: "Enable REGUL-SPEED Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
-  R.Config("ra_cmd_rndp", {
-    name: "RANDOM+",
-    desc: "Enable RANDOM+ Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
-  R.Config("ra_cmd_hrnd", {
-    name: "H-RANDOM",
-    desc: "Enable H-RANDOM Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
-  R.Config("ra_cmd_alls", {
-    name: "ALL-SCRATCH",
-    desc: "Enable ALL-SCRATCH Command (Resort Anthem)",
-    type: "boolean",
-    default: true,
-  });
   R.Config("ra_league", {
     name: "League Phase (RA)",
     type: "integer",

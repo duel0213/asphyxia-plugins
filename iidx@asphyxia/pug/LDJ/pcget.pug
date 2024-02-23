@@ -22,6 +22,7 @@ pc(status="0")
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
         shop(name=shop_data.opname)
   join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
+  visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
   step(sp_ach=pcdata.st_sp_ach dp_ach=pcdata.st_dp_ach sp_hdpt=pcdata.st_sp_hdpt dp_hdpt=pcdata.st_dp_hdpt sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_round=pcdata.st_sp_round dp_round=pcdata.st_dp_round sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay review=pcdata.st_review)
     stamp(__type="bin") #{pcdata.st_stamp}
