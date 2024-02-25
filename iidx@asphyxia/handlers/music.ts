@@ -701,13 +701,15 @@ export const musiccrate: EPR = async (info, data, send) => {
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
-    totalFlgs: Record<number, number[]> = {},
-    cFlgArray: number[], fcFlgArray: number[], totalArray: number[];
+    totalFlgs: Record<number, number[]> = {};
 
   scores.forEach((res) => {
-    totalArray = Array<number>(10).fill(0);
-    cFlgArray = Array<number>(10).fill(0);
-    fcFlgArray = Array<number>(10).fill(0);
+    let mVersion = Math.floor(res.mid / 1000);
+    if (mVersion > version) return;
+
+    let totalArray = Array<number>(10).fill(0);
+    let cFlgArray = Array<number>(10).fill(0);
+    let fcFlgArray = Array<number>(10).fill(0);
 
     for (let a = 0; a < 10; a++) {
       if (res.cArray[a] != 0) totalArray[a] += 1;
@@ -715,18 +717,20 @@ export const musiccrate: EPR = async (info, data, send) => {
       if (res.cArray[a] == 7) fcFlgArray[a] += 1;
     }
 
-    totalFlgs[res.mid] = totalArray;
-    cFlgs[res.mid] = cFlgArray;
-    fcFlgs[res.mid] = fcFlgArray;
+    let temp_mid = version < 20 ? NewMidToOldMid(res.mid) : res.mid;
+    totalFlgs[temp_mid] = totalArray;
+    cFlgs[temp_mid] = cFlgArray;
+    fcFlgs[temp_mid] = fcFlgArray;
   });
 
   let c = [];
-  let indices = [1, 2, 3, 6, 7, 8];
   for (const key in totalFlgs) {
-    let cRate = Array<number>(10).fill(-1);
-    let fcRate = Array<number>(10).fill(-1);
+    let cRate = Array<number>(10).fill(0);
+    let fcRate = Array<number>(10).fill(0);
 
-    for (let a = 0; a < cRate.length; a++) {
+    for (let a = 0; a < 10; a++) {
+      if (totalFlgs[key][a] == 0) continue;
+
       if (version > 23) {
         cRate[a] = Math.round((cFlgs[key][a] / totalFlgs[key][a]) * 1000);
         fcRate[a] = Math.round((fcFlgs[key][a] / totalFlgs[key][a]) * 1000);
@@ -736,20 +740,16 @@ export const musiccrate: EPR = async (info, data, send) => {
       }
     }
 
-    if (version > 26) {
+    let indices = [1, 2, 3, 6, 7, 8];
+    if (version < 27) {
+      c.push(
+        K.ARRAY("u8", [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])], { mid: key }),
+      );
+    }
+    else {
       c.push(
         K.ARRAY("s32", [...cRate, ...fcRate], { mid: key }),
       );
-    } else {
-      if (version < 20) { // TODO:: figure out why this doesn't work in older than Lincle //
-        c.push(
-          K.ARRAY("u8", [...indices.map(i => cRate[i])], { mid: String(NewMidToOldMid(Number(key))) }),
-        );
-      } else {
-        c.push(
-          K.ARRAY("u8", [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])], { mid: key }),
-        );
-      }
     }
   }
 
