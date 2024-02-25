@@ -61,9 +61,58 @@ export function Base64toBuffer(s: string) {
   return Buffer.from(t);
 }
 
+export function NumArrayToString(bits: number[], numArray: number[]): string {
+  const characters = "0123456789:;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let byteSum = 0;
+  let byteIndex = 0;
+  if (bits.length > 0) {
+    do {
+      byteSum = bits[byteIndex] + byteSum;
+      byteIndex++;
+    } while (byteIndex < bits.length);
+  }
+
+  let result = "";
+  let numIdx = 0;
+  if (numArray != null && !_.isNaN(numArray[0])) {
+    let numArrayIdx = 0;
+    if (numArray.length > 0) {
+      let combined = 0;
+      do {
+        if (numIdx == 0) combined = 0;
+
+        const b = bits[numArrayIdx];
+        combined = ((numArray[numIdx] & (1 << b) - 1) | combined << b);
+        numArrayIdx++;
+        if (numArrayIdx == bits.length) {
+          combined <<= 32 - byteSum;
+
+          const characterCount = Math.floor((byteSum + 5) / 6);
+          if (characterCount > 0) {
+            let charaIdx = 26;
+            let charaLoopCnt = characterCount;
+            do {
+              const character = (combined >> charaIdx) & 63;
+              result += characters.charAt(character);
+
+              charaIdx -= 6;
+              charaLoopCnt--;
+            } while (charaLoopCnt > 0);
+          }
+          numArrayIdx = 0;
+        }
+        numIdx++;
+      } while (numIdx < numArray.length);
+    }
+  }
+
+  return result;
+}
+
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
   switch (info.model.substring(0, 3)) {
+    case "HDD": return 15;
     case "JDJ": return 17;
     case "JDZ": return 18;
     case "KDZ": return 19;

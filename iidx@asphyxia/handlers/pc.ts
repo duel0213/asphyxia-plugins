@@ -1,7 +1,7 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter } from "../util";
+import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_playdata, lm_settings, lm_settings_new, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
@@ -23,6 +23,8 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 15:
+      break;
     case 17:
       result = {
         ...result,
@@ -239,6 +241,9 @@ export const pcreg: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 15:
+      pcdata = HDD_pcdata;
+      break;
     case 17:
       pcdata = JDJ_pcdata;
       break;
@@ -398,7 +403,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.rival_played_folder,
     custom.hide_iidxid,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], gArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -454,7 +459,24 @@ export const pcget: EPR = async (info, data, send) => {
     wArray.sort((a, b) => a.tour_id - b.tour_id);
   }
 
-  let event;
+  let event, gradeStr, exStr, skinStr;
+  if (version == 15) {
+    dArray.forEach((res: grade) => {
+      gArray.concat([res.gradeId, res.maxStage, res.style, res.archive]);
+    });
+    gradeStr = NumArrayToString([6, 3, 2, 7], gArray);
+    exStr = ""; // TODO:: //
+    skinStr = NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
+
+    return send.pugFile("pug/HDD/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exStr,
+      skinStr,
+      rArray,
+    });
+  }
   if (version == 17) {
     expert.sort((a: expert, b: expert) => a.coid - b.coid);
     expert.forEach((res) => {
@@ -770,6 +792,9 @@ export const pctakeover: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 15:
+      pcdata = HDD_pcdata;
+      break;
     case 17:
       pcdata = JDJ_pcdata;
       break;
@@ -936,7 +961,42 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = parseInt($(data).attr().mode);
   pcdata.pmode = parseInt($(data).attr().pmode);
 
-  if (version == 17) {
+  if (version == 15) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    }
+    else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.sflg0 = parseInt($(data).attr().sflg0);
+    pcdata.sflg1 = parseInt($(data).attr().sflg1);
+    pcdata.sflg2 = parseInt($(data).attr().sflg2);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.ncomb = parseInt($(data).attr().ncomb);
+    pcdata.mcomb = parseInt($(data).attr().mcomb);
+
+    if (!_.isNil($(data).element("tutorial"))) {
+      let clr = parseInt($(data).attr("tutorial").clr);
+      await DB.Upsert<tutorial>(refid,
+        {
+          collection: "tutorial",
+          version: version,
+          tid: parseInt($(data).attr("tutorial").tid),
+        },
+        {
+          $set: {
+            clr
+          }
+        }
+      );
+    }
+  }
+  else if (version == 17) {
     if (cltype == 0) {
       pcdata.sach = parseInt($(data).attr().achi);
       pcdata.sp_opt = parseInt($(data).attr().opt);

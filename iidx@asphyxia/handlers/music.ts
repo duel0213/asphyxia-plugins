@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO } from "../util";
+import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -25,7 +25,48 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  if (version < 20) {
+  if (version == 15) { // TODO:: Debug NumArrayToString, theres weird records (invalid exscore) //
+    let result = {
+      r: [], // v - (-1, beginner/-2, tutorial) //
+    };
+    indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+    music_data.forEach((res: score) => {
+      temp_mid = NewMidToOldMid(res.mid);
+      let mVersion = Math.floor(temp_mid / 100);
+      let mMid = temp_mid % 100;
+
+      if (mVersion > version) return;
+      for (let a = 0; a < 3; a++) {
+        if (res.esArray[indices[a]] == 0) continue;
+        result.r.push(
+          K.ITEM("str", NumArrayToString(
+            [7, 4, 13, 3, 3],
+            [mMid, a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // mid , diff , score , rid (rank_id) , flg //
+          ), { v: String(mVersion) } )
+        );
+      }
+    });
+
+    // rival data seems to be retrieve from getralive //
+
+    // tutorial //
+    const tutorial = await DB.Find<tutorial>(refid, {
+      collection: "tutorial",
+      version: version
+    });
+    tutorial.sort((a: tutorial, b: tutorial) => a.tid - b.tid);
+    tutorial.forEach((res) => {
+      result.r.push(
+        K.ITEM("str", NumArrayToString(
+          [5, 1],
+          [res.tid, res.clr]
+        ), { v: String("-2") })
+      );
+    });
+
+    return send.object(result);
+  }
+  else if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
@@ -103,11 +144,11 @@ export const musicgetrank: EPR = async (info, data, send) => {
     });
 
     if (score_top.length > 0) {
-      if (version >= 27) {	  
+      if (version >= 27) {
         score_top.forEach((res) => {
           let mVersion = Math.floor(res.mid / 1000);
           if (mVersion > version) return;
-		  
+
           top.push({
             "@attr": ({
               name0: res.names[0],
@@ -123,7 +164,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
         score_top.forEach((res) => {
           let mVersion = Math.floor(res.mid / 1000);
           if (mVersion > version) return;
-		
+
           top.push({
             "@attr": ({
               name0: res.names[1],
@@ -346,7 +387,8 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (version >= 17) ghost = $(data).buffer("ghost").toString("base64");
+  if (version == 15) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  else ghost = $(data).buffer("ghost").toString("base64");
   
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");

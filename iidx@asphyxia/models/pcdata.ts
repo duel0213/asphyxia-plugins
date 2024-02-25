@@ -9,6 +9,7 @@ export interface pcdata {
   dach: number;
   sflg0: number;
   sflg1: number;
+  sflg2: number;
   gno: number;
   timing: number;
   sdhd: number;
@@ -212,6 +213,30 @@ export interface pcdata {
 
   tourism_secret_flg1: string[];
   tourism_secret_flg2: string[];
+}
+
+export const HDD_pcdata = {
+  version: 15,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  sflg0: 0,
+  sflg1: 0,
+  sflg2: 0,
+  gno: 0,
+  sdhd: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mcomb: 0,
+  ncomb: 0,
+  mode: 0,
+  pmode: 0,
+
+  sgid: -1,
+  dgid: -1,
 }
 
 export const JDJ_pcdata = {
