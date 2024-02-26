@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString } from "../util";
+import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -25,24 +25,24 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  if (version == 15) { // TODO:: Debug NumArrayToString, theres weird records (invalid exscore) //
+  if (version == 15) {
     let result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
-      let mVersion = Math.floor(temp_mid / 100);
-      let mMid = temp_mid % 100;
+      let verMid = OldMidToVerMid(temp_mid);
 
-      if (mVersion > version) return;
+      // TODO:: determine whether use rid,dj_level from music.reg or make a database that has max exscore of all songs for rid //
+      if (verMid[0] > version) return;
       for (let a = 0; a < 3; a++) {
         if (res.esArray[indices[a]] == 0) continue;
         result.r.push(
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
-            [mMid, a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // mid , diff , score , rid (rank_id) , flg //
-          ), { v: String(mVersion) } )
+            [verMid[1], a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // 4th attribute is rid (rank_id) //
+          ), { v: String(verMid[0]) } )
         );
       }
     });
@@ -351,7 +351,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let clid = parseInt($(data).attr().clid);
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
-  let style = 0, option = 0, option_2 = 0;
+  let style = 0, option = 0, option_2 = 0, rid = -1;
 
   // TODO:: Leggendaria until HEROIC VERSE has seperate music_id //
   // TODO:: SUPER FUTURE 2323 has seperate music_id //
@@ -386,6 +386,10 @@ export const musicreg: EPR = async (info, data, send) => {
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
+
+  if (!_.isNil($(data).attr().rid)) rid = parseInt($(data).attr().rid);
+  else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
+  console.log(rid);
 
   if (version == 15) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
   else ghost = $(data).buffer("ghost").toString("base64");
@@ -698,6 +702,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
+  const cltype = parseInt($(data).attr().cltype);
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
@@ -723,7 +728,7 @@ export const musiccrate: EPR = async (info, data, send) => {
     fcFlgs[temp_mid] = fcFlgArray;
   });
 
-  let c = [];
+  let result = {}, c = [], cdata = [];
   for (const key in totalFlgs) {
     let cRate = Array<number>(10).fill(0);
     let fcRate = Array<number>(10).fill(0);
@@ -741,7 +746,18 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
 
     let indices = [1, 2, 3, 6, 7, 8];
-    if (version < 27) {
+    if (version == 15) {
+      let verMid = OldMidToVerMid(parseInt(key));
+
+      let str = cltype == 0 ?
+        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ`:
+        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[6], cRate[7], cRate[8]])}ZZZZ`;
+
+      cdata.push(
+        K.ITEM("str", str, { ver: String(verMid[0]) })
+      );
+    }
+    else if (version < 27) {
       c.push(
         K.ARRAY("u8", [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])], { mid: key }),
       );
@@ -753,9 +769,10 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   }
 
-  return send.object({
-    c
-  })
+  if (version == 15) result = { cdata };
+  else result = { c };
+
+  return send.object(result);
 }
 
 // this is not valid response //

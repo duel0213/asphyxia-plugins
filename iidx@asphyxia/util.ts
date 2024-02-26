@@ -19,6 +19,10 @@ export async function IDtoRef(iidxid: number) {
   return profile.__refid;
 }
 
+export function OldMidToVerMid(mid: number) {
+  return [Math.floor(mid / 100), mid % 100];
+}
+
 export function OldMidToNewMid(mid: number) {
   const numberString = String(mid);
   
