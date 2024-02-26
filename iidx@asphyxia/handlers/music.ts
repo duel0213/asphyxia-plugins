@@ -41,7 +41,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
         result.r.push(
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
-            [verMid[1], a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // 4th attribute is rid (rank_id) //
+            [verMid[1], a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
           ), { v: String(verMid[0]) } )
         );
       }
@@ -193,6 +193,82 @@ export const musicgetrank: EPR = async (info, data, send) => {
     b,
     t
   });
+}
+
+export const musicgetralive: EPR = async (info, data, send) => {
+  const version = GetVersion(info);
+  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const cltype = parseInt($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const music_data: any = (
+    await DB.Find(refid, {
+      collection: "score",
+    })
+  );
+  const rival_refids = [
+    [parseInt($(data).attr().iidxid0), await IDtoRef(parseInt($(data).attr().iidxid0))],
+    [parseInt($(data).attr().iidxid1), await IDtoRef(parseInt($(data).attr().iidxid1))],
+    [parseInt($(data).attr().iidxid2), await IDtoRef(parseInt($(data).attr().iidxid2))],
+    [parseInt($(data).attr().iidxid3), await IDtoRef(parseInt($(data).attr().iidxid3))],
+    [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
+  ];
+
+  let result = {
+    d: []
+  };
+  let myRecord: Record<number, number[]> = {};
+  let rRecord: Record<number, string> = {};
+  let indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+
+  music_data.forEach((res: score) => {
+    myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
+  });
+
+  for (let i = 0; i < rival_refids.length; i++) {
+    if (_.isNaN(rival_refids[i][0])) continue;
+
+    const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
+      { collection: "score", }
+    );
+
+    // [0~2] - NOPLAY/WIN/LOSE (ANOTHER/HYPER/NORMAL), //
+    // consider same score as LOSE, tho theres seems DRAW state but game render as LOSE //
+    // TODO:: figure out what other elements does //
+    rival_score.forEach((res: score) => {
+      let mid = NewMidToOldMid(res.mid);
+      let verMid = OldMidToVerMid(mid);
+      if (verMid[0] > version) return;
+
+      let scoreArray = Array<number>(15).fill(0);
+      if (!_.isNil(myRecord[mid])) {
+        for (let a = 0; a < 3; a++) {
+          let myExscore = myRecord[mid][indices[a]];
+          let rvExscore = res.esArray[indices[a]];
+          let mycFlg = myRecord[mid][indices[a] + 10];
+          let rvcFlg = res.cArray[indices[a]];
+
+          if (mycFlg == 0 || rvcFlg == 0) continue;
+          scoreArray[2 - a] = myExscore > rvExscore ? 1 : 2;
+        }
+      }
+
+      let strResult = NumArrayToString([6], [verMid[1]]);
+      strResult += NumArrayToString(Array<number>(15).fill(2), scoreArray);
+
+      if (verMid[0] in rRecord) {
+        rRecord[verMid[0]] += strResult;
+      } else {
+        rRecord[verMid[0]] = strResult;
+      }
+    });
+  }
+
+  for (const key in rRecord) {
+    result.d.push(
+      K.ITEM("str", rRecord[key], { v: key })
+    );
+  }
+
+  return send.object(result);
 }
 
 export const musicappoint: EPR = async (info, data, send) => {
