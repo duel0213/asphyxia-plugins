@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.12**
+Plugin Version: **v0.1.13**
 
 ---
 
@@ -115,6 +115,7 @@ Changelogs
   - Fixed where shop name always displayed as "CORE" instead of saved one
   - Fixed where rlist STEP UP achieve value was fixed value instead of saved one
   - Fixed where fcombo isn't saving (Resort Anthem)
+  - Removed shop.savename as not working as intented.
 
 **v0.1.13**
-  - Added Initial support for DJ TROOPERS (WIP)
+  - Added Initial support for DJ TROOPERS
