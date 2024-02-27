@@ -33,6 +33,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(temp_mid);
+      let rank_id = -1;
 
       // TODO:: determine whether use rid,dj_level from music.reg or make a database that has max exscore of all songs for rid //
       if (verMid[0] > version) return;
@@ -41,15 +42,22 @@ export const musicgetrank: EPR = async (info, data, send) => {
         result.r.push(
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
-            [verMid[1], a, res.esArray[indices[a]], -1, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
+            [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
           ), { v: String(verMid[0]) } )
         );
       }
+
+      // BEGINNER //
+      if (res.cArray[0] == 0) return;
+      result.r.push(
+        K.ITEM("str", NumArrayToString(
+          [12, 6],
+          [temp_mid, res.cArray[0]]
+        ), { v: String("-1") })
+      );
     });
 
-    // rival data seems to be retrieve from getralive //
-
-    // tutorial //
+    // TUTORIAL //
     const tutorial = await DB.Find<tutorial>(refid, {
       collection: "tutorial",
       version: version
@@ -465,7 +473,7 @@ export const musicreg: EPR = async (info, data, send) => {
 
   if (!_.isNil($(data).attr().rid)) rid = parseInt($(data).attr().rid);
   else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
-  console.log(rid);
+  if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
   if (version == 15) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
   else ghost = $(data).buffer("ghost").toString("base64");

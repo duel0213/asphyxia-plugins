@@ -6,5 +6,5 @@ export interface grade {
   gradeId: number;
 
   maxStage: number;
-  archive: number;
+  archive: number; // typo: achieve //
 }

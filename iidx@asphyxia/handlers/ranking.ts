@@ -106,17 +106,18 @@ export const rankingentry: EPR = async (info, data, send) => {
     }
   );
 
-  let expertUser = await DB.Find<expert>(null, {
-    collection: "expert",
+  let expertUser = await DB.Find<ranking>(null, {
+    collection: "ranking",
     version: version,
     coid: coid,
     clid: clid,
-    maxStage: 5,
   });
+  expertUser.sort((a: ranking, b: ranking) => b.exscore - a.exscore);
+  let rankPos = expertUser.findIndex((a: ranking) => a.name == name);
 
   return send.object(K.ATTR({
-    anum: String(expertUser.length),
-    jun: "1",
+    anum: String(expertUser.length), 
+    jun: String(rankPos + 1),
   }));
 };
 

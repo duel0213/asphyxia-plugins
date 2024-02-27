@@ -92,8 +92,7 @@ export const graderaised: EPR = async (info, data, send) => {
 
     return send.object(
       K.ATTR({
-        status: "0",
-        pnum: "1",
+        pnum: "1", // This isn't visible to user and seems leftover //
       })
     );
   }
@@ -164,7 +163,6 @@ export const graderaised: EPR = async (info, data, send) => {
 
   return send.object(
     K.ATTR({
-      status: "0",
       pnum: String(gradeUser.length),
     })
   );

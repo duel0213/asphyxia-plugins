@@ -403,7 +403,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.rival_played_folder,
     custom.hide_iidxid,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], gArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -459,14 +459,22 @@ export const pcget: EPR = async (info, data, send) => {
     wArray.sort((a, b) => a.tour_id - b.tour_id);
   }
 
-  let event, gradeStr, exStr, skinStr;
+  let event, gradeStr = "", exStr = "", skinStr = "";
   if (version == 15) {
-    dArray.forEach((res: grade) => {
-      gArray.concat([res.gradeId, res.maxStage, res.style, res.archive]);
+    dArray.forEach((res) => {
+      gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
     });
-    gradeStr = NumArrayToString([6, 3, 2, 7], gArray);
-    exStr = ""; // TODO:: //
-    skinStr = NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exStr += NumArrayToString([6, 3, 3], [res.coid, a, res.cArray[a]]);
+        exStr += NumArrayToString([18], [res.pgArray[a]]);
+        exStr += NumArrayToString([18], [res.gArray[a]]);
+      }
+    });
+
+    skinStr += NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
 
     return send.pugFile("pug/HDD/pcget.pug", {
       profile,

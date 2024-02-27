@@ -17,7 +17,6 @@ export const shopgetname: EPR = async (info, data, send) => {
 
     return send.object(
       K.ATTR({
-        status: "0",
         opname: "CORE",
         pid: "57",
         cls_opt: "0",
@@ -29,7 +28,6 @@ export const shopgetname: EPR = async (info, data, send) => {
 
   return send.object(
     K.ATTR({
-      status: "0",
       opname: shop_data.opname,
       pid: String(shop_data.pid),
       cls_opt: String(shop_data.cls_opt),
