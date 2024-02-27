@@ -114,3 +114,4 @@ Changelogs
   - Fixed where shop name always displayed as "CORE" instead of saved one
   - Fixed where rlist STEP UP achieve value was fixed value instead of saved one
   - Fixed where fcombo isn't saving (Resort Anthem)
+  - Removed shop.savename as not working as intented.

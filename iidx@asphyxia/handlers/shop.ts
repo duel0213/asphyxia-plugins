@@ -10,7 +10,7 @@ export const shopgetname: EPR = async (info, data, send) => {
     await DB.Insert<shop_data>({
       collection: "shop_data",
 
-      opname: "CORE",
+      opname: "ＣＯＲＥ",
       pid: 57,
       cls_opt: 0,
     });
@@ -18,12 +18,13 @@ export const shopgetname: EPR = async (info, data, send) => {
     return send.object(
       K.ATTR({
         status: "0",
-        opname: "CORE",
+        opname: "ＣＯＲＥ",
         pid: "57",
         cls_opt: "0",
         hr: "0",
         mi: "0",
-      })
+      }),
+      { encoding: "shift_jis" }
     );
   }
 
@@ -35,24 +36,13 @@ export const shopgetname: EPR = async (info, data, send) => {
       cls_opt: String(shop_data.cls_opt),
       hr: "0",
       mi: "0",
-    })
+    }),
+    { encoding: "shift_jis" }
   );
 };
 
 export const shopsavename: EPR = async (info, data, send) => {
-  await DB.Upsert<shop_data>(
-    {
-      collection: "shop_data",
-    },
-    {
-      $set: {
-        opname: $(data).attr().opname,
-        pid: parseInt($(data).attr().pid),
-        cls_opt: parseInt($(data).attr().cls_opt),
-      },
-    }
-  );
-
+  // removed saving code as opname attribute being sent as shift_jis but KDataReader read as utf-8 //
   return send.success();
 };
 
