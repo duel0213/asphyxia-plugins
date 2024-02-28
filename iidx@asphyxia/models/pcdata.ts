@@ -120,6 +120,8 @@ export interface pcdata {
   sgid: number; // grade //
   dgid: number;
 
+  jewel_num: string;
+  jewel_bnum: number[];
   party: number[];
 
   jpoint: number; // jpoint (lincle) //
@@ -234,6 +236,35 @@ export const HDD_pcdata = {
   ncomb: 0,
   mode: 0,
   pmode: 0,
+
+  sgid: -1,
+  dgid: -1,
+}
+
+export const I00_pcdata = {
+  version: 16,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  sflg0: 0,
+  sflg1: 0,
+  sflg2: 0,
+  gno: 0,
+  sdhd: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mcomb: 0,
+  ncomb: 0,
+  mode: 0,
+  pmode: 0,
+  liflen: 0,
+
+  jewel_num: "0",
+  jewel_bnum: Array<number>(18).fill(0),
+  fcombo: Array<number>(2).fill(0),
 
   sgid: -1,
   dgid: -1,

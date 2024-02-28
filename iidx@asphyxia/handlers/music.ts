@@ -81,7 +81,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
       let mVersion = Math.floor(temp_mid / 100);
       if (mVersion > version) return;
 
-      score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      if (version == 16) score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
+      else score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
       m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [temp_mid, res.cArray[0]]));
@@ -99,7 +100,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
         let mVersion = Math.floor(temp_mid / 100);
         if (mVersion > version) return;
 
-        score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+        if (version == 16) score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
+        else score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
 
         m.push(K.ARRAY("s16", score_data));
       });

@@ -106,7 +106,7 @@ export const rankingentry: EPR = async (info, data, send) => {
     }
   );
 
-  let expertUser = await DB.Find<ranking>(null, {
+  let expertUser = await DB.Find<ranking>({
     collection: "ranking",
     version: version,
     coid: coid,
@@ -143,7 +143,7 @@ export const rankingoentry: EPR = async (info, data, send) => {
 
 export const rankinggetranker: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const ranking = await DB.Find<ranking>(null, {
+  const ranking = await DB.Find<ranking>({
     collection: "ranking",
     version: version,
     coid: parseInt($(data).attr().coid),

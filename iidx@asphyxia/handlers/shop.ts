@@ -11,14 +11,14 @@ export const shopgetname: EPR = async (info, data, send) => {
       collection: "shop_data",
 
       opname: "ＣＯＲＥ",
-      pid: 57,
+      pid: 53,
       cls_opt: 0,
     });
 
     return send.object(
       K.ATTR({
         opname: "ＣＯＲＥ",
-        pid: "57",
+        pid: "53",
         cls_opt: "0",
         hr: "0",
         mi: "0",

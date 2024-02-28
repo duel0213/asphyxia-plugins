@@ -7,6 +7,7 @@ Plugin Version: **v0.1.13**
 Supported Versions
 
   - beatmaniaIIDX 15 DJ TROOPERS
+  - beatmaniaIIDX 16 EMPRESS
   - beatmaniaIIDX 17 SIRIUS
   - beatmaniaIIDX 18 Resort Anthem
   - beatmaniaIIDX 19 Lincle
@@ -36,8 +37,8 @@ Features
 ---
 
 Known Issues
-
   - Clear Lamps may display invalid lamps due to missing conversion code
+  - DJ LEVEL folders are broken in ~ DJ TROOPERS due to missing rank_id
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
 
 ---
@@ -119,3 +120,5 @@ Changelogs
 
 **v0.1.13**
   - Added Initial support for DJ TROOPERS
+  - Added Initial support for EMPRESS
+  - Fixed where EXPERT result does not display total cleared users and ranking position

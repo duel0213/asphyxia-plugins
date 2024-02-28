@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString } from "../util";
@@ -24,6 +24,18 @@ export const pccommon: EPR = async (info, data, send) => {
   // exposing these to plugin setting or use static value //
   switch (version) {
     case 15:
+    case 16:
+      result = {
+        ...result,
+        cmd: K.ATTR({
+          gmbl: String(Number(U.GetConfig("cmd_gmbl"))),
+          gmbla: String(Number(U.GetConfig("cmd_gmbla"))),
+          regl: String(Number(U.GetConfig("cmd_regl"))),
+          rndp: String(Number(U.GetConfig("cmd_rndp"))),
+          hrnd: String(Number(U.GetConfig("cmd_hrnd"))),
+          alls: String(Number(U.GetConfig("cmd_alls"))),
+        }),
+      }
       break;
     case 17:
       result = {
@@ -243,6 +255,9 @@ export const pcreg: EPR = async (info, data, send) => {
   switch (version) {
     case 15:
       pcdata = HDD_pcdata;
+      break;
+    case 16:
+      pcdata = I00_pcdata;
       break;
     case 17:
       pcdata = JDJ_pcdata;
@@ -485,7 +500,25 @@ export const pcget: EPR = async (info, data, send) => {
       rArray,
     });
   }
-  if (version == 17) {
+  else if (version == 16) {
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        eArray.push([res.coid, a, res.cArray[a], res.pgArray[a], res.gArray[a]]);
+      }
+    });
+
+    return send.pugFile("pug/I00/pcget.pug", {
+      profile,
+      pcdata,
+      dArray,
+      eArray,
+      appendsettings,
+      custom,
+      rArray,
+    });
+  }
+  else if (version == 17) {
     expert.sort((a: expert, b: expert) => a.coid - b.coid);
     expert.forEach((res) => {
       for (let a = 0; a < 6; a++) {
@@ -803,6 +836,9 @@ export const pctakeover: EPR = async (info, data, send) => {
     case 15:
       pcdata = HDD_pcdata;
       break;
+    case 16:
+      pcdata = I00_pcdata;
+      break;
     case 17:
       pcdata = JDJ_pcdata;
       break;
@@ -1002,6 +1038,49 @@ export const pcsave: EPR = async (info, data, send) => {
           }
         }
       );
+    }
+  }
+  else if (version == 16) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    }
+    else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.sflg0 = parseInt($(data).attr().sflg0);
+    pcdata.sflg1 = parseInt($(data).attr().sflg1);
+    pcdata.sflg2 = parseInt($(data).attr().sflg2);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.ncomb = parseInt($(data).attr().ncomb);
+    pcdata.mcomb = parseInt($(data).attr().mcomb);
+    pcdata.liflen = parseInt($(data).attr().lift);
+    pcdata.fcombo[cltype] = parseInt($(data).attr().fcombo);
+
+    if (!_.isNil($(data).element("tutorial"))) {
+      let clr = parseInt($(data).attr("tutorial").clr);
+      await DB.Upsert<tutorial>(refid,
+        {
+          collection: "tutorial",
+          version: version,
+          tid: parseInt($(data).attr("tutorial").tid),
+        },
+        {
+          $set: {
+            clr
+          }
+        }
+      );
+    }
+
+    // bigint is returning convert error on sendPug so save as string //
+    if (!_.isNil($(data).element("jewel"))) {
+      pcdata.jewel_num = String($(data).element("jewel").bigint("jnum"));
+      pcdata.jewel_bnum = $(data).element("jewel").numbers("bjnum");
     }
   }
   else if (version == 17) {
