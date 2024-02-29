@@ -43,26 +43,25 @@ export function ClidToPlaySide(clid: number) {
 export function Base64toBuffer(s: string) {
   const base64list =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  let t = "",
+  let buffer = Buffer.alloc(0),
     p = -8,
     a = 0,
-    c: number,
-    d: number;
+    c: number;
 
-  if (s == null) return Buffer.from([0x00]);
+  if (_.isNil(s)) return Buffer.alloc(0);
 
   for (let i = 0; i < s.length; i++) {
     if ((c = base64list.indexOf(s.charAt(i))) < 0) continue;
+    if (c == 64) break;
     a = (a << 6) | (c & 63);
     if ((p += 6) >= 0) {
-      d = (a >> p) & 255;
-      if (c != 64) t += String.fromCharCode(d);
+      buffer = Buffer.concat([buffer, Buffer.from([((a >> p) & 255)])]);
       a &= 63;
       p -= 8;
     }
   }
 
-  return Buffer.from(t);
+  return buffer;
 }
 
 export function NumArrayToString(bits: number[], numArray: number[]): string {
