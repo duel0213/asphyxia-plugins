@@ -9,6 +9,7 @@ import { world_tourism } from "../models/worldtourism";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
+import { blueboss } from "../models/event";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -24,6 +25,7 @@ export const pccommon: EPR = async (info, data, send) => {
   // exposing these to plugin setting or use static value //
   switch (version) {
     case 15:
+      break;
     case 16:
       result = {
         ...result,
@@ -593,13 +595,15 @@ export const pcget: EPR = async (info, data, send) => {
   else if (version == 20) {
     if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = Base64toBuffer(pcdata.st_stamp).toString("hex");
     if (!_.isNil(pcdata.st_help)) pcdata.st_help = Base64toBuffer(pcdata.st_help).toString("hex");
-
     if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // temp //
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
     let redboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "redboss" });
+    let blueboss = await DB.FindOne<blueboss>(refid, { collection: "event_1", version: version, event_name: "blueboss" });
     let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
+
+    if (!_.isNil(blueboss)) blueboss.durability = Base64toBuffer(blueboss.durability).toString("hex");
 
     return send.pugFile("pug/LDJ/pcget.pug", {
       profile,
@@ -611,6 +615,7 @@ export const pcget: EPR = async (info, data, send) => {
       link5,
       tricolettepark,
       redboss,
+      blueboss,
       yellowboss,
       shop_data,
     });
@@ -1446,6 +1451,53 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.orb += parseInt($(data).attr("commonboss").orb);
     }
 
+    if (!_.isNil($(data).element("redboss"))) {
+      let event_data = {
+        progress: parseInt($(data).attr("redboss").progress),
+        crush: parseInt($(data).attr("redboss").crush),
+        open: parseInt($(data).attr("redboss").open),
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "redboss",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
+    if (!_.isNil($(data).element("blueboss"))) {
+      let event_data: blueboss = {
+        level: Number($(data).attr("blueboss").level),
+        gauge: Number($(data).attr("blueboss").gauge),
+        item: Number($(data).attr("blueboss").item),
+        item_flg: Number($(data).attr("blueboss").item_flg),
+        row0: Number($(data).attr("blueboss").row0),
+        row1: Number($(data).attr("blueboss").row1),
+        column0: Number($(data).attr("blueboss").column0),
+        column1: Number($(data).attr("blueboss").column1),
+        general: Number($(data).attr("blueboss").general),
+        first_flg: Number($(data).element("blueboss").bool("first_flg")),
+        sector: Number($(data).element("blueboss").bool("sector")),
+        durability: $(data).element("blueboss").buffer("durability").toString("base64"),
+      }
+
+      await DB.Upsert<blueboss>(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "blueboss",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+
     if (!_.isNil($(data).element("yellowboss"))) {
       let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
       let event_data;
@@ -1477,32 +1529,13 @@ export const pcsave: EPR = async (info, data, send) => {
           event_data.pbest_attack[a] = Math.max(event_data.pbest_attack[a], p_attack[a]);
         }
       }
-      
+
 
       await DB.Upsert(refid,
         {
           collection: "event_1",
           version: version,
           event_name: "yellowboss",
-        },
-        {
-          $set: event_data,
-        }
-      );
-    }
-
-    if (!_.isNil($(data).element("redboss"))) {
-      let event_data = {
-        progress: parseInt($(data).attr("redboss").progress),
-        crush: parseInt($(data).attr("redboss").crush),
-        open: parseInt($(data).attr("redboss").open),
-      }
-
-      await DB.Upsert(refid,
-        {
-          collection: "event_1",
-          version: version,
-          event_name: "redboss",
         },
         {
           $set: event_data,

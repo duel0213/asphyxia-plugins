@@ -38,7 +38,9 @@ pc(status="0")
   commonboss(deller=pcdata.deller orb=pcdata.orb baron="0")
   if redboss != null
     redboss(progress=redboss.progress crush=redboss.crush open=redboss.open)
-  //-blueboss(level gauge item item_flg column0 column1 sector first_flg general)
+  if blueboss != null
+    blueboss(level=blueboss.level gauge=blueboss.gauge item=blueboss.item item_flg=blueboss.item_flg row0=blueboss.row0 row1=blueboss.row1 column0=blueboss.column0 column1=blueboss.column1 sector=blueboss.sector first_flg=blueboss.first_flg general=blueboss.general)
+      durability(__type="bin") #{blueboss.durability}
   if yellowboss != null
     yellowboss(join_num="1" first_flg=yellowboss.first_flg level=yellowboss.level heroic0=yellowboss.heroic0 heroic1=yellowboss.heroic1 critical=yellowboss.critical destiny="0" last_select=yellowboss.last_select shop_message="SHOP MESSAGE" special_move="SPECIAL MOVE")
       //-shop_damage(__type="s32" __count="7")
