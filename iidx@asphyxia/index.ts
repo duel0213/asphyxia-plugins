@@ -308,6 +308,33 @@ export function register() {
     default: 2,
   });
 
+  // Rootage //
+  R.Config("rt_boss", {
+    name: "Event Phase (RT)",
+    desc: "蜃気楼の図書館 / DELABITY LABORATORY",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("rt_event1", {
+    name: "蜃気楼の図書館",
+    desc: "蜃気楼の図書館 Phase",
+    type: "integer",
+    default: 3
+  });
+  R.Config("rt_event2", {
+    name: "DELABITY LABORATORY",
+    desc: "DELABITY LABORATORY Phase",
+    type: "integer",
+    default: 2
+  });
+  R.Config("rt_extraboss",
+  {
+    name: "ARC SCORE",
+    desc: "ARC SCORE Phase",
+    type: "integer",
+    default: 3
+  });
+
   // HEROIC VERSE //
   R.Config("hv_boss", {
     name: "Event Phase (HV)",

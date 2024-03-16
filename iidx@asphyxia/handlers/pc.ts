@@ -19,6 +19,7 @@ export const pccommon: EPR = async (info, data, send) => {
     ir: K.ATTR({ beat: String(U.GetConfig("BeatPhase")) }),
     expert: K.ATTR({ phase: String(U.GetConfig("ExpertPhase")) }),
     expert_random_secret: K.ATTR({ phase: String(U.GetConfig("ExpertRandomPhase")) }),
+    expert_secret_full_open: {},
   }
 
   // have no idea what some of attribute or value does //
@@ -149,12 +150,28 @@ export const pccommon: EPR = async (info, data, send) => {
       break;
     case 24: // asphyxia_route_public //
     case 25:
-    case 26:
       result = {
         ...result,
         newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+      }
+      break;
+    case 26:
+      result = {
+        ...result,
+        boss: K.ATTR({ phase: String(U.GetConfig("rt_boss")) }),
+        extra_boss_event: K.ATTR({ phase: String(U.GetConfig("rt_extraboss")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        expert_secret_full_open: {},
+        eaorder_phase: K.ATTR({ phase: String(2) }), // TODO:: figure out what this does //
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
+        event1_phase: K.ATTR({ phase: String(U.GetConfig("rt_event1")) }),
+        event2_phase: K.ATTR({ phase: String(U.GetConfig("rt_event2")) }),
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        anniv20_phase: K.ATTR({ phase: String(8) }), // TODO:: figure out what this does //
       }
       break;
     case 27:
@@ -539,7 +556,7 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 18) {
-    if (_.isNil(pcdata.fcombo)) { // temp //
+    if (_.isNil(pcdata.fcombo)) { // migration //
       pcdata.fcombo = Array<number>(2).fill(0);
 
       await DB.Upsert<pcdata>(
@@ -595,7 +612,7 @@ export const pcget: EPR = async (info, data, send) => {
   else if (version == 20) {
     if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = Base64toBuffer(pcdata.st_stamp).toString("hex");
     if (!_.isNil(pcdata.st_help)) pcdata.st_help = Base64toBuffer(pcdata.st_help).toString("hex");
-    if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // temp //
+    if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // migration //
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
@@ -630,6 +647,10 @@ export const pcget: EPR = async (info, data, send) => {
       pendual_talis = null,
       open_tokotoko = null,
       mystery_line = null,
+      mirage_lib = null,
+      mirage_lib_sub = [],
+      delabity_lab = null,
+      delabity_lab_sub = [],
       event_1 = null,
       event_1s = null,
       evtArray = [], evtArray2 = [];
@@ -676,13 +697,48 @@ export const pcget: EPR = async (info, data, send) => {
       }
     }
 
-    if (version == 21 || version == 22 || version == 23) {
+    if (version == 21 || version == 22 || version == 23 || version == 26) {
       if (!_.isNil(pcdata.sp_mlist)) {
         pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
         pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
         pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
         pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
       }
+    }
+
+    if (version == 26) { // migration //
+      if (_.isNil(pcdata.eb_bossorb0)) {
+        pcdata.eb_bossorb0 = 0;
+        pcdata.eb_bossorb1 = 0;
+        pcdata.eb_bossorb2 = 0;
+        pcdata.eb_bossorb3 = 0;
+        pcdata.eb_bossorb4 = 0;
+        pcdata.eb_bossorb5 = 0;
+        pcdata.eb_bossorb6 = 0;
+        pcdata.eb_bossorb7 = 0;
+        pcdata.eb_bossorb8 = 0;
+
+        await DB.Upsert<pcdata>(
+          refid,
+          {
+            collection: "pcdata",
+            version: version,
+          },
+          {
+            $set: pcdata,
+          }
+        );
+      }
+
+      mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+      if (!_.isNil(mirage_lib.quiz_control_list)) mirage_lib.quiz_control_list = Base64toBuffer(mirage_lib.quiz_control_list).toString("hex");
+      mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+      mirage_lib_sub.forEach((res) => {
+        res.map_route_damage = Base64toBuffer(res.map_route_damage).toString("hex");
+      });
+
+      delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+      delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
     }
 
     if (version >= 30 && lm_music_memo_new.length > 0) {
@@ -795,6 +851,10 @@ export const pcget: EPR = async (info, data, send) => {
       pendual_talis,
       open_tokotoko,
       mystery_line,
+      mirage_lib,
+      mirage_lib_sub,
+      delabity_lab,
+      delabity_lab_sub,
       wArray,
       bArray,
       shop_data,
@@ -2323,7 +2383,217 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.d_liflen = parseInt($(data).attr().d_lift);
     }
 
+    if (!_.isNil($(data).element("secret"))) {
+      pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
+      pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
+      pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
+    }
+
+    if (!_.isNil($(data).element("favorite"))) {
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+    }
+
+    if (!_.isNil($(data).element("qpro_secret"))) {
+      custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
+      custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
+      custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
+      custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
+      custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+    }
+
+    if (!_.isNil($(data).element("qpro_equip"))) {
+      custom.qpro_head = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
+      custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
+      custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+    }
+
+    if (hasStepUpData) {
+      pcdata.st_enemy_damage = parseInt($(data).attr("step").enemy_damage);
+      pcdata.st_progress = parseInt($(data).attr("step").progress);
+      pcdata.st_is_track_ticket = $(data).element("step").bool("is_track_ticket");
+      pcdata.st_sp_level = parseInt($(data).attr("step").sp_level);
+      pcdata.st_dp_level = parseInt($(data).attr("step").dp_level);
+      pcdata.st_sp_mission_point = parseInt($(data).attr("step").sp_mission_point);
+      pcdata.st_dp_mission_point = parseInt($(data).attr("step").dp_mission_point);
+      pcdata.st_sp_dj_mission_level = parseInt($(data).attr("step").sp_dj_mission_level);
+      pcdata.st_dp_dj_mission_level = parseInt($(data).attr("step").dp_dj_mission_level);
+      pcdata.st_sp_clear_mission_level = parseInt($(data).attr("step").sp_clear_mission_level);
+      pcdata.st_dp_clear_mission_level = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_sp_dj_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_dp_dj_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_sp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_dp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_sp_mplay = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_tips_read_list = parseInt($(data).attr("step").tips_read_list);
+    }
+
+    if (!_.isNil($(data).element("achievements"))) {
+      // TODO:: achi_packflg, achi_packid, achi_playpack //
+      pcdata.achi_lastweekly = parseInt($(data).attr("achievements").last_weekly);
+      pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
+      pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
+      pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
+      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+    }
+
+    if ($(data).attr("dj_rank.1").style == "1") {
+      pcdata.dr_sprank = $(data).element("dj_rank").numbers("rank");
+      pcdata.dr_sppoint = $(data).element("dj_rank").numbers("point");
+      pcdata.dr_dprank = $(data).element("dj_rank.1").numbers("rank");
+      pcdata.dr_dppoint = $(data).element("dj_rank.1").numbers("point");
+    } else if ($(data).attr("dj_rank").style == "0") {
+      pcdata.dr_sprank = $(data).element("dj_rank").numbers("rank");
+      pcdata.dr_sppoint = $(data).element("dj_rank").numbers("point");
+    } else if ($(data).attr("dj_rank").style == "1") {
+      pcdata.dr_dprank = $(data).element("dj_rank").numbers("rank");
+      pcdata.dr_dppoint = $(data).element("dj_rank").numbers("point");
+    }
+
+    if (!_.isNil($(data).element("extra_boss_event"))) {
+      pcdata.eb_bossorb0 = parseInt($(data).attr("extra_boss_event").orb_0);
+      pcdata.eb_bossorb1 = parseInt($(data).attr("extra_boss_event").orb_1);
+      pcdata.eb_bossorb2 = parseInt($(data).attr("extra_boss_event").orb_2);
+      pcdata.eb_bossorb3 = parseInt($(data).attr("extra_boss_event").orb_3);
+      pcdata.eb_bossorb4 = parseInt($(data).attr("extra_boss_event").orb_4);
+      pcdata.eb_bossorb5 = parseInt($(data).attr("extra_boss_event").orb_5);
+      pcdata.eb_bossorb6 = parseInt($(data).attr("extra_boss_event").orb_6);
+      pcdata.eb_bossorb7 = parseInt($(data).attr("extra_boss_event").orb_7);
+      pcdata.eb_bossorb8 = parseInt($(data).attr("extra_boss_event").orb_8);
+    }
+
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+    if (!_.isNil($(data).element("orb_data"))) {
+      pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
+      pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
+    }
+
+    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg) //
+
+    // TODO:: fix event saving, these event savings hasn't fully tested //
+    if (!_.isNil($(data).element("event1"))) {
+      pcdata.event_play_num += 1;
+
+      let event_data = {
+        fragment_num: parseInt($(data).attr("event1").fragment_num),
+        last_select_map_id: parseInt($(data).attr("event1").last_select_map_id),
+        read_tips_list: parseInt($(data).attr("event1").read_tips_list),
+        continuous_correct: parseInt($(data).attr("event1").continuous_correct),
+        bookshelf_release_num: parseInt($(data).attr("event1").bookshelf_release_num),
+        play_gift: parseInt($(data).attr("event1").play_gift),
+        quiz_control_list: $(data).element("event1").buffer("quiz_control_list").toString("base64"),
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event1_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+
+      $(data).element("event1").elements("map_data").forEach((res) => {
+        DB.Upsert(refid,
+          {
+            collection: "event_1_sub",
+            version: version,
+            event_name: "event1_data",
+            map_id: parseInt(res.attr().map_id),
+          },
+          {
+            $set: {
+              play_num: parseInt(res.attr().play_num),
+              last_select_route_id: parseInt(res.attr().last_select_route_id),
+              bookshelf_release_num: parseInt(res.attr().bookshelf_release_num),
+              is_clear: res.bool("is_clear"),
+              map_route_damage: res.buffer("map_route_damage").toString("base64"),
+            }
+          }
+        );
+      });
+
+      // skipping quiz_log as it doesn't display anywhere //
+    }
+
+    if (!_.isNil($(data).element("event2"))) {
+      let event_data = {
+        play_num: parseInt($(data).attr("event2").play_num),
+        last_select_floor: parseInt($(data).attr("event2").last_select_floor),
+        delabity: parseInt($(data).attr("event2").delabity),
+        tips_list: parseInt($(data).attr("event2").tips_list),
+        floor_clear_flg_list: parseInt($(data).attr("event2").floor_clear_flg_list),
+        floor_0_last_area: parseInt($(data).attr("event2").floor_0_last_area),
+        floor_1_last_area: parseInt($(data).attr("event2").floor_1_last_area),
+        floor_2_last_area: parseInt($(data).attr("event2").floor_2_last_area),
+        floor_3_last_area: parseInt($(data).attr("event2").floor_3_last_area),
+        floor_4_last_area: parseInt($(data).attr("event2").floor_4_last_area),
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event2_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+
+      $(data).element("event2").elements("area_data").forEach((res) => {
+        DB.Upsert(refid,
+          {
+            collection: "event_1_sub",
+            version: version,
+            event_name: "event2_data",
+            floor_id: parseInt(res.attr().floor_id),
+            area_id: parseInt(res.attr().area_id),
+          },
+          {
+            $set: {
+              last_select_note: parseInt(res.attr().last_select_note),
+              normal_play_num: parseInt(res.attr().normal_play_num),
+              hyper_play_num: parseInt(res.attr().hyper_play_num),
+              another_play_num: parseInt(res.attr().another_play_num),
+              area_clear_flg_list: parseInt(res.attr().area_clear_flg_list),
+              normal_grade_point: parseInt(res.attr().normal_grade_point),
+              hyper_grade_point: parseInt(res.attr().hyper_grade_point),
+              another_grade_point: parseInt(res.attr().another_grade_point),
+            }
+          }
+        );
+      });
+    }
+
+    if (!_.isNil($(data).element("anniv20_event"))) {
+      let event_data = {
+        damage_0: parseInt($(data).attr("anniv20_event").damage_0),
+        damage_1: parseInt($(data).attr("anniv20_event").damage_1),
+        damage_2: parseInt($(data).attr("anniv20_event").damage_2),
+        challenge_0: parseInt($(data).attr("anniv20_event").challenge_0),
+        challenge_1: parseInt($(data).attr("anniv20_event").challenge_1),
+        challenge_2: parseInt($(data).attr("anniv20_event").challenge_2)
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "anniv20_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
   }
   else if (version >= 27) {
     // lid bookkeep cid ctype ccode

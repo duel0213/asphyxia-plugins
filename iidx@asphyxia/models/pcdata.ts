@@ -212,6 +212,7 @@ export interface pcdata {
   eb_bossorb5: number;
   eb_bossorb6: number;
   eb_bossorb7: number;
+  eb_bossorb8: number;
 
   tourism_secret_flg1: string[];
   tourism_secret_flg2: string[];
@@ -930,6 +931,16 @@ export const IIDX26_pcdata = {
   deller: 0,
   orb: 0,
   present_orb: 0,
+
+  eb_bossorb0: 0,
+  eb_bossorb1: 0,
+  eb_bossorb2: 0,
+  eb_bossorb3: 0,
+  eb_bossorb4: 0,
+  eb_bossorb5: 0,
+  eb_bossorb6: 0,
+  eb_bossorb7: 0,
+  eb_bossorb8: 0,
 
   event_play_num: 0,
   event_last_select_id: -1,

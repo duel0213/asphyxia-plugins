@@ -374,7 +374,7 @@ export const musicappoint: EPR = async (info, data, send) => {
     if (!_.isNil(music_data)) my_gauge_data = Base64toBuffer(music_data[clid + 10]);
 
     if (!_.isNil(sdata)) {
-      if (_.isNil(other_musicdata.optArray)) { // temp //
+      if (_.isNil(other_musicdata.optArray)) { // migration //
         other_musicdata.optArray = Array<number>(10).fill(0);
         other_musicdata.opt2Array = Array<number>(10).fill(0);
       }
@@ -504,7 +504,7 @@ export const musicreg: EPR = async (info, data, send) => {
     mArray = music_data.mArray;
     cArray = music_data.cArray;
     esArray = music_data.esArray;
-    if (!_.isNil(music_data.optArray)) { // temp //
+    if (!_.isNil(music_data.optArray)) { // migration //
       optArray = music_data.optArray;
       opt2Array = music_data.opt2Array;
     }

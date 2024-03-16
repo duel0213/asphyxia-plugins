@@ -23,6 +23,8 @@ export interface custom {
   disable_hcn_color: boolean;
   first_note_preview: number;
 
+  skin_customize_flg: number[];
+
   // appendsettings
   rank_folder: boolean;
   clear_folder: boolean;
@@ -71,6 +73,8 @@ export const default_custom = {
   bomb_size: 0,
   disable_hcn_color: false,
   first_note_preview: 0,
+
+  skin_customize_flg: Array<number>(3).fill(-1),
 
   rank_folder: true,
   clear_folder: true,
