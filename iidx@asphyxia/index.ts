@@ -308,6 +308,33 @@ export function register() {
     default: 2,
   });
 
+  // SINOBUZ //
+  R.Config("sb_boss", {
+    name: "Event Phase (SB)",
+    desc: "攻城シノバズ伝 / 忍々七鍵伝",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("sb_event1", {
+    name: "攻城シノバズ伝",
+    desc: "攻城シノバズ伝 Phase",
+    type: "integer",
+    default: 2
+  });
+  R.Config("sb_event2", {
+    name: "忍々七鍵伝",
+    desc: "忍々七鍵伝 Phase",
+    type: "integer",
+    default: 3
+  });
+  R.Config("sb_extraboss",
+  {
+    name: "BUZRA ARTS",
+    desc: "BUZRA ARTS Phase",
+    type: "integer",
+    default: 5
+  });
+
   // Rootage //
   R.Config("rt_boss", {
     name: "Event Phase (RT)",

@@ -148,8 +148,21 @@ export const pccommon: EPR = async (info, data, send) => {
         bemani_summer2016: K.ATTR({ phase: String(U.GetConfig("cp_bemanisummer")) }),
       }
       break;
-    case 24: // asphyxia_route_public //
-    case 25:
+    case 24:
+      result = {
+        ...result,
+        boss: K.ATTR({ phase: String(U.GetConfig("sb_boss")) }),
+        extra_boss_event: K.ATTR({ phase: String(U.GetConfig("sb_extraboss")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        event1_phase: K.ATTR({ phase: String(U.GetConfig("sb_event1")) }),
+        event2_phase: K.ATTR({ phase: String(U.GetConfig("sb_event2")) }),
+        eaorder_phase: K.ATTR({ phase: String(2) }), // TODO:: figure out what this does //
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
+      }
+      break;
+    case 25:// asphyxia_route_public //
       result = {
         ...result,
         newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
@@ -647,6 +660,9 @@ export const pcget: EPR = async (info, data, send) => {
       pendual_talis = null,
       open_tokotoko = null,
       mystery_line = null,
+      siege_sinobuz = null,
+      siege_sinobuz_sub = null,
+      ninja_shichikyoden = null,
       mirage_lib = null,
       mirage_lib_sub = [],
       delabity_lab = null,
@@ -680,6 +696,34 @@ export const pcget: EPR = async (info, data, send) => {
       boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
       if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
     }
+    else if (version == 24) {
+      siege_sinobuz = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+      siege_sinobuz_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+      siege_sinobuz_sub.forEach((res) => {
+        res.is_clear = Number(res.is_clear);
+        res.ninjyutsu = Base64toBuffer(res.ninjyutsu).toString("hex");
+        res.card_damage = Base64toBuffer(res.card_damage).toString("hex");
+        res.card_clear = Base64toBuffer(res.card_clear).toString("hex");
+      });
+
+      ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+      if (!_.isNil(ninja_shichikyoden.last_select_dojo))
+        ninja_shichikyoden.last_select_dojo = Base64toBuffer(ninja_shichikyoden.last_select_dojo).toString("hex");
+      if (!_.isNil(ninja_shichikyoden.enemy_damage))
+        ninja_shichikyoden.enemy_damage = Base64toBuffer(ninja_shichikyoden.enemy_damage).toString("hex");
+    }
+    else if (version == 26) {
+      mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+      if (!_.isNil(mirage_lib.quiz_control_list))
+        mirage_lib.quiz_control_list = Base64toBuffer(mirage_lib.quiz_control_list).toString("hex");
+      mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+      mirage_lib_sub.forEach((res) => {
+        res.map_route_damage = Base64toBuffer(res.map_route_damage).toString("hex");
+      });
+
+      delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+      delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+    }
     else {
       event_1 = await DB.Find(refid, { collection: "event_1", version: version });
       event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
@@ -697,48 +741,11 @@ export const pcget: EPR = async (info, data, send) => {
       }
     }
 
-    if (version == 21 || version == 22 || version == 23 || version == 26) {
-      if (!_.isNil(pcdata.sp_mlist)) {
-        pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
-        pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
-        pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
-        pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
-      }
-    }
-
-    if (version == 26) { // migration //
-      if (_.isNil(pcdata.eb_bossorb0)) {
-        pcdata.eb_bossorb0 = 0;
-        pcdata.eb_bossorb1 = 0;
-        pcdata.eb_bossorb2 = 0;
-        pcdata.eb_bossorb3 = 0;
-        pcdata.eb_bossorb4 = 0;
-        pcdata.eb_bossorb5 = 0;
-        pcdata.eb_bossorb6 = 0;
-        pcdata.eb_bossorb7 = 0;
-        pcdata.eb_bossorb8 = 0;
-
-        await DB.Upsert<pcdata>(
-          refid,
-          {
-            collection: "pcdata",
-            version: version,
-          },
-          {
-            $set: pcdata,
-          }
-        );
-      }
-
-      mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      if (!_.isNil(mirage_lib.quiz_control_list)) mirage_lib.quiz_control_list = Base64toBuffer(mirage_lib.quiz_control_list).toString("hex");
-      mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
-      mirage_lib_sub.forEach((res) => {
-        res.map_route_damage = Base64toBuffer(res.map_route_damage).toString("hex");
-      });
-
-      delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-      delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+    if (!_.isNil(pcdata.sp_mlist)) {
+      pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
+      pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
+      pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
+      pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
     }
 
     if (version >= 30 && lm_music_memo_new.length > 0) {
@@ -829,6 +836,50 @@ export const pcget: EPR = async (info, data, send) => {
       }
     }
 
+    if (version == 24) { // migration //
+      if (_.isNil(pcdata.dr_sprank)) {
+        pcdata.dr_sprank = Array<number>(15).fill(0);
+        pcdata.dr_sppoint = Array<number>(15).fill(0);
+        pcdata.dr_dprank = Array<number>(15).fill(0);
+        pcdata.dr_dppoint = Array<number>(15).fill(0);
+
+        await DB.Upsert<pcdata>(
+          refid,
+          {
+            collection: "pcdata",
+            version: version,
+          },
+          {
+            $set: pcdata,
+          }
+        );
+      }
+    }
+    if (version == 26) { // migration //
+      if (_.isNil(pcdata.eb_bossorb0)) {
+        pcdata.eb_bossorb0 = 0;
+        pcdata.eb_bossorb1 = 0;
+        pcdata.eb_bossorb2 = 0;
+        pcdata.eb_bossorb3 = 0;
+        pcdata.eb_bossorb4 = 0;
+        pcdata.eb_bossorb5 = 0;
+        pcdata.eb_bossorb6 = 0;
+        pcdata.eb_bossorb7 = 0;
+        pcdata.eb_bossorb8 = 0;
+
+        await DB.Upsert<pcdata>(
+          refid,
+          {
+            collection: "pcdata",
+            version: version,
+          },
+          {
+            $set: pcdata,
+          }
+        );
+      }
+    }
+
     return send.pugFile(`pug/LDJ/${version}pcget.pug`, {
       profile,
       pcdata,
@@ -851,6 +902,9 @@ export const pcget: EPR = async (info, data, send) => {
       pendual_talis,
       open_tokotoko,
       mystery_line,
+      siege_sinobuz,
+      siege_sinobuz_sub,
+      ninja_shichikyoden,
       mirage_lib,
       mirage_lib_sub,
       delabity_lab,
@@ -2268,7 +2322,136 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.d_liflen = parseInt($(data).attr().d_lift);
     }
 
+    if (!_.isNil($(data).element("secret"))) {
+      pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
+      pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
+      pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
+    }
+
+    if (!_.isNil($(data).element("favorite"))) {
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+    }
+
+    if (!_.isNil($(data).element("qpro_secret"))) {
+      custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
+      custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
+      custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
+      custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
+      custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+    }
+
+    if (!_.isNil($(data).element("qpro_equip"))) {
+      custom.qpro_head = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
+      custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
+      custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+    }
+
+    if (hasStepUpData) {
+      pcdata.st_enemy_damage = parseInt($(data).attr("step").enemy_damage);
+      pcdata.st_progress = parseInt($(data).attr("step").progress);
+      pcdata.st_enemy_defeat_flg = parseInt($(data).attr("step").enemy_defeat_flg);
+      pcdata.st_sp_level = parseInt($(data).attr("step").sp_level);
+      pcdata.st_dp_level = parseInt($(data).attr("step").dp_level);
+      pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
+      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
+    }
+
+    if (!_.isNil($(data).element("achievements"))) {
+      // TODO:: achi_packflg, achi_packid, achi_playpack //
+      pcdata.achi_lastweekly = parseInt($(data).attr("achievements").last_weekly);
+      pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
+      pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
+      pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
+      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+    }
+
+    if ($(data).attr("ninja_rank.1").style == "1") {
+      pcdata.dr_sprank = $(data).element("ninja_rank").numbers("rank");
+      pcdata.dr_sppoint = $(data).element("ninja_rank").numbers("point");
+      pcdata.dr_dprank = $(data).element("ninja_rank.1").numbers("rank");
+      pcdata.dr_dppoint = $(data).element("ninja_rank.1").numbers("point");
+    } else if ($(data).attr("ninja_rank").style == "0") {
+      pcdata.dr_sprank = $(data).element("ninja_rank").numbers("rank");
+      pcdata.dr_sppoint = $(data).element("ninja_rank").numbers("point");
+    } else if ($(data).attr("ninja_rank").style == "1") {
+      pcdata.dr_dprank = $(data).element("ninja_rank").numbers("rank");
+      pcdata.dr_dppoint = $(data).element("ninja_rank").numbers("point");
+    }
+
+    // TODO:: fix event saving, these event savings hasn't fully tested //
+    if (!_.isNil($(data).element("event1"))) {
+      let event_data = {
+        last_select_map: parseInt($(data).attr("event1").last_select_map),
+        hold_rice: parseInt($(data).attr("event1").hold_rice),
+        tax_rice: parseInt($(data).attr("event1").tax_rice),
+        tipls_read: parseInt($(data).attr("event1").tipls_read),
+        play_gift: parseInt($(data).attr("event1").play_gift)
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event1_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+
+      $(data).element("event1").elements("map_data").forEach((res) => {
+        DB.Upsert(refid,
+          {
+            collection: "event_1_sub",
+            version: version,
+            event_name: "event1_data",
+            map_id: parseInt(res.attr().map_id),
+          },
+          {
+            $set: {
+              play_num: parseInt(res.attr().play_num),
+              progress: parseInt(res.attr().progress),
+              battle_point: parseInt(res.attr().battle_point),
+              rice_point: parseInt(res.attr().rice_point),
+              is_clear: res.bool("is_clear"),
+              ninjyutsu: res.buffer("ninjyutsu").toString("base64"),
+              card_damage: res.buffer("card_damage").toString("base64"),
+              card_clear: res.buffer("card_clear").toString("base64"),
+            }
+          }
+        );
+      });
+    }
+
+    if (!_.isNil($(data).element("event2"))) {
+      let event_data = {
+        play_num: parseInt($(data).attr("event2").play_num),
+        chakra_point: parseInt($(data).attr("event2").chakra_point),
+        last_select_ryuha: parseInt($(data).attr("event2").last_select_ryuha),
+        last_select_dojo: $(data).element("event2").buffer("last_select_dojo").toString("base64"),
+        enemy_damage: $(data).element("event2").buffer("enemy_damage").toString("base64"),
+      };
+
+      await DB.Upsert(refid,
+        {
+          collection: "event_1",
+          version: version,
+          event_name: "event2_data",
+        },
+        {
+          $set: event_data,
+        }
+      );
+    }
+    // onemore //
+
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
+    if (!_.isNil($(data).element("orb_data"))) pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
   }
   else if (version == 25) {
     pcdata.sach = parseInt($(data).attr().s_achi);

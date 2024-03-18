@@ -717,6 +717,11 @@ export const IIDX24_pcdata = {
   sgid: -1,
   dgid: -1,
 
+  dr_sprank: Array<number>(15).fill(0),
+  dr_sppoint: Array<number>(15).fill(0),
+  dr_dprank: Array<number>(15).fill(0),
+  dr_dppoint: Array<number>(15).fill(0),
+
   event_play_num: 0,
   event_last_select_id: -1,
   event2_play_num: 0,
