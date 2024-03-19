@@ -661,10 +661,12 @@ export const pcget: EPR = async (info, data, send) => {
       boss1 = null,
       chrono_diver = null,
       qpronicle_chord = null,
+      qpronicle_chord_sub = [],
       qpronicle_phase3 = null,
       pendual_talis = null,
       open_tokotoko = null,
       mystery_line = null,
+      mystery_line_sub = [],
       siege_sinobuz = null,
       siege_sinobuz_sub = [],
       ninja_shichikyoden = null,
@@ -678,11 +680,14 @@ export const pcget: EPR = async (info, data, send) => {
       event_1s = null,
       evtArray = [], evtArray2 = [];
 
-    if (version == 23) {
-      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
+    if (version == 21) {
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
 
-      open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+      link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+      tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+
+      boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
+      if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
     }
     else if (version == 22) {
       if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
@@ -692,16 +697,15 @@ export const pcget: EPR = async (info, data, send) => {
       if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
 
       qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
+      qpronicle_chord_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "qpronicle_chord" });
       qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
     }
-    else if (version == 21) {
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+    else if (version == 23) {
+      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
 
-      link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-      tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
-
-      boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-      if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
+      open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+      mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+      mystery_line_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
     }
     else if (version == 24) {
       siege_sinobuz = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
@@ -730,6 +734,7 @@ export const pcget: EPR = async (info, data, send) => {
       mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
       if (!_.isNil(mirage_lib.quiz_control_list))
         mirage_lib.quiz_control_list = Base64toBuffer(mirage_lib.quiz_control_list).toString("hex");
+
       mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
       mirage_lib_sub.forEach((res) => {
         res.map_route_damage = Base64toBuffer(res.map_route_damage).toString("hex");
@@ -912,10 +917,12 @@ export const pcget: EPR = async (info, data, send) => {
       tricolettepark,
       chrono_diver,
       qpronicle_chord,
+      qpronicle_chord_sub,
       qpronicle_phase3,
       pendual_talis,
       open_tokotoko,
       mystery_line,
+      mystery_line_sub,
       siege_sinobuz,
       siege_sinobuz_sub,
       ninja_shichikyoden,
@@ -1553,7 +1560,7 @@ export const pcsave: EPR = async (info, data, send) => {
         event_data = tricolettepark;
 
         event_data.open_music = parseInt($(data).attr("tricolettepark").open_music),
-          event_data.boss0_damage += parseInt($(data).attr("tricolettepark").boss0_damage);
+        event_data.boss0_damage += parseInt($(data).attr("tricolettepark").boss0_damage);
         event_data.boss1_damage += parseInt($(data).attr("tricolettepark").boss1_damage);
         event_data.boss2_damage += parseInt($(data).attr("tricolettepark").boss2_damage);
         event_data.boss3_damage += parseInt($(data).attr("tricolettepark").boss3_damage);
@@ -1695,6 +1702,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
     pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
     pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
     pcdata.s_notes = parseFloat($(data).attr().s_notes);
     pcdata.d_notes = parseFloat($(data).attr().d_notes);
     pcdata.s_judge = parseInt($(data).attr().s_judge);
@@ -1954,6 +1963,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
     pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
     pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
     pcdata.s_notes = parseFloat($(data).attr().s_notes);
     pcdata.d_notes = parseFloat($(data).attr().d_notes);
     pcdata.s_judge = parseInt($(data).attr().s_judge);
@@ -2079,8 +2090,6 @@ export const pcsave: EPR = async (info, data, send) => {
         rare_enemy_damage5: parseInt($(data).attr("qpronicle_chord").rare_enemy_damage5),
       };
 
-      // TODO:: patona_data //
-
       await DB.Upsert(refid,
         {
           collection: "event_1",
@@ -2091,6 +2100,26 @@ export const pcsave: EPR = async (info, data, send) => {
           $set: event_data,
         }
       );
+
+      // TODO:: verify //
+      $(data).element("qpronicle_chord").elements("patona_data").forEach((res) => {
+        DB.Upsert(refid,
+          {
+            collection: "event_1_sub",
+            version: version,
+            event_name: "qpronicle_chord",
+            patona_id: parseInt(res.attr().patona_id),
+          },
+          {
+            $set: {
+              level: parseInt(res.attr().level),
+              exp: parseInt(res.attr().exp),
+              affection: parseInt(res.attr().affection),
+              dissatisfaction: parseInt(res.attr().dissatisfaction),
+            }
+          }
+        );
+      });
     }
 
     if (!_.isNil($(data).element("qpronicle_phase3"))) {
@@ -2144,6 +2173,8 @@ export const pcsave: EPR = async (info, data, send) => {
         }
       );
     }
+
+    // chaser //
   }
   else if (version == 23) {
     pcdata.rtype = parseInt($(data).attr().rtype);
@@ -2169,6 +2200,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
     pcdata.s_notes = parseFloat($(data).attr().s_notes);
     pcdata.d_notes = parseFloat($(data).attr().d_notes);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
     pcdata.s_judge = parseInt($(data).attr().s_judge);
     pcdata.d_judge = parseInt($(data).attr().d_judge);
     pcdata.s_judgeAdj = parseInt($(data).attr().s_judgeAdj);
@@ -2275,8 +2308,6 @@ export const pcsave: EPR = async (info, data, send) => {
         stop_area_time: parseInt($(data).attr("event2_data").stop_area_time),
       };
 
-      // TODO:: event2_area_data //
-
       await DB.Upsert(refid,
         {
           collection: "event_1",
@@ -2287,6 +2318,26 @@ export const pcsave: EPR = async (info, data, send) => {
           $set: event_data,
         }
       );
+
+      // TODO:: verify //
+      $(data).element("event2_data").elements("event2_area_data").forEach((res) => {
+        DB.Upsert(refid,
+          {
+            collection: "event_1_sub",
+            version: version,
+            event_name: "event2_data",
+            area_no: parseInt(res.attr().area_no),
+          },
+          {
+            $set: {
+              area_play_num: parseInt(res.attr().area_play_num),
+              normal_point: parseInt(res.attr().normal_point),
+              hyper_point: parseInt(res.attr().hyper_point),
+              another_point: parseInt(res.attr().another_point),
+            }
+          }
+        );
+      });
     }
   }
   else if (version == 24) {
@@ -2664,6 +2715,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
     pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
     pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
     pcdata.s_notes = parseFloat($(data).attr().s_notes);
     pcdata.d_notes = parseFloat($(data).attr().d_notes);
     pcdata.s_judge = parseInt($(data).attr().s_judge);
@@ -2932,6 +2985,8 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_sdlen = parseInt($(data).attr().d_sdlen);
     pcdata.s_sdtype = parseInt($(data).attr().s_sdtype);
     pcdata.d_sdtype = parseInt($(data).attr().d_sdtype);
+    pcdata.s_timing = parseInt($(data).attr().s_timing);
+    pcdata.d_timing = parseInt($(data).attr().d_timing);
     pcdata.s_notes = parseFloat($(data).attr().s_notes);
     pcdata.d_notes = parseFloat($(data).attr().d_notes);
     pcdata.s_judge = parseInt($(data).attr().s_judge);

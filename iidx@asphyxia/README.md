@@ -129,3 +129,4 @@ Changelogs
   - Added Experimental OMEGA-Attack event saving support on tricoro
   - Reworked on SINOBUZ ~ Rootage responses
   - Fixed where Base64toBuffer returns invalid value sometimes
+  - Fixed where timing display option isn't saving on certain versions
