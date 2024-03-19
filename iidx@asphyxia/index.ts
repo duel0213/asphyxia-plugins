@@ -301,6 +301,13 @@ export function register() {
     type: "integer",
     default: 2,
   });
+  R.Config("cp_extraboss",
+  {
+    name: "Extra Boss Phase (CP)",
+    desc: "Extra Boss Phase",
+    type: "integer",
+    default: 30,
+  });
   R.Config("cp_bemanisummer", {
     name: "BEMANI Summer 2016",
     desc: "NEW Generation 夏の流星フェスタ2016 Phase",
@@ -319,20 +326,41 @@ export function register() {
     name: "攻城シノバズ伝",
     desc: "攻城シノバズ伝 Phase",
     type: "integer",
-    default: 2
+    default: 2,
   });
   R.Config("sb_event2", {
     name: "忍々七鍵伝",
     desc: "忍々七鍵伝 Phase",
     type: "integer",
-    default: 3
+    default: 2,
   });
   R.Config("sb_extraboss",
   {
     name: "BUZRA ARTS",
     desc: "BUZRA ARTS Phase",
     type: "integer",
-    default: 5
+    default: 35,
+  });
+
+  // CANNON BALLERS //
+  R.Config("cb_boss", {
+    name: "Event Phase (SB)",
+    desc: "激走！キャノンレーサー",
+    type: "integer",
+    default: 1,
+  });
+  R.Config("cb_event1", {
+    name: "激走！キャノンレーサー",
+    desc: "激走！キャノンレーサー Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("cb_extraboss",
+  {
+    name: "IIDX AIR RACE",
+    desc: "IIDX AIR RACE Phase",
+    type: "integer",
+    default: 35,
   });
 
   // Rootage //
@@ -346,20 +374,20 @@ export function register() {
     name: "蜃気楼の図書館",
     desc: "蜃気楼の図書館 Phase",
     type: "integer",
-    default: 3
+    default: 3,
   });
   R.Config("rt_event2", {
     name: "DELABITY LABORATORY",
     desc: "DELABITY LABORATORY Phase",
     type: "integer",
-    default: 2
+    default: 2,
   });
   R.Config("rt_extraboss",
   {
     name: "ARC SCORE",
     desc: "ARC SCORE Phase",
     type: "integer",
-    default: 3
+    default: 3,
   });
 
   // HEROIC VERSE //
@@ -373,14 +401,14 @@ export function register() {
     name: "HEROIC WORKOUT!!",
     desc: "HEROIC WORKOUT!! Phase",
     type: "integer",
-    default: 4
+    default: 4,
   });
   R.Config("hv_extraboss",
   {
     name: "SHADOW REBELLION",
     desc: "SHADOW REBELLION Phase",
     type: "integer",
-    default: 1
+    default: 1,
   });
 
   // BISTROVER //
@@ -388,19 +416,19 @@ export function register() {
     name: "Event Phase (BO)",
     desc: "召しませ！BISTROVER",
     type: "integer",
-    default: 1
+    default: 1,
   });
   R.Config("bo_extraboss", {
     name: "BISTRO LANDING",
     desc: "BISTRO LANDING Phase",
     type: "integer",
-    default: 1
+    default: 1,
   });
   R.Config("bo_event", {
     name: "召しませ！BISTROVER",
     desc: "召しませ！BISTROVER Phase",
     type: "integer",
-    default: 1
+    default: 1,
   });
 
   // CastHour //

@@ -139,7 +139,7 @@ export interface pcdata {
   st_stamp: any;
   st_help: any; // save as base64 string, sent as buffer //
 
-  st_damage: number; // spada //
+  st_damage: number; // SPADA //
   st_defeat: number;
   st_round: number;
   st_sp_mission: number;
@@ -161,6 +161,8 @@ export interface pcdata {
   st_station_play: number;
   st_mission_gauge: number;
   st_tokimeki: any;
+
+  st_point: number; // Cannon Ballers //
 
   st_enemy_damage: number; // Heroic Verse //
   st_progress: number;

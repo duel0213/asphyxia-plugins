@@ -1,10 +1,30 @@
 IIDX25pc(status="0")
   pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach mode=pcdata.mode pmode=pcdata.pmode rtype=pcdata.rtype sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 gpos=pcdata.gpos s_sorttype=pcdata.s_sorttype d_sorttype=pcdata.d_sorttype s_pace=pcdata.s_pace d_pace=pcdata.d_pace s_gno=pcdata.s_gno d_gno=pcdata.d_gno s_gtype=pcdata.s_gtype d_gtype=pcdata.d_gtype s_sdlen=pcdata.s_sdlen d_sdlen=pcdata.d_sdlen s_sdtype=pcdata.s_sdtype d_sdtype=pcdata.d_sdtype s_timing=pcdata.s_timing d_timing=pcdata.d_timing s_notes=pcdata.s_notes d_notes=pcdata.d_notes s_judge=pcdata.s_judge d_judge=pcdata.d_judge s_judgeAdj=pcdata.s_judgeAdj d_judgeAdj=pcdata.d_judgeAdj s_hispeed=pcdata.s_hispeed d_hispeed=pcdata.d_hispeed s_liflen=pcdata.s_liflen d_liflen=pcdata.d_liflen s_disp_judge=pcdata.s_disp_judge d_disp_judge=pcdata.d_disp_judge s_opstyle=pcdata.s_opstyle d_opstyle=pcdata.d_opstyle s_exscore=pcdata.s_exscore d_exscore=pcdata.d_exscore s_graph_score=pcdata.s_graph_score d_graph_score=pcdata.d_graph_score s_auto_scrach=pcdata.s_auto_scrach d_auto_scrach=pcdata.d_auto_scrach s_gauge_disp=pcdata.s_gauge_disp d_gauge_disp=pcdata.d_gauge_disp s_lane_brignt=pcdata.s_lane_brignt d_lane_brignt=pcdata.d_lane_brignt s_camera_layout=pcdata.s_camera_layout d_camera_layout=pcdata.d_camera_layout)
-  join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
+  spdp_rival(flg="0")
+  bind_eaappli
+  ea_premium_course
+  leggendaria_open
+  secret
+    flg1(__type="s64" __count="3") -1 -1 -1
+    flg2(__type="s64" __count="3") -1 -1 -1
+    flg3(__type="s64" __count="3") -1 -1 -1
+  if pcdata.sp_mlist != null
+    favorite
+      sp_mlist(__type="bin") #{pcdata.sp_mlist}
+      sp_clist(__type="bin") #{pcdata.sp_clist}
+      dp_mlist(__type="bin") #{pcdata.dp_mlist}
+      dp_clist(__type="bin") #{pcdata.dp_clist}
+  qpro_secret
+    head(__type="s64" __count="4") -1 -1 -1 -1
+    hair(__type="s64" __count="4") -1 -1 -1 -1
+    face(__type="s64" __count="4") -1 -1 -1 -1
+    body(__type="s64" __count="4") -1 -1 -1 -1 
+    hand(__type="s64" __count="4") -1 -1 -1 -1
   grade(sgid=pcdata.sgid dgid=pcdata.dgid)
     - for (let d of dArray)
       g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
-  deller(deller=pcdata.deller rate="1")
+  skin(__type="s16" __count="14") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} 0 #{custom.disable_musicpreview} 0 0
+  qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
   rlist
     - for (let rd of rArray)
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
@@ -12,64 +32,33 @@ IIDX25pc(status="0")
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1])
         shop(name=shop_data.opname)
         is_robo(__type="bool") 0
-  ir_data
-  secret_course_data
-  secret
-    flg1(__type="s64" __count="3") -1 -1 -1
-    flg2(__type="s64" __count="3") -1 -1 -1
-    flg3(__type="s64" __count="3") -1 -1 -1
-    flg4(__type="s64" __count="3") -1 -1 -1
-  expert_point
-  classic_course_data
-  qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
-  dj_rank_ranking(style="0")
-    detail(bronze_point="0" bronze_rank="0" category="0" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="1" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="2" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="3" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="4" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="5" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="6" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="7" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="8" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="9" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="10" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="11" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="12" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="13" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="14" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-  dj_rank_ranking(style="1")
-    detail(bronze_point="0" bronze_rank="0" category="0" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="1" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="2" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="3" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="4" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="5" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="6" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="7" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="8" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="9" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="10" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="11" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="12" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="13" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
-    detail(bronze_point="0" bronze_rank="0" category="14" gold_point="0" gold_rank="0" platinum_point="0" platinum_rank="0" rank="0" silver_point="0" silver_rank="0" total_user="0" white_point="0" white_rank="0")
+  dj_rank(style="0")
+    rank(__type="s32" __count="15") #{pcdata.dr_sprank[0]} #{pcdata.dr_sprank[1]} #{pcdata.dr_sprank[2]} #{pcdata.dr_sprank[3]} #{pcdata.dr_sprank[4]} #{pcdata.dr_sprank[5]} #{pcdata.dr_sprank[6]} #{pcdata.dr_sprank[7]} #{pcdata.dr_sprank[8]} #{pcdata.dr_sprank[9]} #{pcdata.dr_sprank[10]} #{pcdata.dr_sprank[11]} #{pcdata.dr_sprank[12]} #{pcdata.dr_sprank[13]} #{pcdata.dr_sprank[14]}
+    point(__type="s32" __count="15") #{pcdata.dr_sppoint[0]} #{pcdata.dr_sppoint[1]} #{pcdata.dr_sppoint[2]} #{pcdata.dr_sppoint[3]} #{pcdata.dr_sppoint[4]} #{pcdata.dr_sppoint[5]} #{pcdata.dr_sppoint[6]} #{pcdata.dr_sppoint[7]} #{pcdata.dr_sppoint[8]} #{pcdata.dr_sppoint[9]} #{pcdata.dr_sppoint[10]} #{pcdata.dr_sppoint[11]} #{pcdata.dr_sppoint[12]} #{pcdata.dr_sppoint[13]} #{pcdata.dr_sppoint[14]}
+  dj_rank(style="1")
+    rank(__type="s32" __count="15") #{pcdata.dr_dprank[0]} #{pcdata.dr_dprank[1]} #{pcdata.dr_dprank[2]} #{pcdata.dr_dprank[3]} #{pcdata.dr_dprank[4]} #{pcdata.dr_dprank[5]} #{pcdata.dr_dprank[6]} #{pcdata.dr_dprank[7]} #{pcdata.dr_dprank[8]} #{pcdata.dr_dprank[9]} #{pcdata.dr_dprank[10]} #{pcdata.dr_dprank[11]} #{pcdata.dr_dprank[12]} #{pcdata.dr_dprank[13]} #{pcdata.dr_dprank[14]}
+    point(__type="s32" __count="15") #{pcdata.dr_dppoint[0]} #{pcdata.dr_dppoint[1]} #{pcdata.dr_dppoint[2]} #{pcdata.dr_dppoint[3]} #{pcdata.dr_dppoint[4]} #{pcdata.dr_dppoint[5]} #{pcdata.dr_dppoint[6]} #{pcdata.dr_dppoint[7]} #{pcdata.dr_dppoint[8]} #{pcdata.dr_dppoint[9]} #{pcdata.dr_dppoint[10]} #{pcdata.dr_dppoint[11]} #{pcdata.dr_dppoint[12]} #{pcdata.dr_dppoint[13]} #{pcdata.dr_dppoint[14]}
+  //-onemore_event(defeat_0-5 channelge_num_1-3_n-a)
+  join_shop(joinflg="1" join_cflg="1" join_id="ea" join_name=shop_data.opname)
+  visitor(anum="10" snum="10" pnum="10" vs_flg="1")
+  step(enemy_damage=pcdata.st_enemy_damage progress=pcdata.st_progress point=pcdata.st_point enemy_defeat_flg=pcdata.st_enemy_defeat_flg sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay)
+  achievements(pack=pcdata.achi_pack pack_comp=pcdata.achi_packcomp last_weekly=pcdata.achi_lastweekly weekly_num=pcdata.achi_weeklynum visit_flg=pcdata.achi_visitflg rival_crush=pcdata.achi_rivalcrush)
+    trophy(__type="s64" __count="10") #{pcdata.achi_trophy[0]} #{pcdata.achi_trophy[1]} #{pcdata.achi_trophy[2]} #{pcdata.achi_trophy[3]} #{pcdata.achi_trophy[4]} #{pcdata.achi_trophy[5]} #{pcdata.achi_trophy[6]} #{pcdata.achi_trophy[7]} #{pcdata.achi_trophy[8]} #{pcdata.achi_trophy[9]}
+  deller(deller=pcdata.deller rate="1")
+  orb_data(rest_orb=pcdata.orb)
+  pay_per_use(item_num="5")
+  present_pay_per_use(item_num="5")
+  old_linkage_secret_flg(floor_infection="-1" link_track="-1")
+  nostalgia_open
+  leggendaria_semi_open(flg="-1")
+  konami_stytle(skip_flg="0")
+  if rush_cannonracer != null
+    event1(tuneup_point=rush_cannonracer.tuneup_point body_parts_list=rush_cannonracer.body_parts_list engine_parts_list=rush_cannonracer.engine_parts_list tire_parts_list=rush_cannonracer.tire_parts_list body_equip_parts=rush_cannonracer.body_equip_parts engine_equip_parts=rush_cannonracer.engine_equip_parts tire_equip_parts=rush_cannonracer.tire_equip_parts gift_point="0")
+      - for (let evt of rush_cannonracer_sub)
+        map_data(map_id=evt.map_id play_num=evt.play_num progress=evt.progress boost_fuel=evt.boost_fuel is_clear=evt.is_clear rare1_appearance=evt.rare1_appearance rare2_appearance=evt.rare2_appearance rare3_appearance=evt.rare3_appearance rare4_appearance=evt.rare4_appearance rare5_appearance=evt.rare5_appearance rare6_appearance=evt.rare6_appearance rare_defeat_list=evt.rare_defeat_list)
   arena_data(play_num="2" play_num_dp="1" play_num_sp="1")
     achieve_data(arena_class="20" best_top_class_continuing="0" now_top_class_continuing="0" play_style="0" rating_value="20")
     achieve_data(arena_class="20" best_top_class_continuing="0" now_top_class_continuing="0" play_style="1" rating_value="20")
     cube_data(cube="0" season_id="0")
-    chat_data(chat_type_0="CHAT CUSTOM 1" chat_type_1="CHAT CUSTOM 2" chat_type_2="CHAT CUSTOM 3" chat_type_3="CHAT CUSTOM 4")
-      is_chat_0(__type="bool") 1
-      is_chat_1(__type="bool") 1
-      is_chat_2(__type="bool") 1
-      is_chat_3(__type="bool") 1
-  ea_premium_course
-  bind_eaappli
-  leggendaria_open
-  pay_per_use(item_num="99")
-  skin(__type="s16" __count="14") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} 0 #{custom.disable_musicpreview} 0 0
-  nostalgia_open
-  floor_infection(music_list="3")
-  qma_collabo(music_list="7")
-  old_linkage_secret_flg(floor_infection="-1" link_track="-1")
-  event1_rival_car(body="0" face="0" hair="0" hand="0" head="0" iidx_id="00000000" name="ASYX")
+  floor_infection(music_list="-1")
+  qma_collabo(music_list="-1")
