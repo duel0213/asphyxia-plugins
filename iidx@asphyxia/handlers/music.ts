@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toBuffer, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid } from "../util";
+import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64 } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -317,9 +317,9 @@ export const musicappoint: EPR = async (info, data, send) => {
         option2 = music_data.opt2Array[clid];
       }
 
-      mydata = Base64toBuffer(music_data[clid]);
+      mydata = Base64toNumArray(music_data[clid]);
     }
-    else mydata = K.ITEM("bin", Base64toBuffer(music_data[clid]));
+    else mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
   }
 
   /*** ctype
@@ -354,7 +354,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         });
         if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
-        sdata = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
+        sdata = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
           score: String(other_musicdata.esArray[clid]),
           pid: String(other_profile[1]),
           name: String(other_profile[0]),
@@ -371,7 +371,7 @@ export const musicappoint: EPR = async (info, data, send) => {
 
   if (version >= 27) {
     let my_gauge_data = null;
-    if (!_.isNil(music_data)) my_gauge_data = Base64toBuffer(music_data[clid + 10]);
+    if (!_.isNil(music_data)) my_gauge_data = Base64toNumArray(music_data[clid + 10]);
 
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // migration //
@@ -379,7 +379,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         other_musicdata.opt2Array = Array<number>(10).fill(0);
       }
 
-      let other_data = K.ITEM("bin", Base64toBuffer(other_musicdata[clid]), {
+      let other_data = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
         score: String(other_musicdata.esArray[clid]),
         achieve: String(other_pcdata[ClidToPlaySide(clid) + 2]),
         pid: String(other_profile[1]),
@@ -391,7 +391,7 @@ export const musicappoint: EPR = async (info, data, send) => {
 
       sdata = {
         ...other_data,
-        gauge_data: K.ITEM("bin", Base64toBuffer(other_musicdata[clid + 10]))
+        gauge_data: K.ITEM("bin", Base64toNumArray(other_musicdata[clid + 10]))
       };
 
       if (_.isNil(sdata) && !_.isNil(mydata)) {
@@ -468,6 +468,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let gArray = Array<number>(10).fill(0); // GREAT //
   let mArray = Array<number>(10).fill(0); // MISS //
   let cArray = Array<number>(10).fill(0); // CLEAR FLAGS //
+  let rArray = Array<number>(10).fill(0); // RANK ID //
   let esArray = Array<number>(10).fill(0); // EXSCORE //
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
@@ -477,8 +478,10 @@ export const musicreg: EPR = async (info, data, send) => {
   else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
-  if (version == 15) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  if (version == 15) ghost = HextoBase64($(data).str("ghost"));
   else ghost = $(data).buffer("ghost").toString("base64");
+
+  console.log(ghost);
   
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
@@ -495,6 +498,7 @@ export const musicreg: EPR = async (info, data, send) => {
     gArray[clid] = gnum;
     mArray[clid] = mnum;
     cArray[clid] = cflg;
+    rArray[clid] = rid;
     esArray[clid] = exscore;
     optArray[clid] = option;
     opt2Array[clid] = option_2;
@@ -508,12 +512,16 @@ export const musicreg: EPR = async (info, data, send) => {
       optArray = music_data.optArray;
       opt2Array = music_data.opt2Array;
     }
+    if (!_.isNil(music_data.rArray)) {
+      rArray = music_data.rArray;
+    }
 
     const pExscore = esArray[clid];
     if (exscore > pExscore) {
       pgArray[clid] = pgnum;
       gArray[clid] = gnum;
       mArray[clid] = mnum;
+      rArray[clid] = rid;
       esArray[clid] = exscore;
       optArray[clid] = option;
       opt2Array[clid] = option_2;
@@ -589,6 +597,7 @@ export const musicreg: EPR = async (info, data, send) => {
         gArray,
         mArray,
         cArray,
+        rArray,
         esArray,
         optArray,
         opt2Array,

@@ -1,7 +1,7 @@
 import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, Base64toBuffer, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString } from "../util";
+import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_playdata, lm_settings, lm_settings_new, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
@@ -593,9 +593,9 @@ export const pcget: EPR = async (info, data, send) => {
 
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
     if (!_.isNil(event)) {
-      event.cf = Base64toBuffer(event.cf).toString("hex");
-      event.pf = Base64toBuffer(event.pf).toString("hex");
-      event.mf = Base64toBuffer(event.mf).toString("hex");
+      event.cf = NumArraytoHex(Base64toNumArray(event.cf));
+      event.pf = NumArraytoHex(Base64toNumArray(event.pf));
+      event.mf = NumArraytoHex(Base64toNumArray(event.mf));
     }
 
     return send.pugFile("pug/JDZ/pcget.pug", {
@@ -612,9 +612,9 @@ export const pcget: EPR = async (info, data, send) => {
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
 
     if (!_.isNil(event)) {
-      event.cf = Base64toBuffer(event.cf).toString("hex");
-      event.qcf = Base64toBuffer(event.qcf).toString("hex");
-      event.piece = Base64toBuffer(event.piece).toString("hex");
+      event.cf = NumArraytoHex(Base64toNumArray(event.cf));
+      event.qcf = NumArraytoHex(Base64toNumArray(event.qcf));
+      event.piece = NumArraytoHex(Base64toNumArray(event.piece));
     }
 
     return send.pugFile("pug/KDZ/pcget.pug", {
@@ -628,8 +628,8 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 20) {
-    if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = Base64toBuffer(pcdata.st_stamp).toString("hex");
-    if (!_.isNil(pcdata.st_help)) pcdata.st_help = Base64toBuffer(pcdata.st_help).toString("hex");
+    if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = NumArraytoHex(Base64toNumArray(pcdata.st_stamp));
+    if (!_.isNil(pcdata.st_help)) pcdata.st_help = NumArraytoHex(Base64toNumArray(pcdata.st_help));
     if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // migration //
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
@@ -638,7 +638,7 @@ export const pcget: EPR = async (info, data, send) => {
     let blueboss = await DB.FindOne<blueboss>(refid, { collection: "event_1", version: version, event_name: "blueboss" });
     let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
 
-    if (!_.isNil(blueboss)) blueboss.durability = Base64toBuffer(blueboss.durability).toString("hex");
+    if (!_.isNil(blueboss)) blueboss.durability = NumArraytoHex(Base64toNumArray(blueboss.durability));
 
     return send.pugFile("pug/LDJ/pcget.pug", {
       profile,
@@ -681,16 +681,16 @@ export const pcget: EPR = async (info, data, send) => {
       evtArray = [], evtArray2 = [];
 
     if (version == 21) {
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
       link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
       tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
 
       boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-      if (!_.isNil(boss1.durability)) boss1.durability = Base64toBuffer(boss1.durability).toString("hex");
+      if (!_.isNil(boss1.durability)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
     }
     else if (version == 22) {
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = Base64toBuffer(pcdata.st_album).toString("hex");
+      if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
       chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
       pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
@@ -701,7 +701,7 @@ export const pcget: EPR = async (info, data, send) => {
       qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
     }
     else if (version == 23) {
-      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = Base64toBuffer(pcdata.st_tokimeki).toString("hex");
+      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
 
       open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
       mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
@@ -712,16 +712,16 @@ export const pcget: EPR = async (info, data, send) => {
       siege_sinobuz_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
       siege_sinobuz_sub.forEach((res) => {
         res.is_clear = Number(res.is_clear);
-        res.ninjyutsu = Base64toBuffer(res.ninjyutsu).toString("hex");
-        res.card_damage = Base64toBuffer(res.card_damage).toString("hex");
-        res.card_clear = Base64toBuffer(res.card_clear).toString("hex");
+        res.ninjyutsu = NumArraytoHex(Base64toNumArray(res.ninjyutsu));
+        res.card_damage = NumArraytoHex(Base64toNumArray(res.card_damage));
+        res.card_clear = NumArraytoHex(Base64toNumArray(res.card_clear));
       });
 
       ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
       if (!_.isNil(ninja_shichikyoden.last_select_dojo))
-        ninja_shichikyoden.last_select_dojo = Base64toBuffer(ninja_shichikyoden.last_select_dojo).toString("hex");
+        ninja_shichikyoden.last_select_dojo = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.last_select_dojo));
       if (!_.isNil(ninja_shichikyoden.enemy_damage))
-        ninja_shichikyoden.enemy_damage = Base64toBuffer(ninja_shichikyoden.enemy_damage).toString("hex");
+        ninja_shichikyoden.enemy_damage = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.enemy_damage));
     }
     else if (version == 25) {
       rush_cannonracer = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
@@ -733,11 +733,11 @@ export const pcget: EPR = async (info, data, send) => {
     else if (version == 26) {
       mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
       if (!_.isNil(mirage_lib.quiz_control_list))
-        mirage_lib.quiz_control_list = Base64toBuffer(mirage_lib.quiz_control_list).toString("hex");
+        mirage_lib.quiz_control_list = NumArraytoHex(Base64toNumArray(mirage_lib.quiz_control_list));
 
       mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
       mirage_lib_sub.forEach((res) => {
-        res.map_route_damage = Base64toBuffer(res.map_route_damage).toString("hex");
+        res.map_route_damage = NumArraytoHex(Base64toNumArray(res.map_route_damage));
       });
 
       delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
@@ -761,10 +761,10 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil(pcdata.sp_mlist)) {
-      pcdata.sp_mlist = Base64toBuffer(pcdata.sp_mlist).toString("hex");
-      pcdata.sp_clist = Base64toBuffer(pcdata.sp_clist).toString("hex");
-      pcdata.dp_mlist = Base64toBuffer(pcdata.dp_mlist).toString("hex");
-      pcdata.dp_clist = Base64toBuffer(pcdata.dp_clist).toString("hex");
+      pcdata.sp_mlist = NumArraytoHex(Base64toNumArray(pcdata.sp_mlist));
+      pcdata.sp_clist = NumArraytoHex(Base64toNumArray(pcdata.sp_clist));
+      pcdata.dp_mlist = NumArraytoHex(Base64toNumArray(pcdata.dp_mlist));
+      pcdata.dp_clist = NumArraytoHex(Base64toNumArray(pcdata.dp_clist));
     }
 
     if (version >= 30 && lm_music_memo_new.length > 0) {

@@ -40,28 +40,71 @@ export function ClidToPlaySide(clid: number) {
   return clid < 5 ? 0 : 1;
 }
 
-export function Base64toBuffer(s: string) {
-  const base64list =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  let buffer = Buffer.alloc(0),
-    p = -8,
+export function Base64toNumArray(s: string) {
+  const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  let p = -8,
     a = 0,
-    c: number;
-
-  if (_.isNil(s)) return Buffer.alloc(0);
+    c: number,
+    d: number,
+    buffer: number[] = [];
 
   for (let i = 0; i < s.length; i++) {
-    if ((c = base64list.indexOf(s.charAt(i))) < 0) continue;
-    if (c == 64) break;
+    if ((c = base64Chars.indexOf(s.charAt(i))) < 0) continue;
     a = (a << 6) | (c & 63);
     if ((p += 6) >= 0) {
-      buffer = Buffer.concat([buffer, Buffer.from([((a >> p) & 255)])]);
+      d = (a >> p) & 255;
+      if (c !== 64) buffer.push(d);
       a &= 63;
       p -= 8;
     }
   }
 
   return buffer;
+}
+
+export function NumArraytoHex(buff: number[]) {
+  let hexStr = "";
+  for (let i = 0; i < buff.length; i++) {
+    const hex = buff[i].toString(16);
+    const paddedHex = hex.length % 2 ? "0" + hex : hex;
+
+    hexStr += paddedHex;
+  }
+
+  return hexStr;
+}
+
+export function HextoBase64(hex: string) {
+  const buffer = [];
+  const base64Chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  let base64String = "";
+  let i = 0;
+
+  for (let i = 0; i < hex.length; i += 2) {
+    const hexByte = hex.substr(i, 2);
+    const byteValue = parseInt(hexByte, 16);
+    buffer.push(byteValue);
+  }
+
+  while (i < buffer.length) {
+    const byte1 = buffer[i++] || 0;
+    const byte2 = buffer[i++] || 0;
+    const byte3 = buffer[i++] || 0;
+
+    const enc1 = byte1 >> 2;
+    const enc2 = ((byte1 & 3) << 4) | (byte2 >> 4);
+    const enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
+    const enc4 = byte3 & 63;
+
+    base64String +=
+      base64Chars.charAt(enc1) +
+      base64Chars.charAt(enc2) +
+      (i <= buffer.length + 2 ? base64Chars.charAt(enc3) : "=") +
+      (i <= buffer.length + 1 ? base64Chars.charAt(enc4) : "=");
+  }
+
+  return base64String;
 }
 
 export function NumArrayToString(bits: number[], numArray: number[]): string {

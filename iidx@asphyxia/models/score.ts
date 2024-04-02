@@ -7,6 +7,7 @@ export interface score {
   gArray: number[];
   mArray: number[];
   cArray: number[];
+  rArray: number[];
   esArray: number[];
 
   optArray: number[];
