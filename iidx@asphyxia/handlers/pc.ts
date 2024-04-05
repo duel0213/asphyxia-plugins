@@ -1,7 +1,7 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex } from "../util";
+import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex, NumArraytoBase64 } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_playdata, lm_settings, lm_settings_new, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
@@ -290,6 +290,9 @@ export const pcreg: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 14:
+      pcdata = GLD_pcdata;
+      break;
     case 15:
       pcdata = HDD_pcdata;
       break;
@@ -495,6 +498,7 @@ export const pcget: EPR = async (info, data, send) => {
 
       rArray.push(rival_data);
     }
+
     rArray.sort((a: rival_data, b: rival_data): number => a.play_style - b.play_style || a.index - b.index);
   }
 
@@ -512,7 +516,32 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, gradeStr = "", exStr = "", skinStr = "";
-  if (version == 15) {
+  if (version == 14) {
+    dArray.forEach((res) => {
+      gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
+    });
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exStr += NumArrayToString([6, 5, 1], [res.coid, a, res.cArray[a]]);
+        exStr += NumArrayToString([18], [res.pgArray[a]]);
+        exStr += NumArrayToString([18], [res.gArray[a]]);
+      }
+    });
+
+    skinStr += NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
+
+    return send.pugFile("pug/GLD/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exStr,
+      skinStr,
+      rArray,
+    });
+  }
+  else if (version == 15) {
     dArray.forEach((res) => {
       gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
     });
@@ -975,6 +1004,9 @@ export const pctakeover: EPR = async (info, data, send) => {
   let lightning_settings: object;
   let lightning_playdata: object;
   switch (version) {
+    case 14:
+      pcdata = GLD_pcdata;
+      break;
     case 15:
       pcdata = HDD_pcdata;
       break;
@@ -1147,7 +1179,32 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = parseInt($(data).attr().mode);
   pcdata.pmode = parseInt($(data).attr().pmode);
 
-  if (version == 15) {
+  if (version == 14) {
+    if (cltype == 0) {
+      pcdata.sach = parseInt($(data).attr().achi);
+      pcdata.sp_opt = parseInt($(data).attr().opt);
+    }
+    else {
+      pcdata.dach = parseInt($(data).attr().achi);
+      pcdata.dp_opt = parseInt($(data).attr().opt);
+      pcdata.dp_opt2 = parseInt($(data).attr().opt2);
+    }
+
+    pcdata.gno = parseInt($(data).attr().gno);
+    pcdata.sflg0 = parseInt($(data).attr().sflg0);
+    pcdata.sflg1 = parseInt($(data).attr().sflg1);
+    pcdata.sflg2 = parseInt($(data).attr().sflg2);
+    pcdata.sdhd = parseInt($(data).attr().sdhd);
+    pcdata.ncomb = parseInt($(data).attr().ncomb);
+    pcdata.mcomb = parseInt($(data).attr().mcomb);
+
+    if (!_.isNil($(data).attr().now_g)) {
+      pcdata.gold_now = parseInt($(data).attr().now_g);
+      pcdata.gold_all = parseInt($(data).attr().all_g); 
+      pcdata.gold_use = parseInt($(data).attr().use_g); 
+    }
+  }
+  else if (version == 15) {
     if (cltype == 0) {
       pcdata.sach = parseInt($(data).attr().achi);
       pcdata.sp_opt = parseInt($(data).attr().opt);
@@ -1447,8 +1504,8 @@ export const pcsave: EPR = async (info, data, send) => {
         pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       }
       pcdata.st_review = parseInt($(data).attr("step").review);
-      pcdata.st_stamp = $(data).buffer("step").toString("base64"); // TODO:: verify //
-      pcdata.st_help = $(data).element("step").buffer("help").toString("base64");
+      pcdata.st_stamp = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
+      pcdata.st_help = NumArraytoBase64($(data).element("step").buffer("help"));
     }
     
     if (!_.isNil($(data).element("achievements"))) {
@@ -1725,10 +1782,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -1760,7 +1817,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_last_select = parseInt($(data).attr("step").last_select);
-      pcdata.st_album = $(data).buffer("step").toString("base64"); // TODO:: verify //
+      pcdata.st_album = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
     }
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
@@ -1990,10 +2047,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2033,7 +2090,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_age_list = parseInt($(data).attr("step").age_list);
-      pcdata.st_album = $(data).buffer("step").toString("base64"); // TODO:: verify //
+      pcdata.st_album = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
       pcdata.st_is_present = parseInt($(data).attr("step").is_present);
       pcdata.st_is_future = parseInt($(data).attr("step").is_future);
     }
@@ -2225,10 +2282,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2268,7 +2325,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_mission_gauge = parseInt($(data).attr("step").mission_gauge);
-      pcdata.st_tokimeki = $(data).buffer("step").toString("base64"); // TODO:: verify //
+      pcdata.st_tokimeki = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
     }
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
@@ -2395,10 +2452,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2582,10 +2639,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2755,10 +2812,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
+      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
+      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
+      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {

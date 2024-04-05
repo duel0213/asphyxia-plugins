@@ -120,6 +120,10 @@ export interface pcdata {
   sgid: number; // grade //
   dgid: number;
 
+  gold_now: number;
+  gold_all: number;
+  gold_use: number;
+
   jewel_num: string;
   jewel_bnum: number[];
   party: number[];
@@ -218,6 +222,34 @@ export interface pcdata {
 
   tourism_secret_flg1: string[];
   tourism_secret_flg2: string[];
+}
+
+export const GLD_pcdata = {
+  version: 14,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  sflg0: 0,
+  sflg1: 0,
+  sflg2: 0,
+  gno: 0,
+  sdhd: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  mcomb: 0,
+  ncomb: 0,
+  mode: 0,
+  pmode: 0,
+
+  sgid: -1,
+  dgid: -1,
+
+  gold_now: 0,
+  gold_all: 0,
+  gold_use: 0,
 }
 
 export const HDD_pcdata = {

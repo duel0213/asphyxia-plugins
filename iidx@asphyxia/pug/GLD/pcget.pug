@@ -1,0 +1,9 @@
+pc(status="0")
+  pcdata(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum sach=pcdata.sach dach=pcdata.dach sflg0=pcdata.sflg0 sflg1=pcdata.sflg1 sflg2=pcdata.sflg2 gno=pcdata.gno sdhd=pcdata.sdhd sp_opt=pcdata.sp_opt dp_opt=pcdata.dp_opt dp_opt2=pcdata.dp_opt2 mcomb=pcdata.mcomb ncomb=pcdata.ncomb mode=pcdata.mode pmode=pcdata.pmode)
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid __type="str") #{gradeStr}
+  ex(__type="str") #{exStr}
+  skin(__type="str") #{skinStr}
+  rlist
+    - for (let rd of rArray)
+      rival(rno=rd.index id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
+  gold(now_g=pcdata.gold_now all_g=pcdata.gold_all use_g=pcdata.gold_use)

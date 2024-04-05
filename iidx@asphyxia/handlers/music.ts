@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64 } from "../util";
+import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64, NumArraytoBase64 } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -25,7 +25,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  if (version == 15) {
+  if (version == 14 || version == 15) {
     let result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
@@ -33,12 +33,13 @@ export const musicgetrank: EPR = async (info, data, send) => {
     music_data.forEach((res: score) => {
       temp_mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(temp_mid);
-      let rank_id = -1;
 
       // TODO:: determine whether use rid,dj_level from music.reg or make a database that has max exscore of all songs for rid //
       if (verMid[0] > version) return;
       for (let a = 0; a < 3; a++) {
         if (res.esArray[indices[a]] == 0) continue;
+        let rank_id = _.isNil(res.rArray) ? -1 : res.rArray[indices[a]];
+
         result.r.push(
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
@@ -316,10 +317,9 @@ export const musicappoint: EPR = async (info, data, send) => {
         option = music_data.optArray[clid];
         option2 = music_data.opt2Array[clid];
       }
-
-      mydata = Base64toNumArray(music_data[clid]);
     }
-    else mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
+
+    mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
   }
 
   /*** ctype
@@ -468,7 +468,7 @@ export const musicreg: EPR = async (info, data, send) => {
   let gArray = Array<number>(10).fill(0); // GREAT //
   let mArray = Array<number>(10).fill(0); // MISS //
   let cArray = Array<number>(10).fill(0); // CLEAR FLAGS //
-  let rArray = Array<number>(10).fill(0); // RANK ID //
+  let rArray = Array<number>(10).fill(-1); // RANK ID //
   let esArray = Array<number>(10).fill(0); // EXSCORE //
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
@@ -478,13 +478,11 @@ export const musicreg: EPR = async (info, data, send) => {
   else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
-  if (version == 15) ghost = HextoBase64($(data).str("ghost"));
-  else ghost = $(data).buffer("ghost").toString("base64");
-
-  console.log(ghost);
+  if (version == 14 || version == 15) ghost = HextoBase64($(data).str("ghost"));
+  else ghost = NumArraytoBase64($(data).buffer("ghost"));
   
   if (version >= 27) {
-    ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
+    ghost_gauge = NumArraytoBase64($(data).buffer("ghost_gauge"));
     style = parseInt($(data).element("music_play_log").attr().play_style);
 
     if (version >= 29) {
@@ -841,7 +839,7 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
 
     let indices = [1, 2, 3, 6, 7, 8];
-    if (version == 15) {
+    if (version == 14 || version == 15) {
       let verMid = OldMidToVerMid(parseInt(key));
 
       let str = cltype == 0 ?
@@ -864,7 +862,7 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   }
 
-  if (version == 15) result = { cdata };
+  if (version == 14 || version == 15) result = { cdata };
   else result = { c };
 
   return send.object(result);

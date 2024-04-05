@@ -40,6 +40,28 @@ export function ClidToPlaySide(clid: number) {
   return clid < 5 ? 0 : 1;
 }
 
+export function NumArraytoBase64(buff: number[]) {
+  const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  let result = "";
+
+  for (let i = 0; i < buff.length; i += 3) {
+    const chunk = (buff[i] << 16) | (buff[i + 1] << 8) | buff[i + 2];
+    result += base64Chars[(chunk >> 18) & 63] +
+      base64Chars[(chunk >> 12) & 63] +
+      base64Chars[(chunk >> 6) & 63] +
+      base64Chars[chunk & 63];
+  }
+
+  const padding = buff.length % 3;
+  if (padding === 1) {
+    result = result.slice(0, -2) + "==";
+  } else if (padding === 2) {
+    result = result.slice(0, -1) + "=";
+  }
+
+  return result;
+}
+
 export function Base64toNumArray(s: string) {
   const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
   let p = -8,
@@ -47,6 +69,8 @@ export function Base64toNumArray(s: string) {
     c: number,
     d: number,
     buffer: number[] = [];
+
+  if (_.isNil(s)) return buffer;
 
   for (let i = 0; i < s.length; i++) {
     if ((c = base64Chars.indexOf(s.charAt(i))) < 0) continue;
@@ -158,6 +182,7 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
   switch (info.model.substring(0, 3)) {
+    case "GLD": return 14;
     case "HDD": return 15;
     case "I00": return 16;
     case "JDJ": return 17;

@@ -1,11 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.14**
+Plugin Version: **v0.1.15**
 
 ---
 
 Supported Versions
-
+  - beatmaniaIIDX 14 GOLD
   - beatmaniaIIDX 15 DJ TROOPERS
   - beatmaniaIIDX 16 EMPRESS
   - beatmaniaIIDX 17 SIRIUS
@@ -130,3 +130,7 @@ Changelogs
   - Reworked on SINOBUZ ~ Rootage responses
   - Fixed where Base64toBuffer returns invalid value sometimes
   - Fixed where timing display option isn't saving on certain versions
+
+**v0.1.15**
+  - Added Initial support for GOLD
+  - Fixed where plugin may fail to register due to missing types in dev mode
