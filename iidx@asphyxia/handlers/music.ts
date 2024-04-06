@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64, NumArraytoBase64 } from "../util";
+import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64, NumArraytoBase64, NumArraytoHex } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -319,7 +319,8 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
     }
 
-    mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
+    if (version < 16) mydata = K.ITEM("str", NumArraytoHex(Base64toNumArray(music_data[clid])));
+    else mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
   }
 
   /*** ctype
@@ -354,12 +355,23 @@ export const musicappoint: EPR = async (info, data, send) => {
         });
         if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
-        sdata = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
-          score: String(other_musicdata.esArray[clid]),
-          pid: String(other_profile[1]),
-          name: String(other_profile[0]),
-          riidxid: String(other_profile[2])
-        });
+        if (version < 16) {
+          sdata = K.ITEM("str", NumArraytoHex(Base64toNumArray(other_musicdata[clid])), {
+            score: String(other_musicdata.esArray[clid]),
+            pid: String(other_profile[1]),
+            name: String(other_profile[0]),
+            riidxid: String(other_profile[2])
+          });
+        }
+        else {
+          sdata = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
+            score: String(other_musicdata.esArray[clid]),
+            pid: String(other_profile[1]),
+            name: String(other_profile[0]),
+            riidxid: String(other_profile[2])
+          });
+        }
+        
         break;
 
       default:
