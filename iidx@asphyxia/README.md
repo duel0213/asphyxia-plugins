@@ -5,28 +5,27 @@ Plugin Version: **v0.1.15**
 ---
 
 Supported Versions
-  - beatmaniaIIDX 14 GOLD
-  - beatmaniaIIDX 15 DJ TROOPERS
-  - beatmaniaIIDX 16 EMPRESS
-  - beatmaniaIIDX 17 SIRIUS
-  - beatmaniaIIDX 18 Resort Anthem
-  - beatmaniaIIDX 19 Lincle
-  - beatmaniaIIDX 20 tricoro
-  - beatmaniaIIDX 21 SPADA
-  - beatmaniaIIDX 22 PENDUAL
-  - beatmaniaIIDX 23 copula
-  - beatmaniaIIDX 24 SINOBUZ
-  - beatmaniaIIDX 25 CANNON BALLERS
-  - beatmaniaIIDX 26 Rootage
-  - beatmaniaIIDX 27 HEROIC VERSE
-  - beatmaniaIIDX 28 BISTROVER
-  - beatmaniaIIDX 29 CastHour
-  - beatmaniaIIDX 30 RESIDENT
+  - beatmaniaIIDX 14 GOLD (2007072301)
+  - beatmaniaIIDX 15 DJ TROOPERS (2008031100)
+  - beatmaniaIIDX 16 EMPRESS (2009072200)
+  - beatmaniaIIDX 17 SIRIUS (2010071200)
+  - beatmaniaIIDX 18 Resort Anthem (2011071200)
+  - beatmaniaIIDX 19 Lincle (2012090300)
+  - beatmaniaIIDX 20 tricoro (2013090900)
+  - beatmaniaIIDX 21 SPADA (2014071600)
+  - beatmaniaIIDX 22 PENDUAL (2015080500)
+  - beatmaniaIIDX 23 copula (2016083100)
+  - beatmaniaIIDX 24 SINOBUZ (2017082800)
+  - beatmaniaIIDX 25 CANNON BALLERS (2018012300)
+  - beatmaniaIIDX 26 Rootage (2019090200)
+  - beatmaniaIIDX 27 HEROIC VERSE (2020092900)
+  - beatmaniaIIDX 28 BISTROVER (2021091500)
+  - beatmaniaIIDX 29 CastHour (2022082400)
+  - beatmaniaIIDX 30 RESIDENT (2023090500)
 
 ---
 
 Features
-
   - STEP UP (Partial)
   - SKILL ANALYZER
   - EVENT (Partial)
@@ -42,11 +41,11 @@ Known Issues
   - DJ LEVEL folders are broken in ~ DJ TROOPERS due to missing rank\_id
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
+  - Some of licensed songs are locked behind due to missing license element (needs to be verified)
 
 ---
 
 Changelogs
-
 **v0.1.0**
   - Added Initial support for Lincle
 

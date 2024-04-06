@@ -25,6 +25,14 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 14:
+      result = {
+        ...result,
+        gshop: {
+          "@attr": { vipg: "0" } // TODO:: verify //
+        }
+      }
+      break;
     case 15:
       break;
     case 16:
