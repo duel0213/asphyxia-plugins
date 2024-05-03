@@ -42,6 +42,7 @@ Known Issues
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
   - Some of licensed songs are locked behind due to missing license element (needs to be verified)
+  - Badges aren't saving in RESIDENT ~ (needs to figure out name to id)
 
 ---
 
