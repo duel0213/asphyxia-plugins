@@ -5,6 +5,11 @@
 
 -
   const version = [
+    14,
+    15,
+    16,
+    17,
+    18,
     19,
     20,
     21,
@@ -162,6 +167,10 @@ div
           label.label Hide IIDX ID
           .control
             input(type="checkbox" name="hide_iidxid", checked=Boolean(custom.hide_iidxid))
+        .field
+          label.label Disable Beginner Option
+          .control
+            input(type="checkbox" name="disable_beginner_option", checked=Boolean(custom.disable_beginner_option))
         //- QPRO
         .field
           label.label QPRO Head

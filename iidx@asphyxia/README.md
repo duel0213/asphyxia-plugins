@@ -16,7 +16,7 @@ Supported Versions
   - beatmaniaIIDX 22 PENDUAL (2015080500)
   - beatmaniaIIDX 23 copula (2016083100)
   - beatmaniaIIDX 24 SINOBUZ (2017082800)
-  - beatmaniaIIDX 25 CANNON BALLERS (2018012300)
+  - beatmaniaIIDX 25 CANNON BALLERS (2018091900)
   - beatmaniaIIDX 26 Rootage (2019090200)
   - beatmaniaIIDX 27 HEROIC VERSE (2020092900)
   - beatmaniaIIDX 28 BISTROVER (2021091500)

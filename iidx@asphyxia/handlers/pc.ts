@@ -452,6 +452,23 @@ export const pcget: EPR = async (info, data, send) => {
 
   if (_.isNil(pcdata)) return send.deny();
 
+  // migration //
+  if (_.isNil(custom.disable_beginner_option)) {
+    await DB.Upsert<custom>(refid,
+      {
+        collection: "custom",
+        version: version,
+      },
+      {
+        $set: {
+          disable_beginner_option: false,
+        }
+      }
+    );
+
+    custom.disable_beginner_option = false;
+  }
+
   const appendsettings = appendSettingConverter(
     custom.rank_folder,
     custom.clear_folder,
@@ -465,6 +482,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.classic_hispeed,
     custom.rival_played_folder,
     custom.hide_iidxid,
+    custom.disable_beginner_option,
   );
   let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [];
 

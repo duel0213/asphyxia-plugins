@@ -236,6 +236,7 @@ export const updateCustomSettings = async (data) => {
     classic_hispeed: StoB(data.classic_hispeed),
     rival_played_folder: StoB(data.rival_played_folder),
     hide_iidxid: StoB(data.hide_iidxid),
+    disable_beginner_option: StoB(data.disable_beginner_option),
   }
 
   await DB.Upsert<custom>(data.refid, {

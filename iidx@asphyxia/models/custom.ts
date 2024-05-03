@@ -38,6 +38,7 @@ export interface custom {
   classic_hispeed: boolean;
   rival_played_folder: boolean;
   hide_iidxid: boolean;
+  disable_beginner_option: boolean;
 
   // qpro //
   qpro_head: number;
@@ -88,6 +89,7 @@ export const default_custom = {
   classic_hispeed: false,
   rival_played_folder: true,
   hide_iidxid: false,
+  disable_beginner_option: false,
 
   qpro_head: 0,
   qpro_hair: 0,

@@ -210,6 +210,7 @@ export function appendSettingConverter(
   chs: boolean,
   rpf: boolean,
   hii: boolean,
+  dbo: boolean,
 ) {
   const result =
     Number(rf) << 0 |
@@ -223,7 +224,8 @@ export function appendSettingConverter(
     Number(dgc) << 9 |
     Number(chs) << 10 |
     Number(rpf) << 11 |
-    Number(hii) << 12;
+    Number(hii) << 12 |
+    Number(dbo) << 14;
 
   return result;
 }
