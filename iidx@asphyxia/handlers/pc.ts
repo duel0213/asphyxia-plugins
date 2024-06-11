@@ -750,6 +750,7 @@ export const pcget: EPR = async (info, data, send) => {
       chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
       pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
       if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
+      else if (pendual_talis.point == "null" || _.isNil(pendual_talis.point)) pendual_talis = { point: 0 };
 
       qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
       qpronicle_chord_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "qpronicle_chord" });
@@ -2233,16 +2234,17 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (!_.isNil($(data).element("boss_event_3"))) {
       let boss_event_3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
-      let event_data;
+      let event_data = null;
+      let point = parseInt($(data).attr("boss_event_3").add_bonus_point);
 
       if (_.isNil(boss_event_3)) {
         event_data = {
-          point: parseInt($(data).attr().add_bonus_point)
+          point: point,
         }
       }
       else {
         event_data = boss_event_3;
-        event_data.point += parseInt($(data).attr("boss_event_3").add_bonus_point);
+        event_data.point += point;
       }
 
       await DB.Upsert(refid,
