@@ -742,7 +742,7 @@ export const pcget: EPR = async (info, data, send) => {
       tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
 
       boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-      if (!_.isNil(boss1.durability)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
+      if (!_.isNil(boss1)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
     }
     else if (version == 22) {
       if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
@@ -774,9 +774,9 @@ export const pcget: EPR = async (info, data, send) => {
       });
 
       ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-      if (!_.isNil(ninja_shichikyoden.last_select_dojo))
+      if (!_.isNil(ninja_shichikyoden))
         ninja_shichikyoden.last_select_dojo = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.last_select_dojo));
-      if (!_.isNil(ninja_shichikyoden.enemy_damage))
+      if (!_.isNil(ninja_shichikyoden))
         ninja_shichikyoden.enemy_damage = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.enemy_damage));
     }
     else if (version == 25) {
@@ -788,7 +788,7 @@ export const pcget: EPR = async (info, data, send) => {
     }
     else if (version == 26) {
       mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      if (!_.isNil(mirage_lib.quiz_control_list))
+      if (!_.isNil(mirage_lib))
         mirage_lib.quiz_control_list = NumArraytoHex(Base64toNumArray(mirage_lib.quiz_control_list));
 
       mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
