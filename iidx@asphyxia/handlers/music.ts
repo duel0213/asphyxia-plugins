@@ -405,23 +405,23 @@ export const musicappoint: EPR = async (info, data, send) => {
         ...other_data,
         gauge_data: K.ITEM("bin", Base64toNumArray(other_musicdata[clid + 10]))
       };
+    }
 
-      if (_.isNil(sdata) && !_.isNil(mydata)) {
-        result = {
-          "@attr": { my_option: option, my_option2: option2 },
-          mydata,
-          my_gauge_data: K.ITEM("bin", my_gauge_data),
-        };
-      }
-      if (_.isNil(mydata) && !_.isNil(sdata)) result = { sdata };
-      if (!_.isNil(mydata) && !_.isNil(sdata)) {
-        result = {
-          "@attr": { my_option: option, my_option2: option2 }, // CastHour //
-          mydata,
-          my_gauge_data: K.ITEM("bin", my_gauge_data),
-          sdata,
-        };
-      }
+    if (_.isNil(sdata) && !_.isNil(mydata)) {
+      result = {
+        "@attr": { my_option: option, my_option2: option2 },
+        mydata,
+        my_gauge_data: K.ITEM("bin", my_gauge_data),
+      };
+    }
+    if (_.isNil(mydata) && !_.isNil(sdata)) result = { sdata };
+    if (!_.isNil(mydata) && !_.isNil(sdata)) {
+      result = {
+        "@attr": { my_option: option, my_option2: option2 }, // CastHour //
+        mydata,
+        my_gauge_data: K.ITEM("bin", my_gauge_data),
+        sdata,
+      };
     }
   }
   else {
