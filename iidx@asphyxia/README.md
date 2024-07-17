@@ -114,12 +114,12 @@ Changelogs
     - CLEAR RATE and BEGINNER clear lamp may not work on certain versions
   - Added Initial support for SIRIUS
   - Fixed where Venue Top didn't save correctly (BISTROVER ~)
-  - Fixed where music.appoint send empty response even rival has score data when player doesn't have score data
+  - Fixed where music.appoint send empty response even rival has score data but player doesn't have score data
   - Fixed where FAVORITE may work only on specific version
   - Fixed where shop name always displayed as "CORE" instead of saved one
   - Fixed where rlist STEP UP achieve value was fixed value instead of saved one
   - Fixed where fcombo isn't saving (Resort Anthem)
-  - Removed shop.savename as not working as intented.
+  - Removed shop.savename as not working as intented
 
 **v0.1.13**
   - Added Initial support for DJ TROOPERS
@@ -134,5 +134,9 @@ Changelogs
 
 **v0.1.15**
   - Added Initial support for GOLD
+  - Added Disable Beginner Option
   - Fixed where plugin may fail to register due to missing types in dev mode
   - Fixed where pacemaker isn't working as intended due to malformed ghost data on music.appoint response (~ DJ TROOPERS)
+  - Fixed where unable to login after first-play (SPADA, SINOBUZ, Rootage)
+  - Fixed where pacemaker isn't working as intented due to wrong condition check (HEROIC VERSE ~)
+  - Fixed where pacemaker sub-type isn't load correctly (HEROIC VERSE ~)
