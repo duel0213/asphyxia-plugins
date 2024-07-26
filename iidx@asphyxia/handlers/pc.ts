@@ -119,6 +119,9 @@ export const pccommon: EPR = async (info, data, send) => {
     case 22:
       result = {
         ...result,
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         pre_play: K.ATTR({ phase: String(U.GetConfig("pd_preplay")) }),
         toho_remix: K.ATTR({ phase: String(U.GetConfig("pd_tohoremix")) }),
         limit: K.ATTR({ phase: String(U.GetConfig("pd_limit")) }),
@@ -139,6 +142,9 @@ export const pccommon: EPR = async (info, data, send) => {
     case 23:
       result = {
         ...result,
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         boss: K.ATTR({ phase: String(U.GetConfig("cp_boss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("cp_event1")) }),
         event2_phase: K.ATTR({ phase: String(U.GetConfig("cp_event2")) }),
@@ -159,6 +165,9 @@ export const pccommon: EPR = async (info, data, send) => {
     case 24:
       result = {
         ...result,
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         boss: K.ATTR({ phase: String(U.GetConfig("sb_boss")) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("sb_extraboss")) }),
         vip_pass_black: {},
@@ -173,6 +182,9 @@ export const pccommon: EPR = async (info, data, send) => {
     case 25:
       result = {
         ...result,
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         boss: K.ATTR({ phase: String(U.GetConfig("cb_boss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("cb_event1")) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("cb_extraboss")) }),
@@ -186,6 +198,9 @@ export const pccommon: EPR = async (info, data, send) => {
     case 26:
       result = {
         ...result,
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         boss: K.ATTR({ phase: String(U.GetConfig("rt_boss")) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("rt_extraboss")) }),
         vip_pass_black: {},
@@ -203,6 +218,10 @@ export const pccommon: EPR = async (info, data, send) => {
     case 27:
       result = {
         ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         boss: K.ATTR({ phase: String(U.GetConfig("hv_boss")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
@@ -221,6 +240,9 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         boss: K.ATTR({ phase: String(U.GetConfig("bo_boss")) }),
         vip_pass_black: {},
@@ -243,6 +265,9 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         boss: K.ATTR({ phase: String(1) }), // TODO:: verify //
         vip_pass_black: {},
@@ -266,6 +291,9 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
