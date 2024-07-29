@@ -140,3 +140,4 @@ Changelogs
   - Fixed where unable to login after first-play (SPADA, SINOBUZ, Rootage)
   - Fixed where pacemaker isn't working as intented due to wrong condition check (HEROIC VERSE ~)
   - Fixed where pacemaker sub-type isn't load correctly (HEROIC VERSE ~)
+  - Fixed where QPRO doesn't get saved in WebUI

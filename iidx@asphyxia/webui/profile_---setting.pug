@@ -170,7 +170,10 @@ div
         .field
           label.label Disable Beginner Option
           .control
-            input(type="checkbox" name="disable_beginner_option", checked=Boolean(custom.disable_beginner_option))
+            if custom.disable_beginner_option === undefined
+              input(type="checkbox" name="disable_beginner_option", checked=Boolean(false))
+            else
+              input(type="checkbox" name="disable_beginner_option", checked=Boolean(custom.disable_beginner_option))
         //- QPRO
         .field
           label.label QPRO Head

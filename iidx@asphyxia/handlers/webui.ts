@@ -237,6 +237,12 @@ export const updateCustomSettings = async (data) => {
     rival_played_folder: StoB(data.rival_played_folder),
     hide_iidxid: StoB(data.hide_iidxid),
     disable_beginner_option: StoB(data.disable_beginner_option),
+	
+    qpro_head: parseInt(data.qpro_head),
+    qpro_hair: parseInt(data.qpro_hair),
+    qpro_face: parseInt(data.qpro_face),
+    qpro_hand: parseInt(data.qpro_hand),
+    qpro_body: parseInt(data.qpro_body),
   }
 
   await DB.Upsert<custom>(data.refid, {
