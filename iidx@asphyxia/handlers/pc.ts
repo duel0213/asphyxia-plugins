@@ -10,6 +10,7 @@ import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
 import { blueboss } from "../models/event";
+import { badge } from "../models/badge";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -469,14 +470,16 @@ export const pcget: EPR = async (info, data, send) => {
   const custom = await DB.FindOne<custom>(refid, { collection: "custom", version: version });
   const grade = await DB.Find<grade>(refid, { collection: "grade", version: version });
   const rivals = await DB.Find<rival>(refid, { collection: "rival" });
+  const shop_data = await DB.FindOne<shop_data>({ collection: "shop_data" });
+  const expert = await DB.Find<expert>(refid, { collection: "expert", version: version });
   const world_tourism = await DB.Find<world_tourism>(refid, { collection: "world_tourism", version: version });
+  const badge = await DB.Find<badge>(refid, { collection: "badge", version: version });
+
   const lm_settings = await DB.FindOne<lightning_settings>(refid, { collection: "lightning_settings", version: version });
   const lm_playdata = await DB.FindOne<lightning_playdata>(refid, { collection: "lightning_playdata", version: version });
   const lm_eisei_grade = await DB.Find<eisei_grade>(refid, { collection: "eisei_grade", version: version });
   const lm_music_memo = await DB.Find<lightning_musicmemo>(refid, { collection: "lightning_musicmemo", version: version });
   const lm_music_memo_new = await DB.Find<lightning_musicmemo_new>(refid, { collection: "lightning_musicmemo_new", version: version });
-  const shop_data = await DB.FindOne<shop_data>({ collection: "shop_data" });
-  const expert = await DB.Find<expert>(refid, { collection: "expert", version: version });
 
   if (_.isNil(pcdata)) return send.deny();
 
@@ -900,43 +903,54 @@ export const pcget: EPR = async (info, data, send) => {
        badge_flg
     ***/
 
-    if (version >= 30) {
-      for (let a = 0; a < 13; a++) {
-        if (a == 0 || a == 1) {
-          for (let b = 0; b < 24; b++) {
-            bArray.push({
-              id: a,
-              flg_id: b,
-              flg: -1,
-            });
-          }
-          continue;
-        } else if (a == 9) {
-          for (let b = 0; b < 10; b++) {
-            bArray.push({
-              id: a,
-              flg_id: b,
-              flg: -1,
-            });
-          }
-          continue;
-        } else if (a == 7 || a == 10) {
-          for (let b = 0; b < 2; b++) {
-            bArray.push({
-              id: a,
-              flg_id: b,
-              flg: -1,
-            });
-          }
-          continue;
-        }
-
+    if (version >= 30 && badge.length > 0) {
+      let djLevel, clear, visitor, notes_radar, event1;
+      djLevel = badge.filter((res) => res.category_name === "djLevel");
+      djLevel.forEach((res) => {
         bArray.push({
-          id: a,
-          flg_id: 0,
-          flg: -1,
+          id: 0,
+          flg_id: res.flg_id,
+          flg: res.flg,
         });
-      }
+      });
+
+      clear = badge.filter((res) => res.category_name === "clear");
+      clear.forEach((res) => {
+        bArray.push({
+          id: 1,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      // this keep sending back on save //
+      // possibly wrong category_id but at least doesn't show as new badges //
+      visitor = badge.filter((res) => res.category_name === "visitor");
+      visitor.forEach((res) => {
+        bArray.push({
+          id: 6,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      notes_radar = badge.filter((res) => res.category_name === "notes_radar");
+      notes_radar.forEach((res) => {
+        bArray.push({
+          id: 7,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      event1 = badge.filter((res) => res.category_name === "event1");
+      event1.forEach((res) => {
+        bArray.push({
+          id: 9,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
     }
 
     if (version == 24) { // migration //
@@ -1211,6 +1225,7 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasWorldTourism = !(_.isNil($(data).element("world_tourism_data")));
   const hasMusicMemo = !(_.isNil($(data).element("music_memo")));
   const hasTowerData = !(_.isNil($(data).element("tower_data")));
+  const hasBadgeData = !(_.isNil($(data).element("badge")));
 
   if (cltype == 0) pcdata.spnum += 1;
   else pcdata.dpnum += 1;
@@ -3514,6 +3529,116 @@ export const pcsave: EPR = async (info, data, send) => {
     if (hasTowerData) {
       profile.total_kbd += parseInt($(data).attr("tower_data").keyboard);
       profile.total_scr += parseInt($(data).attr("tower_data").scratch);
+    }
+
+    // saving for future purpose //
+    if (hasBadgeData) {
+      let badge_data = [];
+      let badge = $(data).element("badge");
+
+      if (!(_.isNil(badge.element("today_recommend")))) {
+        let badgeInfo = {
+          category_id: "today_recommend",
+          flg_id: 0,
+          flg: parseInt(badge.element("today_recommend").attr().flg),
+        };
+
+        badge_data.push(badgeInfo);
+      }
+
+      if (!(_.isNil(badge.element("weekly_ranking")))) {
+        let badgeInfo = {
+          category_id: "weekly_ranking",
+          flg_id: 0,
+          flg: parseInt(badge.element("weekly_ranking").attr().flg),
+        };
+
+        badge_data.push(badgeInfo);
+      }
+
+      if (!(_.isNil(badge.element("visitor")))) {
+        badge.elements("visitor").forEach((res) => {
+          let badgeInfo = {
+            category_id: "visitor",
+            flg_id: parseInt(res.attr().flg_id),
+            flg: parseInt(res.attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        });
+      }
+
+      if (!(_.isNil(badge.element("notes_radar")))) {
+        badge.elements("notes_radar").forEach((res) => {
+          let badgeInfo = {
+            category_id: "notes_radar",
+            flg_id: parseInt(res.attr().flg_id),
+            flg: parseInt(res.attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        });
+      }
+
+      if (!(_.isNil(badge.element("world_tourism")))) {
+        let badgeInfo = {
+          category_id: "world_tourism",
+          flg_id: 0,
+          flg: parseInt(badge.element("world_tourism").attr().flg),
+        };
+
+        badge_data.push(badgeInfo);
+      }
+
+      if (!(_.isNil(badge.element("event1")))) {
+        badge.elements("event1").forEach((res) => {
+          let badgeInfo = {
+            category_id: "event1",
+            flg_id: parseInt(res.attr().flg_id),
+            flg: parseInt(res.attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        });
+      }
+
+      if (!(_.isNil(badge.element("arena")))) {
+        badge.elements("arena").forEach((res) => {
+          let badgeInfo = {
+            category_id: "arena",
+            flg_id: parseInt(res.attr().flg_id),
+            flg: parseInt(res.attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        });
+      }
+
+      if (!(_.isNil(badge.element("iidx_exam")))) {
+        let badgeInfo = {
+          category_id: "iidx_exam",
+          flg_id: 0,
+          flg: parseInt(badge.element("iidx_exam").attr().flg),
+        };
+
+        badge_data.push(badgeInfo);
+      }
+
+      badge_data.forEach((res) => {
+        DB.Upsert<badge>(
+          refid,
+          {
+            collection: "badge",
+            version: version,
+            category_name: res.category_id,
+            flg_id: res.flg_id,
+          },
+          {
+            $set: {
+              flg: res.flg,
+            }
+          });
+      });
     }
   }
 

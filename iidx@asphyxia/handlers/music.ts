@@ -3,6 +3,7 @@ import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
+import { badge } from "../models/badge";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -435,12 +436,16 @@ export const musicappoint: EPR = async (info, data, send) => {
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
+  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
   });
+  const profile = await DB.FindOne<profile>(refid, {
+    collection: "profile",
+  });
 
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
   const pgnum = parseInt($(data).attr().pgnum);
   const gnum = parseInt($(data).attr().gnum);
   const mnum = parseInt($(data).attr().mnum);
@@ -468,10 +473,6 @@ export const musicreg: EPR = async (info, data, send) => {
   const music_data: score | null = await DB.FindOne<score>(refid, {
     collection: "score",
     mid: mid,
-  });
-
-  const profile = await DB.FindOne<profile>(refid, {
-    collection: "profile",
   });
 
   // SPN -> DPA [0~5] -> LINCLE //
@@ -617,6 +618,59 @@ export const musicreg: EPR = async (info, data, send) => {
       }
     }
   );
+
+  if (!_.isNil($(data).element("badge"))) {
+    if (!_.isNil($(data).attr("badge").djLevel_badge_flg_id)) {
+      await DB.Upsert<badge>(
+        refid,
+        {
+          collection: "badge",
+          version: version,
+          category_name: "djLevel",
+          flg_id: parseInt($(data).attr("badge").djLevel_badge_flg_id),
+        },
+        {
+          $set: {
+            flg: parseInt($(data).attr("badge").djLevel_badge_flg),
+          }
+        }
+      );
+    }
+
+    if (!_.isNil($(data).attr("badge").clear_badge_flg_id)) {
+      await DB.Upsert<badge>(
+        refid,
+        {
+          collection: "badge",
+          version: version,
+          category_name: "clear",
+          flg_id: parseInt($(data).attr("badge").clear_badge_flg_id),
+        },
+        {
+          $set: {
+            flg: parseInt($(data).attr("badge").clear_badge_flg),
+          }
+        }
+      );
+    }
+
+    if (!_.isNil($(data).attr("badge").rivalChallenge_badge_flg)) {
+      await DB.Upsert<badge>(
+        refid,
+        {
+          collection: "badge",
+          version: version,
+          category_name: "rivalChallenge",
+          flg_id: 0,
+        },
+        {
+          $set: {
+            flg: parseInt($(data).attr("badge").rivalChallenge_badge_flg),
+          }
+        }
+      );
+    }
+  }
 
   let shop_rank = -1, shop_rank_data = [];
   let scores: any[][];

@@ -135,6 +135,7 @@ Changelogs
 **v0.1.15**
   - Added Initial support for GOLD
   - Added Disable Beginner Option
+  - Added Experimental Badge saving support
   - Fixed where plugin may fail to register due to missing types in dev mode
   - Fixed where pacemaker isn't working as intended due to malformed ghost data on music.appoint response (~ DJ TROOPERS)
   - Fixed where unable to login after first-play (SPADA, SINOBUZ, Rootage)

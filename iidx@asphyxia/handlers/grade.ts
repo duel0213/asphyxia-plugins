@@ -2,6 +2,7 @@ import { pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { IDtoRef, GetVersion } from "../util";
 import { eisei_grade } from "../models/lightning";
+import { badge } from "../models/badge";
 
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -148,6 +149,23 @@ export const graderaised: EPR = async (info, data, send) => {
         $set: {
           maxStage: cflg,
           archive: achi,
+        }
+      }
+    );
+  }
+
+  if (!_.isNil($(data).element("badge"))) {
+    await DB.Upsert<badge>(
+      refid,
+      {
+        collection: "badge",
+        version: version,
+        category_name: "grade",
+        flg_id: parseInt($(data).attr("badge").badge_flg_id),
+      },
+      {
+        $set: {
+          flg: parseInt($(data).attr("badge").badge_flg),
         }
       }
     );
