@@ -904,7 +904,7 @@ export const pcget: EPR = async (info, data, send) => {
     ***/
 
     if (version >= 30 && badge.length > 0) {
-      let djLevel, clear, visitor, notes_radar, event1;
+      let djLevel, clear, grade, visitor, notes_radar, event1;
       djLevel = badge.filter((res) => res.category_name === "djLevel");
       djLevel.forEach((res) => {
         bArray.push({
@@ -918,6 +918,15 @@ export const pcget: EPR = async (info, data, send) => {
       clear.forEach((res) => {
         bArray.push({
           id: 1,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+	  
+      grade = badge.filter((res) => res.category_name === "grade");
+      grade.forEach((res) => {
+        bArray.push({
+          id: 2,
           flg_id: res.flg_id,
           flg: res.flg,
         });
