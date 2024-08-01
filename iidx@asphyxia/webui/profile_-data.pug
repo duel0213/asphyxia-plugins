@@ -1,0 +1,27 @@
+div
+  .card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-account-edit
+        | Data Management
+    .card-content
+      .field
+        label.label [!] This will overwrite exsiting scores
+        form(method="post" action="/emit/importScoreData")
+          .field
+            input(type="text" name="refid", value=refid readonly hidden)
+            input.input(type="text" name="data" placeholder="Paste score JSON data")
+            p
+            button.button.is-primary(type="submit") 
+              span.icon
+                i.mdi.mdi-check
+              span Score Import
+      .field
+        form(method="post" action="/emit/exportScoreData")
+          .field
+            input(type="text" name="refid", value=refid readonly hidden)
+            button.button.is-primary(type="submit") 
+              span.icon
+                i.mdi.mdi-check
+              span Score Export

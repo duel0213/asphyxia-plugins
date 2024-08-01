@@ -1,6 +1,7 @@
 import { profile } from "../models/profile";
 import { rival } from "../models/rival";
 import { custom } from "../models/custom";
+import { score, old_score } from "../models/score";
 
 export const updateRivalSettings = async (data) => {
   let update_array = [];
@@ -263,6 +264,113 @@ export const updateCustomSettings = async (data) => {
     });
   }
 };
+
+export const importScoreData = async (data) => {
+  if (_.isEmpty(data.data)) return;
+
+  let content = JSON.parse(data.data);
+  let version = content.version;
+  let count = content.count;
+
+  switch (version) {
+    case 1:
+      let sd_ver1: old_score[] = content.data;
+      for (let a = 0; a < count; a++) {
+        let result = {
+          pgArray: Array<number>(10).fill(0),
+          gArray: Array<number>(10).fill(0),
+          mArray: Array<number>(10).fill(0),
+          cArray: Array<number>(10).fill(0),
+          rArray: Array<number>(10).fill(-1),
+          esArray: Array<number>(10).fill(0),
+
+          optArray: Array<number>(10).fill(0),
+          opt2Array: Array<number>(10).fill(0),
+        }
+
+        if (!_.isNil(sd_ver1[a].spmArray)) {
+          for (let b = 0; b < 5; b++) {
+            result.cArray[b] = sd_ver1[a].spmArray[2 + b];
+            result.esArray[b] = sd_ver1[a].spmArray[7 + b];
+            if (sd_ver1[a].spmArray[12 + b] != -1) result.mArray[b] = sd_ver1[a].spmArray[12 + b];
+          }
+        }
+
+        if (!_.isNil(sd_ver1[a].dpmArray)) {
+          for (let b = 5; b < 10; b++) {
+            result.cArray[b] = sd_ver1[a].dpmArray[2 + b];
+            result.esArray[b] = sd_ver1[a].dpmArray[7 + b];
+            if (sd_ver1[a].dpmArray[12 + b] != -1) result.mArray[b] = sd_ver1[a].dpmArray[12 + b];
+          }
+        }
+
+        if (!_.isNil(sd_ver1[a].optArray)) {
+          result.optArray = sd_ver1[a].optArray;
+        }
+
+        if (!_.isNil(sd_ver1[a].opt2Array)) {
+          result.opt2Array = sd_ver1[a].opt2Array;
+        }
+
+        for (let b = 0; b < 10; b++) {
+          if (_.isNil(sd_ver1[a][b])) continue;
+          result[b] = sd_ver1[a][b];
+
+          if (!_.isNil(sd_ver1[a][b + 10])) {
+            result[b + 10] = sd_ver1[a][b + 10];
+          }
+        }
+
+        await DB.Upsert<score>(data.refid,
+          {
+            collection: "score",
+            mid: sd_ver1[a].music_id
+          },
+          {
+            $set: {
+              ...result
+            }
+          }
+        );
+      }
+      break;
+    case 2:
+      let sd_ver2: score[] = content.data;
+      for (let a = 0; a < count; a++) {
+        await DB.Upsert<score>(data.refid,
+          {
+            collection: "score",
+            mid: sd_ver2[a].mid
+          },
+          {
+            $set: {
+              ...sd_ver2[a]
+            }
+          }
+        );
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+export const exportScoreData = async (data, send: WebUISend) => {
+  const score = await DB.Find<score>(data.refid, {
+    collection: "score"
+  });
+
+  let result = {
+    version: 2,
+    count: score.length,
+    data: {
+      ...score,
+    }
+  }
+
+  send.json(result);
+}
 
 function StoB(value: string) {
   return value == "on" ? true : false;

@@ -1,0 +1,25 @@
+//DATA//
+  score: DB.Find(refid, { collection: 'score' })
+
+div
+  .card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-account-edit
+        | Score
+    .card-content
+      table.table
+        thead
+          tr    
+            th Music ID
+            th EXSCORE [SPB~DPL]
+            th Miss Count [SPB~DPL]
+            th Clear Lamp [SPB~DPL]
+        tbody
+          each i in score
+            tr
+              td #{i.mid}
+              td #{i.esArray}
+              td #{i.mArray}
+              td #{i.cArray}

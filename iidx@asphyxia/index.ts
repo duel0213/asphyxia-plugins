@@ -3,7 +3,7 @@ import { shopgetname, shopsavename, shopgetconvention, shopsetconvention } from 
 import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive } from "./handlers/music";
 import { graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
-import { updateRivalSettings, updateCustomSettings } from "./handlers/webui";
+import { updateRivalSettings, updateCustomSettings, importScoreData, exportScoreData } from "./handlers/webui";
 import { GetVersion } from "./util";
 import { rankingentry, rankinggetranker, rankingoentry } from "./handlers/ranking";
 
@@ -461,6 +461,8 @@ export function register() {
   // TODO:: Reflect data when version dropdown menu has been changed //
   R.WebUIEvent("updateIIDXRival", updateRivalSettings);
   R.WebUIEvent("updateIIDXCustom", updateCustomSettings);
+  R.WebUIEvent("importScoreData", importScoreData);
+  R.WebUIEvent("exportScoreData", exportScoreData);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`${method}`, handler);

@@ -24,3 +24,16 @@ export interface score_top {
   scores: number[];
   clflgs: number[];
 }
+
+export interface old_score {
+  music_id: number;
+
+  spmArray: number[];
+  dpmArray: number[];
+
+  optArray: number[];
+  opt2Array: number[];
+
+  option_1: number;
+  option_2: number;
+}
