@@ -2,6 +2,7 @@ import { profile } from "../models/profile";
 import { rival } from "../models/rival";
 import { custom } from "../models/custom";
 import { score, old_score } from "../models/score";
+import { lightning_custom } from "../models/lightning";
 
 export const updateRivalSettings = async (data) => {
   let update_array = [];
@@ -238,18 +239,20 @@ export const updateCustomSettings = async (data) => {
     rival_played_folder: StoB(data.rival_played_folder),
     hide_iidxid: StoB(data.hide_iidxid),
     disable_beginner_option: StoB(data.disable_beginner_option),
-	
+
     qpro_head: parseInt(data.qpro_head),
     qpro_hair: parseInt(data.qpro_hair),
     qpro_face: parseInt(data.qpro_face),
     qpro_hand: parseInt(data.qpro_hand),
     qpro_body: parseInt(data.qpro_body),
+    qpro_back: parseInt(data.qpro_back),
   }
 
   await DB.Upsert<custom>(data.refid, {
     collection: "custom",
     version: parseInt(data.version)
-  }, {
+  },
+  {
     $set: customize
   });
 
@@ -263,14 +266,39 @@ export const updateCustomSettings = async (data) => {
       }
     });
   }
+
+  if (data.version > 27) {
+    await DB.Upsert<lightning_custom>(data.refid, {
+      collection: "lightning_custom",
+      version: parseInt(data.version)
+    },
+    {
+      $set: {
+        premium_skin: parseInt(data.lm_skin),
+        premium_bg: parseInt(data.lm_bg),
+      }
+    });
+  }
 };
 
-export const importScoreData = async (data) => {
-  if (_.isEmpty(data.data)) return;
+export const importScoreData = async (data, send: WebUISend) => {
+  if (_.isEmpty(data.data)) {
+    console.error("[Score Importer] Supplied data is empty");
+    return send.error(400, "Empty data");
+  }
 
-  let content = JSON.parse(data.data);
-  let version = content.version;
-  let count = content.count;
+  let content = null;
+  let version = 0;
+  let count = 0;
+  try {
+    content = JSON.parse(data.data);
+    version = content.version;
+    count = content.count;
+  }
+  catch {
+    console.error("[Score Importer] Invaild data has been supplied");
+    return send.error(400, "Invalid data");
+  }
 
   switch (version) {
     case 1:
@@ -352,7 +380,8 @@ export const importScoreData = async (data) => {
       break;
 
     default:
-      break;
+      console.error("[Score Importer] Unregistered score data version");
+      return send.error(400, "Invalid data version");
   }
 }
 
@@ -360,6 +389,8 @@ export const exportScoreData = async (data, send: WebUISend) => {
   const score = await DB.Find<score>(data.refid, {
     collection: "score"
   });
+
+  if (score == null) return send.error(400, "No data");
 
   let result = {
     version: 2,

@@ -8,7 +8,7 @@ div
     .card-content
       .field
         label.label [!] This will overwrite exsiting scores
-        form(method="post" action="/emit/importScoreData")
+        form(method="post" action="/emit/iidxImportScoreData")
           .field
             input(type="text" name="refid", value=refid readonly hidden)
             input.input(type="text" name="data" placeholder="Paste score JSON data")
@@ -18,7 +18,7 @@ div
                 i.mdi.mdi-check
               span Score Import
       .field
-        form(method="post" action="/emit/exportScoreData")
+        form(method="post" action="/emit/iidxExportScoreData")
           .field
             input(type="text" name="refid", value=refid readonly hidden)
             button.button.is-primary(type="submit") 

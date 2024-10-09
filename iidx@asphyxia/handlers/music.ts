@@ -568,7 +568,8 @@ export const musicreg: EPR = async (info, data, send) => {
         scores[tmp_clid] = exscore;
         clflgs[tmp_clid] = cflg;
       }
-    } else {
+    }
+    else {
       names = score_top.names;
       scores = score_top.scores;
       clflgs = score_top.clflgs;

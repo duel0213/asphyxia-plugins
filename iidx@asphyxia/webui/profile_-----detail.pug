@@ -20,7 +20,8 @@
     27,
     28,
     29,
-    30
+    30,
+    31
   ];
 
 div
@@ -36,30 +37,31 @@ div
             .ver-select
               .control
                 .select
-                  select(name="version")
+                  select(id="version")
                     each i in version
                       option(selected=(i==pcdata.version)) #{i}
       .field
         label.label Name
         .body
-          body #{profile.name}
+          p(id="name") #{profile.name}
       .field
         label.label IIDX ID
         .body
-          body #{profile.idstr}
+          p(id="iidxid") #{profile.idstr}
       .field
         label.label SP Grade
         .body
         - const a = pcdata.sgid
           if a==-1
-            body ----
+            p(id="sp_grade") ----
           else
-            body #{pcdata.sgid}
+            p(id="sp_grade") #{pcdata.sgid}
       .field
         label.label DP Grade
         .body
         - const b = pcdata.dgid
           if b==-1
-            body ----
+            p(id="dp_grade") ----
           else
-            body #{pcdata.dgid}
+            p(id="dp_grade") #{pcdata.dgid}
+script(src="static/asset/js/detail.js") 

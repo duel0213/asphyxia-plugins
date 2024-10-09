@@ -33,6 +33,7 @@ export interface pcdata {
   fcombo: number[]; 
   ngrade: number; // attribute (BISTROVER) //
   rtype: number; // attribute (Heroic Verse) //
+  player_kind: number; // attribute (EPOLIS) //
   gpos: number;
 
   s_sorttype: number;
@@ -89,13 +90,15 @@ export interface pcdata {
   d_timing_split: number;
   s_visualization: number;
   d_visualization: number;
+  s_classic_hispeed: number; // EPOLIS //
+  d_classic_hispeed: number;
 
   secret_flg1: string[]; // secret (Heroic Verse) //
   secret_flg2: string[];
   secret_flg3: string[];
   secret_flg4: string[];
 
-  leggendaria_flg1: string[]; // leggendaria (bistrover) //
+  leggendaria_flg1: string[]; // leggendaria (BISTROVER) //
 
   dr_sprank: number[]; // djrank (Heroic Verse) //
   dr_sppoint: number[];
@@ -113,9 +116,9 @@ export interface pcdata {
   achi_weeklynum: number;
   achi_trophy: string[]; // for somewhat reason save throws lots of elements but sending it as-is throws error //
 
-  deller: number; // in-game currency (heroic verse) //
-  orb: number;
-  present_orb: number;
+  deller: number; // in-game currency (Lincle) //
+  orb: number; // v-disc (SPADA) //
+  present_orb: number; // v-disc but not sure what it does (Rootage) //
 
   sgid: number; // grade //
   dgid: number;
@@ -128,9 +131,9 @@ export interface pcdata {
   jewel_bnum: number[];
   party: number[];
 
-  jpoint: number; // jpoint (lincle) //
+  jpoint: number; // jpoint (Lincle) //
 
-  st_sp_ach: number; // step (lincle) //
+  st_sp_ach: number; // step (Lincle) //
   st_sp_dif: number;
   st_dp_ach: number;
   st_dp_dif: number;
@@ -195,6 +198,7 @@ export interface pcdata {
   event_last_select_type: number; // CastHour //
   event_story_prog: number; // BISTROVER //
   event_failed_num: number;
+  event_skip: boolean;
 
   type: number[]; // history (Lincle) //
   time: number[];
@@ -1301,11 +1305,6 @@ export const IIDX29_pcdata = {
 
   leggendaria_flg1: Array<string>(3).fill("-1"),
 
-  dr_sprank: Array<number>(15).fill(0),
-  dr_sppoint: Array<number>(15).fill(0),
-  dr_dprank: Array<number>(15).fill(0),
-  dr_dppoint: Array<number>(15).fill(0),
-
   nr_spradar: Array<number>(6).fill(0),
   nr_dpradar: Array<number>(6).fill(0),
 
@@ -1456,4 +1455,119 @@ export const IIDX30_pcdata = {
 
   event_play_num: 0,
   event_last_select_id: -1,
+}
+
+export const IIDX31_pcdata = {
+  version: 31,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  mode: 0,
+  pmode: 0,
+  ngrade: 0,
+  rtype: 0,
+  player_kind: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  s_sorttype: 0,
+  d_sorttype: 0,
+  s_pace: 0,
+  d_pace: 0,
+  s_gno: 0,
+  d_gno: 0,
+  s_sub_gno: 0,
+  d_sub_gno: 0,
+  s_gtype: 0,
+  d_gtype: 0,
+  s_sdlen: 0,
+  d_sdlen: 0,
+  s_sdtype: 0,
+  d_sdtype: 0,
+  s_timing: 0,
+  d_timing: 0,
+  s_notes: 0,
+  d_notes: 0,
+  s_judge: 0,
+  d_judge: 0,
+  s_judgeAdj: 0,
+  d_judgeAdj: 0,
+  s_hispeed: 0,
+  d_hispeed: 0,
+  s_liflen: 0,
+  d_liflen: 0,
+  s_disp_judge: 0,
+  d_disp_judge: 0,
+  s_opstyle: 0,
+  d_opstyle: 0,
+  s_graph_score: 0,
+  d_graph_score: 0,
+  s_auto_scrach: 0,
+  d_auto_scrach: 0,
+  s_gauge_disp: 0,
+  d_gauge_disp: 0,
+  s_lane_brignt: 0,
+  d_lane_brignt: 0,
+  s_camera_layout: 0,
+  d_camera_layout: 0,
+  s_ghost_score: 0,
+  d_ghost_score: 0,
+  s_tsujigiri_disp: 0,
+  d_tsujigiri_disp: 0,
+  s_auto_adjust: 0,
+  d_auto_adjust: 0,
+  s_timing_split: 0,
+  d_timing_split: 0,
+  s_visualization: 0,
+  d_visualization: 0,
+  s_classic_hispeed: 0,
+  d_classic_hispeed: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+  secret_flg4: Array<string>(3).fill("-1"),
+
+  leggendaria_flg1: Array<string>(3).fill("-1"),
+
+  tourism_secret_flg1: Array<string>(3).fill("-1"),
+  tourism_secret_flg2: Array<string>(3).fill("-1"),
+
+  nr_spradar: Array<number>(6).fill(0),
+  nr_dpradar: Array<number>(6).fill(0),
+
+  st_enemy_damage: 0,
+  st_progress: 0,
+  st_total_point: 0,
+  st_enemy_defeat_flg: 0,
+  st_is_track_ticket: false,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_fluctuation: 0,
+  st_dp_fluctuation: 0,
+  st_mission_clear_num: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+  st_tips_read_list: 0,
+
+  sgid: -1,
+  dgid: -1,
+
+  achi_lastweekly: 0,
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_rivalcrush: 0,
+  achi_visitflg: 0,
+  achi_weeklynum: 0,
+
+  deller: 0,
+  orb: 0,
+  present_orb: 0,
+
+  event_play_num: 0,
+  event_last_select_id: -1,
+  event_skip: false,
 }

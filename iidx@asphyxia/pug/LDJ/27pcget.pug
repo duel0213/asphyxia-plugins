@@ -28,7 +28,7 @@ IIDX27pc(status="0")
       detail(grade_type=ed.grade_type grade_id=ed.grade_id stage_num=ed.stage_num clear_type=ed.clear_type)
         past(__type="s32" __count="5") #{ed.past[0]} #{ed.past[1]} #{ed.past[2]} #{ed.past[3]} #{ed.past[4]}
         max_past(__type="s32" __count="5") #{ed.max_past[0]} #{ed.max_past[1]} #{ed.max_past[2]} #{ed.max_past[3]} #{ed.max_past[4]}
-  skin(__type="s16" __count="20") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} #{custom.note_beam} #{custom.judge_font} 0 #{custom.disable_musicpreview} #{custom.pacemaker_cover} #{custom.vefx_lock} #{custom.effect} #{custom.bomb_size} #{custom.disable_hcn_color} #{custom.first_note_preview}
+  skin(__type="s16" __count="20") #{custom.frame} #{custom.turntable} #{custom.note_burst} #{custom.menu_music} #{appendsettings} #{custom.lane_cover} 0 #{custom.category_vox} #{custom.note_skin} #{custom.full_combo_splash} #{custom.note_beam} #{custom.judge_font} 0 #{Number(custom.disable_musicpreview)} #{custom.pacemaker_cover} #{Number(custom.vefx_lock)} #{custom.effect} #{custom.bomb_size} #{Number(custom.disable_hcn_color)} #{custom.first_note_preview}
   qprodata(__type="u32" __count="5") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body}
   rlist
     - for (let rd of rArray)

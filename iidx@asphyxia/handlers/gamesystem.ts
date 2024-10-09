@@ -16,6 +16,64 @@ export const gssysteminfo: EPR = async (info, data, send) => {
     arena_cpu_define: [],
   }
 
+  // following datas are made up needs to figure out correct way to do it //
+  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json"));
+  if (!_.isNil(music_open[version])) {
+    result = {
+      ...result,
+      music_open: [],
+    }
+
+    Object.keys(music_open).forEach(v => {
+      Object.keys(music_open[v]).forEach(m => {
+        if (parseInt(v) > version) return;
+
+        result.music_open.push({
+          music_id: K.ITEM("s32", parseInt(m)),
+          kind: K.ITEM("s32", music_open[v][m].kind),
+        });
+      });
+    });
+  }
+
+  if (version >= 31) {
+    result.arena_schedule = {
+      ...result.arena_schedule,
+      rule_type: K.ITEM("u8", 0),
+    }
+
+    result = {
+      ...result,
+      grade_course: [],
+    }
+
+    // following datas are made up needs to figure out correct way to do it //
+    let grade = JSON.parse(await IO.ReadFile("data/grade.json"));
+    if (!_.isNil(grade[version])) {
+      Object.keys(grade[version]).forEach(s => {
+        Object.keys(grade[version][s]).forEach(c => {
+          result.grade_course.push({
+            play_style: K.ITEM("s32", parseInt(s)),
+            grade_id: K.ITEM("s32", parseInt(c)),
+            is_valid: K.ITEM("bool", true),
+            music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
+            class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
+            music_id_1: K.ITEM("s32", grade[version][s][c].music_id[1]),
+            class_id_1: K.ITEM("s32", grade[version][s][c].class_id[1]),
+            music_id_2: K.ITEM("s32", grade[version][s][c].music_id[2]),
+            class_id_2: K.ITEM("s32", grade[version][s][c].class_id[2]),
+            music_id_3: K.ITEM("s32", grade[version][s][c].music_id[3]),
+            class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
+            index: K.ITEM("s32", result.grade_course.length),
+            cube_num: K.ITEM("s32", 0),
+            kind: K.ITEM("s32", 0),
+          });
+        });
+      });
+    }
+  }
+
+  // arena_music_difficult //
   for (let s = 0; s < 2; ++s) {
     for (let c = 0; c < 20; ++c) {
       result.arena_music_difficult.push({
@@ -70,6 +128,23 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         isEiseiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
+      }
+      break;
+    case 31:
+      result = {
+        ...result,
+        CommonBossPhase: K.ATTR({ val: String(3) }),
+        Event1Value: K.ATTR({ val: String(U.GetConfig("ep_event")) }),
+        Event1Phase: K.ATTR({ val: String(U.GetConfig("ep_event1")) }),
+        Event2Phase: K.ATTR({ val: String(U.GetConfig("ep_event2")) }),
+        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("ep_extraboss")) }),
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
+        WorldTourismOpenList: K.ATTR({ val: String(-1) }),
+        BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
+        UnlockLeggendaria: K.ATTR({ val: String(1) }),
+        BPLSerialCodePhase: K.ATTR({ val: String(0) }),
+        Event1AllPlayerTotalGetMetron: K.ATTR({ val: String(2500) }),
       }
       break;
 

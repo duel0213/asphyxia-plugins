@@ -1,8 +1,8 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex, NumArraytoBase64 } from "../util";
-import { eisei_grade, eisei_grade_data, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_playdata, lm_settings, lm_settings_new, musicmemo_data, musicmemo_data_new } from "../models/lightning";
+import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
 import { world_tourism } from "../models/worldtourism";
@@ -228,6 +228,8 @@ export const pccommon: EPR = async (info, data, send) => {
         deller_bonus: K.ATTR({ open: String(1) }),
         newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
+        eaorder_phase: K.ATTR({ phase: String(2) }), // TODO:: figure out what this does //
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("hv_extraboss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("hv_event")) }),
@@ -251,6 +253,8 @@ export const pccommon: EPR = async (info, data, send) => {
         deller_bonus: K.ATTR({ open: String(1) }),
         newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
         expert_secret_full_open: {},
+        eaorder_phase: K.ATTR({ phase: String(2) }), // TODO:: figure out what this does //
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("bo_extraboss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("bo_event")) }),
@@ -276,6 +280,8 @@ export const pccommon: EPR = async (info, data, send) => {
         deller_bonus: K.ATTR({ open: String(1) }),
         newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }), // TODO:: verify //
         expert_secret_full_open: {},
+        eaorder_phase: K.ATTR({ phase: String(2) }), // TODO:: figure out what this does //
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
         extra_boss_event: K.ATTR({ phase: String(1) }), // TODO:: verify //
         event1_phase: K.ATTR({ phase: String(4) }), // TODO:: verify //
@@ -298,15 +304,37 @@ export const pccommon: EPR = async (info, data, send) => {
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         vip_pass_black: {},
         deller_bonus: K.ATTR({ open: String(1) }),
-        newsong_another: K.ATTR({ open: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        common_evnet: K.ATTR({ flg: String(-1) }), // TODO:: figure out what this does //
         system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
         premium_area_news: K.ATTR({ open: String(1) }),
         premium_area_qpro: K.ATTR({ open: String(1) }),
         play_video: {},
+        music_retry: {},
         display_asio_logo: {},
         lane_gacha: {},
         tourism_booster: {},
         ameto_event: {},
+      }
+      break;
+    case 31:
+      result = {
+        ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        common_evnet: K.ATTR({ flg: String(-1) }),
+        system_voice_phase: K.ATTR({ phase: String(_.random(0, 8)) }),
+        premium_area_news: K.ATTR({ open: String(1) }),
+        premium_area_qpro: K.ATTR({ open: String(1) }),
+        play_video: {},
+        music_retry: {},
+        display_asio_logo: {},
+        lane_gacha: {},
+        tourism_booster: {},
       }
       break;
 
@@ -326,6 +354,7 @@ export const pcreg: EPR = async (info, data, send) => {
   let pcdata: object;
   let lightning_settings: object;
   let lightning_playdata: object;
+  let lightning_custom: object;
   switch (version) {
     case 14:
       pcdata = GLD_pcdata;
@@ -375,16 +404,25 @@ export const pcreg: EPR = async (info, data, send) => {
       pcdata = IIDX28_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings;
+      lightning_custom = lm_customdata;
       break;
     case 29:
       pcdata = IIDX29_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
       break;
     case 30:
       pcdata = IIDX30_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 31:
+      pcdata = IIDX31_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
       break;
 
     default:
@@ -451,6 +489,17 @@ export const pcreg: EPR = async (info, data, send) => {
         $set: lightning_playdata,
       }
     );
+
+    await DB.Upsert<lightning_custom>(
+      refid,
+      {
+        collection: "lightning_custom",
+        version: version,
+      },
+      {
+        $set: lightning_custom,
+      }
+    );
   }
 
   return send.object(
@@ -480,6 +529,8 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_eisei_grade = await DB.Find<eisei_grade>(refid, { collection: "eisei_grade", version: version });
   const lm_music_memo = await DB.Find<lightning_musicmemo>(refid, { collection: "lightning_musicmemo", version: version });
   const lm_music_memo_new = await DB.Find<lightning_musicmemo_new>(refid, { collection: "lightning_musicmemo_new", version: version });
+  const lm_music_filter = await DB.Find<lightning_musicfilter>(refid, { collection: "lightning_musicfilter", version: version });
+  let lm_custom: any = await DB.FindOne<lightning_custom>(refid, { collection: "lightning_custom", version: version });
 
   if (_.isNil(pcdata)) return send.deny();
 
@@ -500,6 +551,21 @@ export const pcget: EPR = async (info, data, send) => {
     custom.disable_beginner_option = false;
   }
 
+  // migration //
+  if (version >= 28 && _.isNil(lm_custom)) {
+    await DB.Upsert<lightning_custom>(refid,
+      {
+        collection: "lightning_custom",
+        version: version,
+      },
+      {
+        $set: lm_customdata,
+      }
+    );
+
+    lm_custom = lm_customdata;
+  }
+
   const appendsettings = appendSettingConverter(
     custom.rank_folder,
     custom.clear_folder,
@@ -515,7 +581,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.hide_iidxid,
     custom.disable_beginner_option,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -762,89 +828,114 @@ export const pcget: EPR = async (info, data, send) => {
       mirage_lib_sub = [],
       delabity_lab = null,
       delabity_lab_sub = [],
+      epo_res = null,
+      epo_res_sub = [],
       event_1 = null,
       event_1s = null,
-      evtArray = [], evtArray2 = [];
+      evtArray = [], evtArray2 = [], evtArray3 = [];
 
-    if (version == 21) {
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
+    switch (version) {
+      case 21:
+        if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
-      link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
-      tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
+        link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
+        tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
 
-      boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-      if (!_.isNil(boss1)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
-    }
-    else if (version == 22) {
-      if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
+        boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
+        if (!_.isNil(boss1)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
+        break;
+      case 22:
+        if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
-      chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
-      pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
-      if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
-      else if (pendual_talis.point == "null" || _.isNil(pendual_talis.point)) pendual_talis = { point: 0 };
+        chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
+        pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
+        if (_.isNil(pendual_talis)) pendual_talis = { point: 0 };
+        else if (pendual_talis.point == "null" || _.isNil(pendual_talis.point)) pendual_talis = { point: 0 };
 
-      qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
-      qpronicle_chord_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "qpronicle_chord" });
-      qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
-    }
-    else if (version == 23) {
-      if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
+        qpronicle_chord = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_chord" });
+        qpronicle_chord_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "qpronicle_chord" });
+        qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
+        break;
+      case 23:
+        if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
 
-      open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-      mystery_line_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
-    }
-    else if (version == 24) {
-      siege_sinobuz = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      siege_sinobuz_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
-      siege_sinobuz_sub.forEach((res) => {
-        res.is_clear = Number(res.is_clear);
-        res.ninjyutsu = NumArraytoHex(Base64toNumArray(res.ninjyutsu));
-        res.card_damage = NumArraytoHex(Base64toNumArray(res.card_damage));
-        res.card_clear = NumArraytoHex(Base64toNumArray(res.card_clear));
-      });
+        open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+        mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+        mystery_line_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+        break;
+      case 24:
+        siege_sinobuz = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+        siege_sinobuz_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+        siege_sinobuz_sub.forEach((res) => {
+          res.is_clear = Number(res.is_clear);
+          res.ninjyutsu = NumArraytoHex(Base64toNumArray(res.ninjyutsu));
+          res.card_damage = NumArraytoHex(Base64toNumArray(res.card_damage));
+          res.card_clear = NumArraytoHex(Base64toNumArray(res.card_clear));
+        });
 
-      ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-      if (!_.isNil(ninja_shichikyoden))
-        ninja_shichikyoden.last_select_dojo = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.last_select_dojo));
-      if (!_.isNil(ninja_shichikyoden))
-        ninja_shichikyoden.enemy_damage = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.enemy_damage));
-    }
-    else if (version == 25) {
-      rush_cannonracer = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      rush_cannonracer_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
-      rush_cannonracer_sub.forEach((res) => {
-        res.is_clear = Number(res.is_clear);
-      });
-    }
-    else if (version == 26) {
-      mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
-      if (!_.isNil(mirage_lib))
-        mirage_lib.quiz_control_list = NumArraytoHex(Base64toNumArray(mirage_lib.quiz_control_list));
+        ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+        if (!_.isNil(ninja_shichikyoden))
+          ninja_shichikyoden.last_select_dojo = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.last_select_dojo));
+        if (!_.isNil(ninja_shichikyoden))
+          ninja_shichikyoden.enemy_damage = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.enemy_damage));
+        break;
+      case 25:
+        rush_cannonracer = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+        rush_cannonracer_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+        rush_cannonracer_sub.forEach((res) => {
+          res.is_clear = Number(res.is_clear);
+        });
+        break;
+      case 26:
+        mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
+        if (!_.isNil(mirage_lib))
+          mirage_lib.quiz_control_list = NumArraytoHex(Base64toNumArray(mirage_lib.quiz_control_list));
 
-      mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
-      mirage_lib_sub.forEach((res) => {
-        res.map_route_damage = NumArraytoHex(Base64toNumArray(res.map_route_damage));
-      });
+        mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
+        mirage_lib_sub.forEach((res) => {
+          res.map_route_damage = NumArraytoHex(Base64toNumArray(res.map_route_damage));
+        });
 
-      delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
-      delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
-    }
-    else {
-      event_1 = await DB.Find(refid, { collection: "event_1", version: version });
-      event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+        delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
+        delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+        break;
+      case 31:
+        let myepo_map = await DB.Find(refid, { collection: "event_1", version: version, event_data: "myepo_map" });
+        let myepo_building = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "myepo_building" });
+        let myepo_shop = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "myepo_shop" });
 
-      if (event_1.length > 0) {
-        for (let evt of event_1) {
-          evtArray.push(evt);
+        myepo_map.forEach((res: any) => {
+          let data = {
+            ...res,
+            carryover_use: 0,
+          };
+
+          evtArray.push(data);
+        });
+
+        evtArray2 = myepo_building;
+        evtArray3 = myepo_shop;
+
+        epo_res = await DB.FindOne(refid, { collection: "event_1", version: version, event_data: "epores" });
+        epo_res_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "epores_system" });
+        break;
+
+      default:
+        event_1 = await DB.Find(refid, { collection: "event_1", version: version });
+        event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+
+        if (event_1.length > 0) {
+          for (let evt of event_1) {
+            evtArray.push(evt);
+          }
         }
-      }
 
-      if (event_1s.length > 0) {
-        for (let evt of event_1s) {
-          evtArray2.push(evt);
+        if (event_1s.length > 0) {
+          for (let evt of event_1s) {
+            evtArray2.push(evt);
+          }
         }
-      }
+        break;
     }
 
     if (!_.isNil(pcdata.sp_mlist)) {
@@ -854,155 +945,233 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.dp_clist = NumArraytoHex(Base64toNumArray(pcdata.dp_clist));
     }
 
-    if (version >= 30 && lm_music_memo_new.length > 0) {
-      lm_music_memo_new.forEach((res) => {
-        let musicmemo_data: musicmemo_data_new = {
-          folder_idx: res.folder_idx,
-          folder_name: res.folder_name,
-          play_style: res.play_style,
+    if (version >= 30) {
+      if (lm_music_memo_new.length > 0) {
+        lm_music_memo_new.forEach((res) => {
+          let musicmemo_data: musicmemo_data_new = {
+            folder_idx: res.folder_idx,
+            folder_name: res.folder_name,
+            play_style: res.play_style,
 
-          music_ids: res.music_ids,
-        }
+            music_ids: res.music_ids,
+          }
 
-        mArray.push(musicmemo_data);
-      });
-      mArray.sort((a: musicmemo_data_new, b: musicmemo_data_new): number => a.play_style - b.play_style || a.folder_idx - b.folder_idx);
+          mArray.push(musicmemo_data);
+        });
+        mArray.sort((a: musicmemo_data_new, b: musicmemo_data_new): number => a.play_style - b.play_style || a.folder_idx - b.folder_idx);
+      }
+
+      if (lm_music_filter.length > 0) {
+        lm_music_filter.forEach((res) => {
+          let musicfilter_data: musicfilter_data = {
+            play_style: res.play_style,
+            folder_id: res.folder_id,
+            filter_id: res.filter_id,
+
+            is_valid: res.is_valid,
+            value0: res.value0,
+            value1: res.value1,
+          }
+
+          fArray.push(musicfilter_data);
+        });
+        fArray.sort((a: musicfilter_data, b: musicfilter_data): number => a.play_style - b.play_style || a.folder_id - b.folder_id);
+      }
     }
-    else if (version >= 27 && lm_music_memo.length > 0) {
-      lm_music_memo.forEach((res) => {
-        let musicmemo_data: musicmemo_data = {
-          music_idx: res.music_idx,
-          play_style: res.play_style,
+    else if (version >= 27) {
+      if (lm_music_memo.length > 0) {
+        lm_music_memo.forEach((res) => {
+          let musicmemo_data: musicmemo_data = {
+            music_idx: res.music_idx,
+            play_style: res.play_style,
 
-          music_id: res.music_id,
-        }
+            music_id: res.music_id,
+          }
 
-        mArray.push(musicmemo_data);
-      });
-      mArray.sort((a: musicmemo_data, b: musicmemo_data): number => a.play_style - b.play_style || a.music_idx - b.music_idx);
+          mArray.push(musicmemo_data);
+        });
+        mArray.sort((a: musicmemo_data, b: musicmemo_data): number => a.play_style - b.play_style || a.music_idx - b.music_idx);
+      }
     }
 
-    /*** TODO:: figure out how badges works
-       [save] - elements are below but get checks for id 0~12
-       today_recommend (flg)
-       weekly_ranking (flg)
-       visitor (flg_id, flg)
-       notes_radar (flg_id, flg) [2]
-       world_tourism (flg)
-       event1 (flg_id, flg) [10]
-       arena (flg_id, flg) [2]
-       iidx_exam (flg)
+    /*** TODO:: figure out how badges works (following table is for EPOLIS)
+       [save] - element names are following below but get checks for id 0 ~ 16
+       step_up [2]
+       today_recommend
+       weekly_ranking
+       visitor [2]
+       notes_radar [2]
+       tsujigiri
+       iidx_exam
+       world_tourism
+       event1
+       arena [2]
+       event2
 
-       [get]
-       category_id - up to 12
+       [get] (starts from zero)
+       category_id - up to 16
        badge_flg_id
-        - This can be up to 23
-          - category_id: 0, 1 -> 23
-          - category_id: 9 -> 9
-          - category_id: 7, 10 -> 2
-       badge_flg
+        - This can be up to 23 [category_id, badge_flg_id]
+          - 0    - 23 [djLevel]
+          - 1    - 23 [clear]
+          - 2    - 1 [grade]
+          - 3    - 1 [step_up]
+          - 4    - (none)
+          - 5    - (none)
+          - 6    - (none)
+          - 7    - 1 [visitor]
+          - 8    - 1 [notes_radar]
+          - 10   - (none)
+          - 11   - 1
+          - 12   - (none)
+          - 13   - (none) [event]
+          - 14   - 1
+          - 15   - (none)
+          - 16   - (none) [event2]
+          - 3001 - 9
+       badge_flg (these are s64 - this may exceed max int value)
+
+       - following codes are dummy code
     ***/
 
     if (version >= 30 && badge.length > 0) {
-      let djLevel, clear, grade, visitor, notes_radar, event1;
-      djLevel = badge.filter((res) => res.category_name === "djLevel");
-      djLevel.forEach((res) => {
-        bArray.push({
-          id: 0,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
+      let djLevel, clear, grade, step_up, visitor, notes_radar, event1, event2;
+      switch (version) {
+        case 30:
+          djLevel = badge.filter((res) => res.category_name === "djLevel");
+          djLevel.forEach((res) => {
+            bArray.push({
+              id: 0,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-      clear = badge.filter((res) => res.category_name === "clear");
-      clear.forEach((res) => {
-        bArray.push({
-          id: 1,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
-	  
-      grade = badge.filter((res) => res.category_name === "grade");
-      grade.forEach((res) => {
-        bArray.push({
-          id: 2,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
+          clear = badge.filter((res) => res.category_name === "clear");
+          clear.forEach((res) => {
+            bArray.push({
+              id: 1,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-      // this keep sending back on save //
-      // possibly wrong category_id but at least doesn't show as new badges //
-      visitor = badge.filter((res) => res.category_name === "visitor");
-      visitor.forEach((res) => {
-        bArray.push({
-          id: 6,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
+          grade = badge.filter((res) => res.category_name === "grade");
+          grade.forEach((res) => {
+            bArray.push({
+              id: 2,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-      notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-      notes_radar.forEach((res) => {
-        bArray.push({
-          id: 7,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
+          // this keep sending back on save //
+          // possibly wrong category_id but at least doesn't show as new badges //
+          visitor = badge.filter((res) => res.category_name === "visitor");
+          visitor.forEach((res) => {
+            bArray.push({
+              id: 6,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-      event1 = badge.filter((res) => res.category_name === "event1");
-      event1.forEach((res) => {
-        bArray.push({
-          id: 9,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
-    }
+          notes_radar = badge.filter((res) => res.category_name === "notes_radar");
+          notes_radar.forEach((res) => {
+            bArray.push({
+              id: 7,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-    if (version == 24) { // migration //
-      if (_.isNil(pcdata.dr_sprank)) {
-        pcdata.dr_sprank = Array<number>(15).fill(0);
-        pcdata.dr_sppoint = Array<number>(15).fill(0);
-        pcdata.dr_dprank = Array<number>(15).fill(0);
-        pcdata.dr_dppoint = Array<number>(15).fill(0);
+          event1 = badge.filter((res) => res.category_name === "event1");
+          event1.forEach((res) => {
+            bArray.push({
+              id: 9,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+          break;
+        case 31:
+          djLevel = badge.filter((res) => res.category_name === "djLevel");
+          djLevel.forEach((res) => {
+            bArray.push({
+              id: 0,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-        await DB.Upsert<pcdata>(
-          refid,
-          {
-            collection: "pcdata",
-            version: version,
-          },
-          {
-            $set: pcdata,
-          }
-        );
-      }
-    }
-    if (version == 26) { // migration //
-      if (_.isNil(pcdata.eb_bossorb0)) {
-        pcdata.eb_bossorb0 = 0;
-        pcdata.eb_bossorb1 = 0;
-        pcdata.eb_bossorb2 = 0;
-        pcdata.eb_bossorb3 = 0;
-        pcdata.eb_bossorb4 = 0;
-        pcdata.eb_bossorb5 = 0;
-        pcdata.eb_bossorb6 = 0;
-        pcdata.eb_bossorb7 = 0;
-        pcdata.eb_bossorb8 = 0;
+          clear = badge.filter((res) => res.category_name === "clear");
+          clear.forEach((res) => {
+            bArray.push({
+              id: 1,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
 
-        await DB.Upsert<pcdata>(
-          refid,
-          {
-            collection: "pcdata",
-            version: version,
-          },
-          {
-            $set: pcdata,
-          }
-        );
+          grade = badge.filter((res) => res.category_name === "grade");
+          grade.forEach((res) => {
+            bArray.push({
+              id: 2,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+
+          step_up = badge.filter((res) => res.category_name === "step_up");
+          step_up.forEach((res) => {
+            bArray.push({
+              id: 3,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+
+          // this keep sending back on save //
+          // possibly wrong category_id but at least doesn't show as new badges //
+          visitor = badge.filter((res) => res.category_name === "visitor");
+          visitor.forEach((res) => {
+            bArray.push({
+              id: 7,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+
+          notes_radar = badge.filter((res) => res.category_name === "notes_radar");
+          notes_radar.forEach((res) => {
+            bArray.push({
+              id: 8,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+
+          event1 = badge.filter((res) => res.category_name === "event1");
+          event1.forEach((res) => {
+            bArray.push({
+              id: 13,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+
+          event2 = badge.filter((res) => res.category_name === "event2");
+          event2.forEach((res) => {
+            bArray.push({
+              id: 16,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+          break;
+
+        default:
+          break;
       }
     }
 
@@ -1011,14 +1180,17 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata,
       lm_playdata,
       lm_settings,
+      lm_custom,
       mArray,
       dArray,
       eArray,
+      fArray,
       appendsettings,
       custom,
       rArray,
       evtArray,
       evtArray2,
+      evtArray3,
       boss1,
       link5,
       tricolettepark,
@@ -1039,6 +1211,8 @@ export const pcget: EPR = async (info, data, send) => {
       mirage_lib_sub,
       delabity_lab,
       delabity_lab_sub,
+      epo_res,
+      epo_res_sub,
       wArray,
       bArray,
       shop_data,
@@ -1081,6 +1255,7 @@ export const pctakeover: EPR = async (info, data, send) => {
   let pcdata: object;
   let lightning_settings: object;
   let lightning_playdata: object;
+  let lightning_custom: object;
   switch (version) {
     case 14:
       pcdata = GLD_pcdata;
@@ -1130,16 +1305,25 @@ export const pctakeover: EPR = async (info, data, send) => {
       pcdata = IIDX28_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings;
+      lightning_custom = lm_customdata;
       break;
     case 29:
       pcdata = IIDX29_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
       break;
     case 30:
       pcdata = IIDX30_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 31:
+      pcdata = IIDX31_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
       break;
 
     default:
@@ -1190,6 +1374,17 @@ export const pctakeover: EPR = async (info, data, send) => {
         $set: lightning_playdata,
       }
     );
+
+    await DB.Upsert<lightning_custom>(
+      refid,
+      {
+        collection: "lightning_custom",
+        version: version,
+      },
+      {
+        $set: lightning_custom,
+      }
+    );
   }
 
   return send.object(
@@ -1230,10 +1425,15 @@ export const pcsave: EPR = async (info, data, send) => {
   const isTDJ = !(_.isNil($(data).element("lightning_play_data")));
   const hasStepUpData = !(_.isNil($(data).element("step")));
   const hasEventData = !(_.isNil($(data).element("event1"))) || !(_.isNil($(data).element("event_1")));
+  const hasEvent2Data = !(_.isNil($(data).element("event2"))) || !(_.isNil($(data).element("event_2")));
   const hasLanguageData = !(_.isNil($(data).element("language_setting")));
   const hasWorldTourism = !(_.isNil($(data).element("world_tourism_data")));
+  const hasTDJSettings = !(_.isNil($(data).element("lightning_setting")));
   const hasMusicMemo = !(_.isNil($(data).element("music_memo")));
   const hasTowerData = !(_.isNil($(data).element("tower_data")));
+  const hasSkinData = !(_.isNil($(data).element("skin_equip")));
+  const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip")));
+  const hasMusicFilter = !(_.isNil($(data).element("music_filter")));
   const hasBadgeData = !(_.isNil($(data).element("badge")));
 
   if (cltype == 0) pcdata.spnum += 1;
@@ -1243,14 +1443,29 @@ export const pcsave: EPR = async (info, data, send) => {
     if (cltype == 0) lm_playdata.sp_num += 1;
     else lm_playdata.dp_num += 1;
 
-    lm_settings.headphone_vol = parseInt($(data).attr("lightning_setting").headphone_vol);
-    lm_settings.slider = $(data).element("lightning_setting").numbers("slider");
-    lm_settings.resistance_sp_left = parseInt($(data).attr("lightning_setting").resistance_sp_left);
-    lm_settings.resistance_sp_right = parseInt($(data).attr("lightning_setting").resistance_sp_right);
-    lm_settings.resistance_dp_left = parseInt($(data).attr("lightning_setting").resistance_dp_left);
-    lm_settings.resistance_dp_right = parseInt($(data).attr("lightning_setting").resistance_dp_right);
-    lm_settings.light = $(data).element("lightning_setting").numbers("light");
-    lm_settings.concentration = $(data).element("lightning_setting").number("concentration");
+    if (hasTDJSettings) {
+      lm_settings.headphone_vol = parseInt($(data).attr("lightning_setting").headphone_vol);
+      lm_settings.slider = $(data).element("lightning_setting").numbers("slider");
+      lm_settings.resistance_sp_left = parseInt($(data).attr("lightning_setting").resistance_sp_left);
+      lm_settings.resistance_sp_right = parseInt($(data).attr("lightning_setting").resistance_sp_right);
+      lm_settings.resistance_dp_left = parseInt($(data).attr("lightning_setting").resistance_dp_left);
+      lm_settings.resistance_dp_right = parseInt($(data).attr("lightning_setting").resistance_dp_right);
+      lm_settings.light = $(data).element("lightning_setting").numbers("light");
+      lm_settings.concentration = $(data).element("lightning_setting").number("concentration");
+
+      await DB.Upsert<lightning_settings>(
+        refid,
+        {
+          collection: "lightning_settings",
+          version: version,
+        },
+        {
+          $set: {
+            lm_settings,
+          }
+        }
+      );
+    }
   }
 
   profile.total_pc += 1;
@@ -2587,7 +2802,7 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     // TODO:: fix event saving, these event savings hasn't fully tested //
-    if (!_.isNil($(data).element("event1"))) {
+    if (hasEventData) {
       let event_data = {
         last_select_map: parseInt($(data).attr("event1").last_select_map),
         hold_rice: parseInt($(data).attr("event1").hold_rice),
@@ -2631,7 +2846,7 @@ export const pcsave: EPR = async (info, data, send) => {
       });
     }
 
-    if (!_.isNil($(data).element("event2"))) {
+    if (hasEvent2Data) {
       let event_data = {
         play_num: parseInt($(data).attr("event2").play_num),
         chakra_point: parseInt($(data).attr("event2").chakra_point),
@@ -2949,10 +3164,12 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.dr_sppoint = $(data).element("dj_rank").numbers("point");
       pcdata.dr_dprank = $(data).element("dj_rank.1").numbers("rank");
       pcdata.dr_dppoint = $(data).element("dj_rank.1").numbers("point");
-    } else if ($(data).attr("dj_rank").style == "0") {
+    }
+    else if ($(data).attr("dj_rank").style == "0") {
       pcdata.dr_sprank = $(data).element("dj_rank").numbers("rank");
       pcdata.dr_sppoint = $(data).element("dj_rank").numbers("point");
-    } else if ($(data).attr("dj_rank").style == "1") {
+    }
+    else if ($(data).attr("dj_rank").style == "1") {
       pcdata.dr_dprank = $(data).element("dj_rank").numbers("rank");
       pcdata.dr_dppoint = $(data).element("dj_rank").numbers("point");
     }
@@ -2971,14 +3188,14 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
     if (!_.isNil($(data).element("orb_data"))) {
-      pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
       pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
+      pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
     }
 
     // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg) //
 
     // TODO:: fix event saving, these event savings hasn't fully tested //
-    if (!_.isNil($(data).element("event1"))) {
+    if (hasEventData) {
       pcdata.event_play_num += 1;
 
       let event_data = {
@@ -3025,7 +3242,7 @@ export const pcsave: EPR = async (info, data, send) => {
       // skipping quiz_log as it doesn't display anywhere //
     }
 
-    if (!_.isNil($(data).element("event2"))) {
+    if (hasEvent2Data) {
       let event_data = {
         play_num: parseInt($(data).attr("event2").play_num),
         last_select_floor: parseInt($(data).attr("event2").last_select_floor),
@@ -3162,6 +3379,10 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.s_visualization = parseInt($(data).attr().s_visualization);
       pcdata.d_visualization = parseInt($(data).attr().d_visualization);
     }
+    if (version >= 31) {
+      pcdata.s_classic_hispeed = parseInt($(data).attr().s_classic_hispeed);
+      pcdata.d_classic_hispeed = parseInt($(data).attr().d_classic_hispeed);
+    }
 
     if (cltype == 0) {
       pcdata.s_liflen = parseInt($(data).attr().s_lift);
@@ -3235,7 +3456,8 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.achi_packcomp = parseInt($(data).attr("achievements").pack_comp);
       pcdata.achi_visitflg = parseInt($(data).attr("achievements").visit_flg);
       pcdata.achi_weeklynum = parseInt($(data).attr("achievements").weekly_num);
-      pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
+      if (!_.isNil($(data).element("achievements").bigints("trophy"))) // unavailable since epolis //
+        pcdata.achi_trophy = $(data).element("achievements").bigints("trophy").map(String);
     }
 
     if ($(data).attr("dj_rank.1").style == "1") {
@@ -3262,9 +3484,16 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
     if (!_.isNil($(data).element("orb_data"))) {
-      pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
-      pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
-      pcdata.orb += parseInt($(data).attr("orb_data").reward_orb);
+      if (version == 31) {
+        pcdata.orb += parseInt($(data).attr("orb_data").add_orb_normal);
+        pcdata.orb += parseInt($(data).attr("orb_data").add_orb_event);
+        pcdata.present_orb += parseInt($(data).attr("orb_data").rest_orb);
+      }
+      else {
+        pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
+        pcdata.orb += parseInt($(data).attr("orb_data").reward_orb);
+        pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
+      }
     }
 
     if (hasLanguageData) profile.language = parseInt($(data).attr("language_setting").language);
@@ -3282,194 +3511,364 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (hasEventData) {
-      if (version == 27) {
-        pcdata.event_play_num += 1;
-        pcdata.event_last_select_id = parseInt($(data).attr("event1").last_select_gym_id);
+      let event_data, event_sub_data;
+      switch (version) {
+        case 27:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = parseInt($(data).attr("event1").last_select_gym_id);
 
-        $(data).element("event1").elements("gym_data").forEach((res) => {
-          let event_data = {
-            gym_id: res.attr().gym_id,
-            play_num: res.attr().play_num,
-            gauge_spirit: res.attr().gauge_spirit,
-            gauge_technique: res.attr().gauge_technique,
-            gauge_body: res.attr().gauge_body,
-            boss_attack_num: res.attr().boss_attack_num,
-            boss_damage: res.attr().boss_damage,
-            disp_lounge_list: res.attr().disp_lounge_list,
-            stb_type: res.attr().stb_type,
-            is_complete: res.number("is_complete"),
-            is_gauge_max: res.number("is_gauge_max"),
-          }
-
-          DB.Upsert(
-            refid,
-            {
-              collection: "event_1",
-              version: version,
-              gym_id: event_data.gym_id
-            },
-            {
-              $set: event_data,
-            });
-        });
-      } else if (version == 28) {
-        pcdata.event_play_num += 1;
-        pcdata.event_story_prog = parseInt($(data).attr("event_1").story_prog);
-        pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_area_id);
-        pcdata.event_failed_num = parseInt($(data).attr("event_1").failed_num);
-
-        $(data).element("event_1").elements("area_data").forEach((res) => {
-          let event_data = {
-            area_id: res.attr().area_id,
-            play_num: res.attr().play_num,
-            recipe_prog0: res.attr().recipe_prog0,
-            recipe_prog1: res.attr().recipe_prog1,
-            recipe_prog2: res.attr().recipe_prog2,
-            recipe_prog3: res.attr().recipe_prog3,
-            recipe_prog4: res.attr().recipe_prog4,
-            operation_num: res.attr().operation_num,
-            operation_prog: res.attr().operation_prog,
-            last_select_recipe: res.attr().last_select_recipe,
-            area_prog: res.attr().area_prog,
-            is_complete: res.number("is_complete"),
-          }
-
-          DB.Upsert(
-            refid,
-            {
-              collection: "event_1",
-              version: version,
-              area_id: event_data.area_id
-            },
-            {
-              $set: event_data,
-            });
-        });
-      } else if (version == 29) {
-        pcdata.event_play_num += 1;
-        pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_platform_id);
-        pcdata.event_last_select_type = parseInt($(data).attr("event_1").last_select_platform_type);
-
-        let event_data, event_sub_data;
-        $(data).element("event_1").elements("watch_data").forEach((res) => {
-          if (!(_.isNil(res.element("channel")))) {
+          $(data).element("event1").elements("gym_data").forEach((res) => {
             event_data = {
-              last_select_channel: res.attr().last_select_channel,
-              platform_id: res.attr().platform_id,
-              platform_prog: res.attr().platform_prog,
+              gym_id: res.attr().gym_id,
               play_num: res.attr().play_num,
+              gauge_spirit: res.attr().gauge_spirit,
+              gauge_technique: res.attr().gauge_technique,
+              gauge_body: res.attr().gauge_body,
+              boss_attack_num: res.attr().boss_attack_num,
+              boss_damage: res.attr().boss_damage,
+              disp_lounge_list: res.attr().disp_lounge_list,
+              stb_type: res.attr().stb_type,
+              is_complete: res.number("is_complete"),
+              is_gauge_max: res.number("is_gauge_max"),
+            }
+
+            DB.Upsert(
+              refid,
+              {
+                collection: "event_1",
+                version: version,
+                gym_id: event_data.gym_id
+              },
+              {
+                $set: event_data,
+              });
+          });
+          break;
+        case 28:
+          pcdata.event_play_num += 1;
+          pcdata.event_story_prog = parseInt($(data).attr("event_1").story_prog);
+          pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_area_id);
+          pcdata.event_failed_num = parseInt($(data).attr("event_1").failed_num);
+
+          $(data).element("event_1").elements("area_data").forEach((res) => {
+            event_data = {
+              area_id: res.attr().area_id,
+              play_num: res.attr().play_num,
+              recipe_prog0: res.attr().recipe_prog0,
+              recipe_prog1: res.attr().recipe_prog1,
+              recipe_prog2: res.attr().recipe_prog2,
+              recipe_prog3: res.attr().recipe_prog3,
+              recipe_prog4: res.attr().recipe_prog4,
+              operation_num: res.attr().operation_num,
+              operation_prog: res.attr().operation_prog,
+              last_select_recipe: res.attr().last_select_recipe,
+              area_prog: res.attr().area_prog,
+              is_complete: res.number("is_complete"),
+            }
+
+            DB.Upsert(
+              refid,
+              {
+                collection: "event_1",
+                version: version,
+                area_id: event_data.area_id
+              },
+              {
+                $set: event_data,
+              });
+          });
+          break;
+        case 29:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_platform_id);
+          pcdata.event_last_select_type = parseInt($(data).attr("event_1").last_select_platform_type);
+
+          $(data).element("event_1").elements("watch_data").forEach((res) => {
+            if (!(_.isNil(res.element("channel")))) {
+              event_data = {
+                last_select_channel: res.attr().last_select_channel,
+                platform_id: res.attr().platform_id,
+                platform_prog: res.attr().platform_prog,
+                play_num: res.attr().play_num,
+              };
+
+              event_sub_data = {
+                platform_id: res.attr().platform_id,
+                channel_id: res.attr("channel").channel_id,
+                gauge: res.attr("channel").gauge,
+                channel_play_num: res.attr("channel").play_num,
+                is_complete: res.element("channel").number("is_complete"),
+              }
+            } else {
+              event_data = {
+                last_select_channel: res.attr().last_select_channel,
+                platform_id: res.attr().platform_id,
+                platform_prog: res.attr().platform_prog,
+                play_num: res.attr().play_num,
+              }
+
+              event_sub_data = {
+                platform_id: res.attr().platform_id,
+                channel_id: 0,
+                gauge: 0,
+                channel_play_num: 0,
+                is_complete: 0,
+              }
+            }
+
+            DB.Upsert(refid,
+              {
+                collection: "event_1",
+                version: version,
+                platform_id: event_data.platform_id
+              },
+              {
+                $set: event_data,
+              }
+            );
+
+            DB.Upsert(refid,
+              {
+                collection: "event_1_sub",
+                version: version,
+                platform_id: event_sub_data.platform_id,
+                channel_id: event_sub_data.channel_id,
+              },
+              {
+                $set: event_sub_data,
+              }
+            );
+          });
+          break;
+        case 30:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_flyer_id);
+
+          $(data).element("event_1").elements("flyer_data").forEach((res) => {
+            if (!(_.isNil(res.element("genre_data")))) {
+              event_data = {
+                last_select_genre: res.attr().last_select_genre,
+                flyer_id: res.attr().flyer_id,
+                flyer_prog: res.attr().flyer_prog,
+                play_num: res.attr().play_num,
+                skill_param: res.attr().skill_param,
+              };
+
+              event_sub_data = {
+                flyer_id: res.attr().flyer_id,
+                genre_id: res.element("genre_data").attr().genre_id,
+                gauge: res.element("genre_data").attr().gauge,
+                genre_playnum: res.element("genre_data").attr().play_num,
+                is_complete: res.element("genre_data").number("is_complete"),
+              }
+            } else {
+              event_data = {
+                last_select_genre: res.attr().last_select_genre,
+                flyer_id: res.attr().flyer_id,
+                flyer_prog: res.attr().flyer_prog,
+                play_num: res.attr().play_num,
+                skill_param: res.attr().skill_param,
+              };
+
+              event_sub_data = {
+                flyer_id: res.attr().flyer_id,
+                genre_id: 0,
+                gauge: 0,
+                genre_playnum: 0,
+                is_complete: 0,
+              }
+            }
+
+            DB.Upsert(refid,
+              {
+                collection: "event_1",
+                version: version,
+                flyer_id: event_data.flyer_id
+              },
+              {
+                $set: event_data,
+              }
+            );
+
+            DB.Upsert(refid,
+              {
+                collection: "event_1_sub",
+                version: version,
+                flyer_id: event_sub_data.flyer_id,
+                genre_id: event_sub_data.genre_id,
+              },
+              {
+                $set: event_sub_data,
+              }
+            );
+          });
+          break;
+        case 31:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_map_id);
+          pcdata.event_skip = false;
+
+          if (!_.isNil($(data).element("event_1").element("is_skip"))) {
+            pcdata.event_skip = true;
+          }
+
+          let mapArray = [];
+          $(data).element("event_1").elements("map_data").forEach((res) => {
+            let map_id = res.attr().map_id;
+
+            let buildingArray = [];
+            res.elements("building_data").forEach((res) => {
+              let building_data = {
+                map_id,
+
+                pos: res.attr().pos,
+                building: res.attr().building,
+                use_tile: res.attr().use_tile,
+              }
+
+              buildingArray.push(building_data);
+            });
+
+            let shopArray = [];
+            res.elements("shop_data").forEach((res) => {
+              let shop_data = {
+                map_id,
+
+                reward_id: res.attr().reward_id,
+                prog: res.attr().prog,
+              }
+
+              shopArray.push(shop_data);
+            });
+
+            let musicArray = [];
+            res.elements("music").forEach((res) => {
+              let music_data = {
+                music_id: res.attr().music_id,
+                note_id: res.attr().note_id,
+              }
+
+              musicArray.push(music_data);
+            }); // these are saved but will not used for now //
+
+            let map_data = {
+              map_id,
+
+              play_num: res.attr().play_num,
+              play_num_uc: res.attr().play_num_uc,
+              last_select_pos: res.attr().last_select_pos,
+              map_prog: res.attr().map_prog,
+              gauge: res.attr().gauge,
+              tile_num: res.attr().tile_num,
+              metron_total_get: res.attr().metron_total_get,
+              metron_total_use: res.attr().metron_total_use,
+              bank_date: res.attr().bank_date,
+              grade_bonus: res.attr().grade_bonus,
+              end_bonus: res.attr().end_bonus,
+              fbonus: res.attr().fbonus,
             };
 
-            event_sub_data = {
-              platform_id: res.attr().platform_id,
-              channel_id: res.attr("channel").channel_id,
-              gauge: res.attr("channel").gauge,
-              channel_play_num: res.attr("channel").play_num,
-              is_complete: res.element("channel").number("is_complete"),
-            }
-          } else {
-            event_data = {
-              last_select_channel: res.attr().last_select_channel,
-              platform_id: res.attr().platform_id,
-              platform_prog: res.attr().platform_prog,
-              play_num: res.attr().play_num,
-            }
+            mapArray.push([map_data, buildingArray, shopArray, musicArray]);
+          });
 
-            event_sub_data = {
-              platform_id: res.attr().platform_id,
-              channel_id: 0,
-              gauge: 0,
-              channel_play_num: 0,
-              is_complete: 0,
-            }
-          }
+          mapArray.forEach((res) => {
+            // map_data //
+            DB.Upsert(refid, {
+              collection: "event_1",
+              version: version,
+              event_data: "myepo_map",
+              map_id: res[0].map_id,
+            },
+            {
+              $set: res[0],
+            });
 
-          DB.Upsert(refid,
+            // building_data //
+            res[1].forEach((res) => {
+              DB.Upsert(refid, {
+                collection: "event_1_sub",
+                version: version,
+                event_data: "myepo_building",
+                map_id: res.map_id,
+                pos: res.pos,
+              },
+              {
+                $set: res,
+              });
+            });
+
+            // shop_data //
+            res[2].forEach((res) => {
+              DB.Upsert(refid, {
+                collection: "event_1_sub",
+                version: version,
+                event_data: "myepo_shop",
+                map_id: res.map_id,
+                reward_id: res.reward_id,
+              },
+              {
+                $set: res,
+              });
+            });
+
+            // music //
+            res[3].forEach((res) => {
+              DB.Upsert(refid, {
+                collection: "event_1_sub",
+                version: version,
+                event_data: "myepo_music",
+              },
+              {
+                $set: res,
+              });
+            });
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    if (hasEvent2Data) {
+      switch (version) {
+        case 31:
+          // TODO:: figure out pack_id, pack_flg, play_pack, erosion_play_num, erosion5_clear12_num //
+          await DB.Upsert(refid,
             {
               collection: "event_1",
               version: version,
-              platform_id: event_data.platform_id
+              event_data: "epores",
             },
             {
-              $set: event_data,
+              $set: {
+                event_play_num: $(data).attr("event_2").event_play_num,
+                after_play_num: $(data).attr("event_2").after_play_num,
+                last_select_system_id: $(data).attr("event_2").last_select_system_id,
+                gate_key: $(data).attr("event_2").gate_key,
+                after_gauge: $(data).attr("event_2").after_gauge,
+                last_select_erosion_level: $(data).attr("event_2").last_select_erosion_level,
+              }
             }
           );
 
-          DB.Upsert(refid,
-            {
+          $(data).element("event_2").elements("system_data").forEach((res) => {
+            DB.Upsert(refid, {
               collection: "event_1_sub",
               version: version,
-              platform_id: event_sub_data.platform_id,
-              channel_id: event_sub_data.channel_id,
+              event_data: "epores_system",
+              system_id: res.attr().system_id,
             },
-            {
-              $set: event_sub_data,
-            }
-          );
-        });
-      } else if (version == 30) {
-        pcdata.event_play_num += 1;
-        pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_flyer_id);
-
-        let event_data, event_sub_data;
-        $(data).element("event_1").elements("flyer_data").forEach((res) => {
-          if (!(_.isNil(res.element("genre_data")))) {
-            event_data = {
-              last_select_genre: res.attr().last_select_genre,
-              flyer_id: res.attr().flyer_id,
-              flyer_prog: res.attr().flyer_prog,
-              play_num: res.attr().play_num,
-              skill_param: res.attr().skill_param,
-            };
-
-            event_sub_data = {
-              flyer_id: res.attr().flyer_id,
-              genre_id: res.element("genre_data").attr().genre_id,
-              gauge: res.element("genre_data").attr().gauge,
-              genre_playnum: res.element("genre_data").attr().play_num,
-              is_complete: res.element("genre_data").number("is_complete"),
-            }
-          } else {
-            event_data = {
-              last_select_genre: res.attr().last_select_genre,
-              flyer_id: res.attr().flyer_id,
-              flyer_prog: res.attr().flyer_prog,
-              play_num: res.attr().play_num,
-              skill_param: res.attr().skill_param,
-            };
-
-            event_sub_data = {
-              flyer_id: res.attr().flyer_id,
-              genre_id: 0,
-              gauge: 0,
-              genre_playnum: 0,
-              is_complete: 0,
-            }
-          }
-
-          DB.Upsert(refid,
-            {
-              collection: "event_1",
-              version: version,
-              flyer_id: event_data.flyer_id
-            },
-            {
-              $set: event_data,
-            }
-          );
-
-          DB.Upsert(refid,
-            {
-              collection: "event_1_sub",
-              version: version,
-              flyer_id: event_sub_data.flyer_id,
-              genre_id: event_sub_data.genre_id,
-            },
-            {
-              $set: event_sub_data,
-            }
-          );
-        });
+              {
+                $set: {
+                  play_num: res.attr().play_num,
+                  unlock_prog: res.attr().unlock_prog,
+                  system_prog: res.attr().system_prog,
+                  gauge: res.attr().gauge,
+                },
+              });
+          });
+          break;
       }
     }
 
@@ -3516,7 +3915,8 @@ export const pcsave: EPR = async (info, data, send) => {
               },
             });
         });
-      } else if (version >= 27) {
+      }
+      else if (version >= 27) {
         $(data).element("music_memo").elements("music").forEach((res) => {
           DB.Upsert<lightning_musicmemo>(
             refid,
@@ -3545,92 +3945,217 @@ export const pcsave: EPR = async (info, data, send) => {
       let badge_data = [];
       let badge = $(data).element("badge");
 
-      if (!(_.isNil(badge.element("today_recommend")))) {
-        let badgeInfo = {
-          category_id: "today_recommend",
-          flg_id: 0,
-          flg: parseInt(badge.element("today_recommend").attr().flg),
-        };
-
-        badge_data.push(badgeInfo);
-      }
-
-      if (!(_.isNil(badge.element("weekly_ranking")))) {
-        let badgeInfo = {
-          category_id: "weekly_ranking",
-          flg_id: 0,
-          flg: parseInt(badge.element("weekly_ranking").attr().flg),
-        };
-
-        badge_data.push(badgeInfo);
-      }
-
-      if (!(_.isNil(badge.element("visitor")))) {
-        badge.elements("visitor").forEach((res) => {
+      if (version == 30) {
+        if (!(_.isNil(badge.element("today_recommend")))) {
           let badgeInfo = {
-            category_id: "visitor",
-            flg_id: parseInt(res.attr().flg_id),
-            flg: parseInt(res.attr().flg),
+            category_id: "today_recommend",
+            flg_id: 0,
+            flg: parseInt(badge.element("today_recommend").attr().flg),
           };
 
           badge_data.push(badgeInfo);
-        });
-      }
+        }
 
-      if (!(_.isNil(badge.element("notes_radar")))) {
-        badge.elements("notes_radar").forEach((res) => {
+        if (!(_.isNil(badge.element("weekly_ranking")))) {
           let badgeInfo = {
-            category_id: "notes_radar",
-            flg_id: parseInt(res.attr().flg_id),
-            flg: parseInt(res.attr().flg),
+            category_id: "weekly_ranking",
+            flg_id: 0,
+            flg: parseInt(badge.element("weekly_ranking").attr().flg),
           };
 
           badge_data.push(badgeInfo);
-        });
-      }
+        }
 
-      if (!(_.isNil(badge.element("world_tourism")))) {
-        let badgeInfo = {
-          category_id: "world_tourism",
-          flg_id: 0,
-          flg: parseInt(badge.element("world_tourism").attr().flg),
-        };
+        if (!(_.isNil(badge.element("visitor")))) {
+          badge.elements("visitor").forEach((res) => {
+            let badgeInfo = {
+              category_id: "visitor",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
 
-        badge_data.push(badgeInfo);
-      }
+            badge_data.push(badgeInfo);
+          });
+        }
 
-      if (!(_.isNil(badge.element("event1")))) {
-        badge.elements("event1").forEach((res) => {
+        if (!(_.isNil(badge.element("notes_radar")))) {
+          badge.elements("notes_radar").forEach((res) => {
+            let badgeInfo = {
+              category_id: "notes_radar",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("world_tourism")))) {
           let badgeInfo = {
-            category_id: "event1",
-            flg_id: parseInt(res.attr().flg_id),
-            flg: parseInt(res.attr().flg),
+            category_id: "world_tourism",
+            flg_id: 0,
+            flg: parseInt(badge.element("world_tourism").attr().flg),
           };
 
           badge_data.push(badgeInfo);
-        });
-      }
+        }
 
-      if (!(_.isNil(badge.element("arena")))) {
-        badge.elements("arena").forEach((res) => {
+        if (!(_.isNil(badge.element("event1")))) {
+          badge.elements("event1").forEach((res) => {
+            let badgeInfo = {
+              category_id: "event1",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("arena")))) {
+          badge.elements("arena").forEach((res) => {
+            let badgeInfo = {
+              category_id: "arena",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("iidx_exam")))) {
           let badgeInfo = {
-            category_id: "arena",
-            flg_id: parseInt(res.attr().flg_id),
-            flg: parseInt(res.attr().flg),
+            category_id: "iidx_exam",
+            flg_id: 0,
+            flg: parseInt(badge.element("iidx_exam").attr().flg),
           };
 
           badge_data.push(badgeInfo);
-        });
+        }
       }
+      else if (version == 31) {
+        if (!(_.isNil(badge.element("step_up")))) {
+          badge.elements("step_up").forEach((res) => {
+            let badgeInfo = {
+              category_id: "step_up",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
 
-      if (!(_.isNil(badge.element("iidx_exam")))) {
-        let badgeInfo = {
-          category_id: "iidx_exam",
-          flg_id: 0,
-          flg: parseInt(badge.element("iidx_exam").attr().flg),
-        };
+            badge_data.push(badgeInfo);
+          });
+        }
 
-        badge_data.push(badgeInfo);
+        if (!(_.isNil(badge.element("today_recommend")))) {
+          let badgeInfo = {
+            category_id: "today_recommend",
+            flg_id: 0,
+            flg: parseInt(badge.element("today_recommend").attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        }
+
+        if (!(_.isNil(badge.element("weekly_ranking")))) {
+          let badgeInfo = {
+            category_id: "weekly_ranking",
+            flg_id: 0,
+            flg: parseInt(badge.element("weekly_ranking").attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        }
+
+        if (!(_.isNil(badge.element("visitor")))) {
+          badge.elements("visitor").forEach((res) => {
+            let badgeInfo = {
+              category_id: "visitor",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("notes_radar")))) {
+          badge.elements("notes_radar").forEach((res) => {
+            let badgeInfo = {
+              category_id: "notes_radar",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("tsujigiri")))) {
+          let badgeInfo = {
+            category_id: "tsujigiri",
+            flg_id: 0,
+            flg: parseInt(badge.element("tsujigiri").attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        }
+
+        if (!(_.isNil(badge.element("iidx_exam")))) {
+          let badgeInfo = {
+            category_id: "iidx_exam",
+            flg_id: 0,
+            flg: parseInt(badge.element("iidx_exam").attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        }
+
+        if (!(_.isNil(badge.element("world_tourism")))) {
+          let badgeInfo = {
+            category_id: "world_tourism",
+            flg_id: 0,
+            flg: parseInt(badge.element("world_tourism").attr().flg),
+          };
+
+          badge_data.push(badgeInfo);
+        }
+
+        if (!(_.isNil(badge.element("event1")))) {
+          badge.elements("event1").forEach((res) => {
+            let badgeInfo = {
+              category_id: "event1",
+              flg_id: 0,
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("arena")))) {
+          badge.elements("arena").forEach((res) => {
+            let badgeInfo = {
+              category_id: "arena",
+              flg_id: parseInt(res.attr().flg_id),
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
+
+        if (!(_.isNil(badge.element("event2")))) {
+          badge.elements("event2").forEach((res) => {
+            let badgeInfo = {
+              category_id: "event2",
+              flg_id: 0,
+              flg: parseInt(res.attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          });
+        }
       }
 
       badge_data.forEach((res) => {
@@ -3648,6 +4173,124 @@ export const pcsave: EPR = async (info, data, send) => {
             }
           });
       });
+    }
+
+    if (hasMusicFilter) {
+      $(data).element("music_filter").elements("folder").forEach((res) => {
+        DB.Upsert<lightning_musicmemo>(
+          refid,
+          {
+            collection: "lightning_musicmemo",
+            version: version,
+            play_style: parseInt(res.attr().play_style),
+            folder_id: parseInt(res.attr().folder_id),
+            filter_id: parseInt(res.attr().filter_id),
+          },
+          {
+            $set: {
+              is_valid: res.bool("is_valid"),
+              value0: parseInt(res.attr().value0),
+              value1: parseInt(res.attr().value1),
+            },
+          });
+      });
+    }
+
+    if (hasSkinData) {
+      let skinData = $(data).elements("skin_equip");
+      let note_burst, bomb_size, turntable, judge_font,
+        note_skin, note_size, lane_cover, pacemaker_cover,
+        lift_cover, note_beam, note_beam_size, full_combo_splash, frame;
+
+      skinData.forEach((res) => {
+        switch (parseInt(res.attr().skin_id)) {
+          case 1:
+            note_burst = parseInt(res.attr().skin_no);
+            break;
+          case 2:
+            bomb_size = parseInt(res.attr().skin_no);
+            break;
+          case 3:
+            turntable = parseInt(res.attr().skin_no);
+            break;
+          case 4:
+            judge_font = parseInt(res.attr().skin_no);
+            break;
+          case 5:
+            note_skin = parseInt(res.attr().skin_no);
+            break;
+          case 6:
+            note_size = parseInt(res.attr().skin_no);
+            break;
+
+          case 13:
+            lane_cover = parseInt(res.attr().skin_no);
+            break;
+          case 14:
+            pacemaker_cover = parseInt(res.attr().skin_no);
+            break;
+          case 15:
+            lift_cover = parseInt(res.attr().skin_no);
+            break;
+          case 16:
+            note_beam = parseInt(res.attr().skin_no);
+            break;
+          case 17:
+            note_beam_size = parseInt(res.attr().skin_no);
+            break;
+          case 18:
+            full_combo_splash = parseInt(res.attr().skin_no);
+            break;
+          case 19:
+            frame = parseInt(res.attr().skin_no);
+            break;
+        }
+      });
+
+      custom.note_burst = note_burst;
+      custom.bomb_size = bomb_size;
+      custom.turntable = turntable;
+      custom.judge_font = judge_font;
+      custom.note_skin = note_skin;
+      custom.note_size = note_size;
+
+      custom.lane_cover = lane_cover;
+      custom.pacemaker_cover = pacemaker_cover;
+      custom.lift_cover = lift_cover;
+      custom.note_beam = note_beam;
+      custom.note_beam_size = note_beam_size;
+      custom.full_combo_splash = full_combo_splash;
+      custom.frame = frame;
+    }
+
+    if (isTDJ && hasTDJSkinData) {
+      let skinData = $(data).elements("tdjskin_equip");
+      let premium_skin;
+      let premium_bg;
+
+      skinData.forEach((res) => {
+        switch (parseInt(res.attr().skin_id)) {
+          case 0:
+            premium_skin = parseInt(res.attr().skin_no);
+            break;
+          case 1:
+            premium_bg = parseInt(res.attr().skin_no);
+            break;
+        }
+      });
+
+      await DB.Upsert<lightning_custom>(
+        refid,
+        {
+          collection: "lightning_custom",
+          version: version,
+        },
+        {
+          $set: {
+            premium_skin,
+            premium_bg,
+          }
+        });
     }
   }
 

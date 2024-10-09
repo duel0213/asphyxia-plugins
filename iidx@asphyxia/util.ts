@@ -106,7 +106,7 @@ export function HextoBase64(hex: string) {
   let i = 0;
 
   for (let i = 0; i < hex.length; i += 2) {
-    const hexByte = hex.substr(i, 2);
+    const hexByte = hex.slice(i, i + 2);
     const byteValue = parseInt(hexByte, 16);
     buffer.push(byteValue);
   }
@@ -144,7 +144,7 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
 
   let result = "";
   let numIdx = 0;
-  if (numArray != null && !_.isNaN(numArray[0])) {
+  if (!_.isNil(numArray) && !_.isNaN(numArray[0])) {
     let numArrayIdx = 0;
     if (numArray.length > 0) {
       let combined = 0;
@@ -181,7 +181,7 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
 
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
-  switch (info.model.substring(0, 3)) {
+  switch (info.model.slice(0, 3)) {
     case "GLD": return 14;
     case "HDD": return 15;
     case "I00": return 16;
@@ -189,7 +189,7 @@ export function GetVersion(info: EamuseInfo) {
     case "JDZ": return 18;
     case "KDZ": return 19;
     case "LDJ":
-      version = parseInt(info.module.substring(4, 6));
+      version = parseInt(info.module.slice(4, 6));
       if (_.isNaN(version)) version = 20;
       break;
   }
@@ -305,17 +305,30 @@ export async function ReftoQPRO(refid: string, version: number) {
   });
 
   let qpro_data = [];
-
   try {
-    qpro_data = [
-      custom.qpro_hair,
-      custom.qpro_head,
-      custom.qpro_face,
-      custom.qpro_body,
-      custom.qpro_hand,
-    ];
+    switch (version) {
+      case 31:
+        qpro_data = [
+          custom.qpro_hair,
+          custom.qpro_head,
+          custom.qpro_face,
+          custom.qpro_body,
+          custom.qpro_hand,
+          custom.qpro_back,
+        ];
+        break;
+      default:
+        qpro_data = [
+          custom.qpro_hair,
+          custom.qpro_head,
+          custom.qpro_face,
+          custom.qpro_body,
+          custom.qpro_hand,
+        ];
+        break;
+    }
   } catch {
-    qpro_data = [0, 0, 0, 0, 0];
+    qpro_data = [0, 0, 0, 0, 0, 0];
   }
 
   return qpro_data;

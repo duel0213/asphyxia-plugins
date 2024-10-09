@@ -24,8 +24,8 @@ export const graderaised: EPR = async (info, data, send) => {
 
   if (version >= 23) cflg = parseInt($(data).attr().cstage);
 
-  const isTDJ = !(_.isNil($(data).element("lightning_play_data"))); // lightning model //
-  const hasEiseiData = (!(_.isNil($(data).element("eisei_data"))) || !(_.isNil($(data).element("eisei_grade_data"))));;
+  const isTDJ = !_.isNil($(data).element("lightning_play_data")); // lightning model //
+  const hasEiseiData = (!_.isNil($(data).element("eisei_data")) || !_.isNil($(data).element("eisei_grade_data")) || !_.isNil($(data).element("kiwami_data")));
   if (isTDJ && hasEiseiData) {
     let eisei_clear_type: number;
     let eisei_grade_id: number;
@@ -38,35 +38,52 @@ export const graderaised: EPR = async (info, data, send) => {
     let eisei_max_past_achievement: number[];
     let eisei_max_past_selected_course: number[];
 
-    if (version == 27) {
-      eisei_clear_type = parseInt($(data).attr("eisei_data").clear_type);
-      eisei_grade_id = parseInt($(data).attr("eisei_data").grade_id);
-      eisei_grade_type = parseInt($(data).attr("eisei_data").grade_type);
-      eisei_stage_num = parseInt($(data).attr("eisei_data").stage_num);
+    switch (version) {
+      case 27:
+        eisei_clear_type = parseInt($(data).attr("eisei_data").clear_type);
+        eisei_grade_id = parseInt($(data).attr("eisei_data").grade_id);
+        eisei_grade_type = parseInt($(data).attr("eisei_data").grade_type);
+        eisei_stage_num = parseInt($(data).attr("eisei_data").stage_num);
 
-      eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
-      eisei_max_past_achievement = $(data).element("eisei_data").numbers("max_past_achievement");
-    } if (version >= 30) {
-      eisei_clear_type = parseInt($(data).element("eisei_data").attr().clear_type);
-      eisei_grade_id = parseInt($(data).element("eisei_data").attr().grade_id);
-      eisei_grade_type = parseInt($(data).element("eisei_data").attr().grade_type);
-      eisei_stage_num = parseInt($(data).element("eisei_data").attr().stage_num);
-      eisei_option = parseInt($(data).element("eisei_data").attr().option);
+        eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
+        eisei_max_past_achievement = $(data).element("eisei_data").numbers("max_past_achievement");
+        break;
+      case 30:
+        eisei_clear_type = parseInt($(data).element("eisei_data").attr().clear_type);
+        eisei_grade_id = parseInt($(data).element("eisei_data").attr().grade_id);
+        eisei_grade_type = parseInt($(data).element("eisei_data").attr().grade_type);
+        eisei_stage_num = parseInt($(data).element("eisei_data").attr().stage_num);
+        eisei_option = parseInt($(data).element("eisei_data").attr().option);
 
-      eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
-      eisei_past_selected_course = $(data).element("eisei_data").numbers("past_selected_course");
-      eisei_max_past_achievement = $(data).element("eisei_data").numbers("max_past_achievement");
-      eisei_max_past_selected_course = $(data).element("eisei_data").numbers("max_past_selected_course");
-    } else {
-      eisei_clear_type = parseInt($(data).attr("eisei_grade_data").clear_type);
-      eisei_grade_id = parseInt($(data).attr("eisei_grade_data").grade_id);
-      eisei_grade_type = parseInt($(data).attr("eisei_grade_data").grade_type);
-      eisei_stage_num = parseInt($(data).attr("eisei_grade_data").stage_num);
+        eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
+        eisei_past_selected_course = $(data).element("eisei_data").numbers("past_selected_course");
+        eisei_max_past_achievement = $(data).element("eisei_data").numbers("max_past_achievement");
+        eisei_max_past_selected_course = $(data).element("eisei_data").numbers("max_past_selected_course");
+        break;
+      case 31:
+        eisei_clear_type = parseInt($(data).attr("kiwami_data").clear_type);
+        eisei_grade_id = parseInt($(data).attr("kiwami_data").grade_id);
+        eisei_grade_type = parseInt($(data).attr("kiwami_data").grade_type);
+        eisei_stage_num = parseInt($(data).attr("kiwami_data").stage_num);
+        eisei_option = parseInt($(data).attr("kiwami_data").option);
 
-      eisei_past_achievement = $(data).element("eisei_grade_data").numbers("past_achievement");
-      eisei_past_selected_course = $(data).element("eisei_grade_data").numbers("past_selected_course");
-      eisei_max_past_achievement = $(data).element("eisei_grade_data").numbers("max_past_achievement");
-      eisei_max_past_selected_course = $(data).element("eisei_grade_data").numbers("max_past_selected_course");
+        eisei_past_achievement = $(data).element("kiwami_data").numbers("past_achievement");
+        eisei_past_selected_course = $(data).element("kiwami_data").numbers("past_selected_course");
+        eisei_max_past_achievement = $(data).element("kiwami_data").numbers("max_past_achievement");
+        eisei_max_past_selected_course = $(data).element("kiwami_data").numbers("max_past_selected_course");
+        break;
+
+      default:
+        eisei_clear_type = parseInt($(data).attr("eisei_grade_data").clear_type);
+        eisei_grade_id = parseInt($(data).attr("eisei_grade_data").grade_id);
+        eisei_grade_type = parseInt($(data).attr("eisei_grade_data").grade_type);
+        eisei_stage_num = parseInt($(data).attr("eisei_grade_data").stage_num);
+
+        eisei_past_achievement = $(data).element("eisei_grade_data").numbers("past_achievement");
+        eisei_past_selected_course = $(data).element("eisei_grade_data").numbers("past_selected_course");
+        eisei_max_past_achievement = $(data).element("eisei_grade_data").numbers("max_past_achievement");
+        eisei_max_past_selected_course = $(data).element("eisei_grade_data").numbers("max_past_selected_course");
+        break;
     }
 
     await DB.Upsert<eisei_grade>(

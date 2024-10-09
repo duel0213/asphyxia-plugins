@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.15**
+Plugin Version: **v0.1.16**
 
 ---
 
@@ -22,6 +22,7 @@ Supported Versions
   - beatmaniaIIDX 28 BISTROVER (2021091500)
   - beatmaniaIIDX 29 CastHour (2022082400)
   - beatmaniaIIDX 30 RESIDENT (2023090500)
+  - beatmaniaIIDX 31 EPOLIS (2024082600)
 
 ---
 
@@ -29,10 +30,11 @@ Features
   - STEP UP (Partial)
   - SKILL ANALYZER
   - EVENT (Partial)
-  - ARENA (Partial)
+  - ARENA (LOCAL only)
   - RANDOME LANE TICKET
   - FAVORITE/SONG SELECTION NOTES (Partial)
     - EXTRA FAVORITE does not support yet
+  - ORIGINAL FILTER
 
 ---
 
@@ -40,9 +42,11 @@ Known Issues
   - Clear Lamps may display invalid lamps due to missing conversion code
   - DJ LEVEL folders are broken in ~ DJ TROOPERS due to missing rank\_id
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
+  - SUPER FUTURE 2323 play records doesn't display on other version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
   - Some of licensed songs are locked behind due to missing license element (needs to be verified)
-  - Badges aren't saving in RESIDENT ~ (needs to figure out name to id)
+  - Some of badges aren't saving in RESIDENT ~ (needs to figure out name to id)
+  - QPRO may have wrong item if you equipped item from STEP UP result (this probably caused by qpro\_secret\_flg being -1)
 
 ---
 
@@ -136,10 +140,17 @@ Changelogs
   - Added Initial support for GOLD
   - Added Disable Beginner Option
   - Added Experimental Badge saving support
-  - Added Experimental score Import/Export
-  - Fixed where plugin may fail to register due to missing types in dev mode
+  - Added Experimental score import/export
+  - Fixed where plugin may fail to register due to missing types in dev mode (invalid setup for dev, just enough to get around)
   - Fixed where pacemaker isn't working as intended due to malformed ghost data on music.appoint response (~ DJ TROOPERS)
   - Fixed where unable to login after first-play (SPADA, SINOBUZ, Rootage)
   - Fixed where pacemaker isn't working as intented due to wrong condition check (HEROIC VERSE ~)
   - Fixed where pacemaker sub-type isn't load correctly (HEROIC VERSE ~)
-  - Fixed where QPRO doesn't get saved in WebUI
+  - Fixed where QPRO data doesn't get saved in WebUI
+
+**v0.1.16**
+  - Added Initial support for EPOLIS
+  - Added music\_open on gameSystem.systemInfo response
+  - Fixed where lightning settings doesn't get saved on logout
+  - Fixed where Disable Music Preview, Disable HCN Color, VEFX Lock settings doesn't reflect
+  - WebUI is now display values of corresponding version

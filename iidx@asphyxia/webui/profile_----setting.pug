@@ -2,6 +2,7 @@
   profile: DB.FindOne(refid, { collection: "profile" })
   pcdata: DB.FindOne(refid, { collection: "pcdata" })
   custom: DB.FindOne(refid, { collection: "custom" })
+  lm_custom: DB.FindOne(refid, { collection: "lightning_custom" })
 
 -
   const version = [
@@ -21,7 +22,8 @@
     27,
     28,
     29,
-    30
+    30,
+    31
   ];
 
 div
@@ -32,7 +34,7 @@ div
           i.mdi.mdi-account-edit
         | Settings
     .card-content
-      form(method="post" action="/emit/updateIIDXCustom")
+      form(method="post" action="/emit/iidxUpdateCustom")
         .field
           input(type="text" name="refid", value=refid readonly hidden)
           label.label IIDX ID
@@ -42,161 +44,197 @@ div
           label.label Version
           .control
             .select
-              select(name="version")
+              select(name="version", id="version")
                 each i in version
                   option(selected=(i==pcdata.version)) #{i}
         .field
           label.label Name
           .control
-            input.input(type="text" name="name", value=profile.name)
+            input.input(type="text" name="name", id="name", value=profile.name)
         //- SKIN
         .field
           label.label Frame
           .control
-            input.input(type="number" name="frame", value=custom.frame)
+            input.input(type="number" name="frame", id="frame", value=custom.frame)
         .field
           label.label Turntable
           .control
-            input.input(type="number" name="turntable", value=custom.turntable)
+            input.input(type="number" name="turntable", id="turntable", value=custom.turntable)
         .field
           label.label Note Burst
           .control
-            input.input(type="number" name="note_burst", value=custom.note_burst)
+            input.input(type="number" name="note_burst", id="note_burst", value=custom.note_burst)
         .field
           label.label Menu Music
           .control
-            input.input(type="number" name="menu_music", value=custom.menu_music)
+            input.input(type="number" name="menu_music", id="menu_music", value=custom.menu_music)
         .field
           label.label Lane Cover
           .control
-            input.input(type="number" name="lane_cover", value=custom.lane_cover)
+            input.input(type="number" name="lane_cover", id="lane_cover", value=custom.lane_cover)
         .field
           label.label Category Voice
           .control
-            input.input(type="number" name="category_vox", value=custom.category_vox)
+            input.input(type="number" name="category_vox", id="category_vox", value=custom.category_vox)
         .field
           label.label Note Skin
           .control
-            input.input(type="number" name="note_skin", value=custom.note_skin)
+            input.input(type="number" name="note_skin", id="note_skin", value=custom.note_skin)
         .field
           label.label Full Combo Splash
           .control
-            input.input(type="number" name="full_combo_splash", value=custom.full_combo_splash)
+            input.input(type="number" name="full_combo_splash", id="full_combo_splash", value=custom.full_combo_splash)
         .field
           label.label Note Beam
           .control
-            input.input(type="number" name="note_beam", value=custom.note_beam)
+            input.input(type="number" name="note_beam", id="note_beam", value=custom.note_beam)
         .field
           label.label Judgement Font
           .control
-            input.input(type="number" name="judge_font", value=custom.judge_font)
+            input.input(type="number" name="judge_font", id="judge_font", value=custom.judge_font)
         .field
           label.label Disable Music Preview
           .control
-            input(type="checkbox" name="disable_musicpreview", checked=Boolean(custom.disable_musicpreview))
+            input(type="checkbox" name="disable_musicpreview", id="disable_musicpreview", checked=Boolean(custom.disable_musicpreview))
         .field
           label.label Pacemaker Cover
           .control
-            input.input(type="number" name="pacemaker_cover", value=custom.pacemaker_cover)
+            input.input(type="number" name="pacemaker_cover", id="pacemaker_cover", value=custom.pacemaker_cover)
         .field
           label.label VEFX Lock
           .control
-            input(type="checkbox" name="vefx_lock", checked=Boolean(custom.vefx_lock))
+            input(type="checkbox" name="vefx_lock", id="vefx_lock", checked=Boolean(custom.vefx_lock))
         .field
           label.label VEFX Lock (Effector)
           .control
-            input.input(type="number" name="effect", value=custom.effect)
+            input.input(type="number" name="effect", id="effect", value=custom.effect)
         .field
           label.label Note Burst Size
           .control
-            input.input(type="number" name="bomb_size", value=custom.bomb_size)
+            input.input(type="number" name="bomb_size", id="bomb_size", value=custom.bomb_size)
         .field
           label.label Disable HCN Color
           .control
-            input(type="checkbox" name="disable_hcn_color", checked=Boolean(custom.disable_hcn_color))
+            input(type="checkbox" name="disable_hcn_color", id="disable_hcn_color", checked=Boolean(custom.disable_hcn_color))
         .field
           label.label First Note Preview
           .control
-            input.input(type="number" name="first_note_preview", value=custom.first_note_preview)
+            input.input(type="number" name="first_note_preview", id="first_note_preview", value=custom.first_note_preview)
+        .field
+          label.label Note Size
+          .control
+            if custom.note_size === undefined
+              input.input(type="number" name="note_size", id="note_size", value="0")
+            else
+              input.input(type="number" name="note_size", id="note_size", value=custom.note_size)
+        .field
+          label.label Lift Cover
+          .control
+            if custom.lift_cover === undefined
+              input.input(type="number" name="lift_cover", id="lift_cover", value="0")
+            else
+              input.input(type="number" name="lift_cover", id="lift_cover", value=custom.lift_cover)
+        .field
+          label.label Note Beam Size
+          .control
+            if custom.note_beam_size === undefined
+              input.input(type="number" name="note_beam_size", id="note_beam_size", value="0")
+            else
+              input.input(type="number" name="note_beam_size", id="note_beam_size", value=custom.note_beam_size)
         //- APPEND SETTINGS
         .field
           label.label Rank Folder
           .control
-            input(type="checkbox" name="rank_folder", checked=Boolean(custom.rank_folder))
+            input(type="checkbox" name="rank_folder", id="rank_folder", checked=Boolean(custom.rank_folder))
         .field
           label.label Clear State Folder
           .control
-            input(type="checkbox" name="clear_folder", checked=Boolean(custom.clear_folder))
+            input(type="checkbox" name="clear_folder", id="clear_folder", checked=Boolean(custom.clear_folder))
         .field
           label.label Difficulty Folder
           .control
-            input(type="checkbox" name="diff_folder", checked=Boolean(custom.diff_folder))
+            input(type="checkbox" name="diff_folder", id="diff_folder", checked=Boolean(custom.diff_folder))
         .field
           label.label Alphabet Folder
           .control
-            input(type="checkbox" name="alpha_folder", checked=Boolean(custom.alpha_folder))
+            input(type="checkbox" name="alpha_folder", id="alpha_folder", checked=Boolean(custom.alpha_folder))
         .field
           label.label Rival Folder
           .control
-            input(type="checkbox" name="rival_folder", checked=Boolean(custom.rival_folder))
+            input(type="checkbox" name="rival_folder", id="rival_folder", checked=Boolean(custom.rival_folder))
         .field
           label.label Rival WIN/LOSE Folder
           .control
-            input(type="checkbox" name="rival_battle_folder", checked=Boolean(custom.rival_battle_folder))
+            input(type="checkbox" name="rival_battle_folder", id="rival_battle_folder", checked=Boolean(custom.rival_battle_folder))
         .field
           label.label Rival Info / Venue Top Display
           .control
-            input(type="checkbox" name="rival_info", checked=Boolean(custom.rival_info))
+            input(type="checkbox" name="rival_info", id="rival_info", checked=Boolean(custom.rival_info))
         .field
           label.label Hide Playcount
           .control
-            input(type="checkbox" name="hide_playcount", checked=Boolean(custom.hide_playcount))
+            input(type="checkbox" name="hide_playcount", id="hide_playcount", checked=Boolean(custom.hide_playcount))
         .field
           label.label Disable Pacemaker Cut-In
           .control
-            input(type="checkbox" name="disable_graph_cutin", checked=Boolean(custom.disable_graph_cutin))
+            input(type="checkbox" name="disable_graph_cutin", id="disable_graph_cutin", checked=Boolean(custom.disable_graph_cutin))
         .field
           label.label Classic Hi-SPEED
           .control
-            input(type="checkbox" name="class_hispeed", checked=Boolean(custom.class_hispeed))
+            input(type="checkbox" name="class_hispeed", id="class_hispeed", checked=Boolean(custom.class_hispeed))
         .field
           label.label Rival Played Folder
           .control
-            input(type="checkbox" name="rival_played_folder", checked=Boolean(custom.rival_played_folder))
+            input(type="checkbox" name="rival_played_folder", id="rival_played_folder", checked=Boolean(custom.rival_played_folder))
         .field
           label.label Hide IIDX ID
           .control
-            input(type="checkbox" name="hide_iidxid", checked=Boolean(custom.hide_iidxid))
+            input(type="checkbox" name="hide_iidxid", id="hide_iidxid", checked=Boolean(custom.hide_iidxid))
         .field
           label.label Disable Beginner Option
           .control
             if custom.disable_beginner_option === undefined
-              input(type="checkbox" name="disable_beginner_option", checked=Boolean(false))
+              input(type="checkbox" name="disable_beginner_option", id="disable_beginner_option", checked=Boolean(false))
             else
-              input(type="checkbox" name="disable_beginner_option", checked=Boolean(custom.disable_beginner_option))
+              input(type="checkbox" name="disable_beginner_option", id="disable_beginner_option", checked=Boolean(custom.disable_beginner_option))
         //- QPRO
         .field
           label.label QPRO Head
           .control
-            input.input(type="number" name="qpro_head", value=custom.qpro_head)
+            input.input(type="number" name="qpro_head", id="qpro_head", value=custom.qpro_head)
         .field
           label.label QPRO Hair
           .control
-            input.input(type="number" name="qpro_hair", value=custom.qpro_hair)
+            input.input(type="number" name="qpro_hair", id="qpro_hair", value=custom.qpro_hair)
         .field
           label.label QPRO Hand
           .control
-            input.input(type="number" name="qpro_hand", value=custom.qpro_hand)
+            input.input(type="number" name="qpro_hand", id="qpro_hand", value=custom.qpro_hand)
         .field
           label.label QPRO Face
           .control
-            input.input(type="number" name="qpro_face", value=custom.qpro_face)
+            input.input(type="number" name="qpro_face", id="qpro_face", value=custom.qpro_face)
         .field
           label.label QPRO Body
           .control
-            input.input(type="number" name="qpro_body", value=custom.qpro_body)
+            input.input(type="number" name="qpro_body", id="qpro_body", value=custom.qpro_body)
+        .field
+          label.label QPRO Back
+          .control
+            if custom.qpro_back === undefined
+              input.input(type="number" name="qpro_back", id="qpro_back", value="0")
+            else
+              input.input(type="number" name="qpro_back", id="qpro_back", value=custom.qpro_back)
+        //- LIGHTNING CUSTOM
+        if lm_custom != null
+          .field
+            label.label Premium Area Skin
+              input.input(type="number" name="lm_skin", id="lm_skin", value=lm_custom.premium_skin)
+            label.label Premium Area Background
+              input.input(type="number" name="lm_bg", id="lm_bg", value=lm_custom.premium_bg)
         .field
           button.button.is-primary(type="submit") 
             span.icon
               i.mdi.mdi-check
             span Submit
+script(src="static/asset/js/setting.js") 

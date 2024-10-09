@@ -25,6 +25,10 @@ export interface custom {
 
   skin_customize_flg: number[];
 
+  note_size: number; // epolis //
+  lift_cover: number;
+  note_beam_size: number;
+
   // appendsettings
   rank_folder: boolean;
   clear_folder: boolean;
@@ -46,6 +50,7 @@ export interface custom {
   qpro_face: number;
   qpro_hand: number;
   qpro_body: number;
+  qpro_back: number; // epolis //
 
   // qpro_secret (heroic verse) //
   qpro_secret_head: string[];
@@ -53,6 +58,7 @@ export interface custom {
   qpro_secret_face: string[];
   qpro_secret_hand: string[];
   qpro_secret_body: string[];
+  qpro_secret_back: string[]; // epolis //
 }
 
 export const default_custom = {
@@ -77,6 +83,10 @@ export const default_custom = {
 
   skin_customize_flg: Array<number>(3).fill(-1),
 
+  note_size: 0,
+  lift_cover: 0,
+  note_beam_size: 0,
+
   rank_folder: true,
   clear_folder: true,
   diff_folder: true,
@@ -96,10 +106,12 @@ export const default_custom = {
   qpro_face: 0,
   qpro_hand: 0,
   qpro_body: 0,
+  qpro_back: 0,
 
   qpro_secret_head: Array<string>(7).fill("-1"),
   qpro_secret_hair: Array<string>(7).fill("-1"),
   qpro_secret_face: Array<string>(7).fill("-1"),
   qpro_secret_hand: Array<string>(7).fill("-1"),
   qpro_secret_body: Array<string>(7).fill("-1"),
+  qpro_secret_back: Array<string>(7).fill("-1"),
 }

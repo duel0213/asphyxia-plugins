@@ -99,8 +99,8 @@ export function register() {
     default: "http://localhost/"
   });
   R.Config("Eisei", {
-    name: "Eisei Dan Courses",
-    desc: "Enable EISEI DAN Courses",
+    name: "Eisei Grade Courses",
+    desc: "Enable EISEI/KIWAMI Grade Courses",
     type: "boolean",
     default: true,
   });
@@ -458,11 +458,63 @@ export function register() {
     default: 3,
   });
 
-  // TODO:: Reflect data when version dropdown menu has been changed //
-  R.WebUIEvent("updateIIDXRival", updateRivalSettings);
-  R.WebUIEvent("updateIIDXCustom", updateCustomSettings);
-  R.WebUIEvent("importScoreData", importScoreData);
-  R.WebUIEvent("exportScoreData", exportScoreData);
+  // EPOLIS //
+  R.Config("ep_event", {
+    name: "Event Phase (EP)",
+    desc: "MY POLIS DESIGNER / EPOLIS RESTORATION",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("ep_event1", {
+    name: "MY POLIS DESIGNER",
+    desc: "MY POLIS DESIGNER Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("ep_event2", {
+    name: "EPOLIS RESTORATION",
+    desc: "EPOLIS RESTORATION Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("ep_extraboss", {
+    name: "EPOLIS SINGULARITY",
+    desc: "EPOLIS SINGULARITY Phase",
+    type: "integer",
+    default: 3,
+  });
+
+  // TODO:: Make a list of customize items //
+  R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
+    const pcdata = await DB.FindOne(data.refid, {
+      collection: "pcdata",
+      version: parseInt(data.version),
+    });
+
+    return send.json({
+      pcdata,
+    });
+  });
+  R.WebUIEvent("iidxGetSetting", async (data, send: WebUISend) => {
+    const custom = await DB.FindOne(data.refid, {
+      collection: "custom",
+      version: parseInt(data.version),
+    });
+
+    const lm_custom = await DB.FindOne(data.refid, {
+      collection: "lightning_custom",
+      version: parseInt(data.version),
+    });
+
+    return send.json({
+      custom,
+      lm_custom,
+    });
+  });
+  R.WebUIEvent("iidxUpdateRival", updateRivalSettings);
+  R.WebUIEvent("iidxUpdateCustom", updateCustomSettings);
+  R.WebUIEvent("iidxImportScoreData", importScoreData);
+  R.WebUIEvent("iidxExportScoreData", exportScoreData);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`${method}`, handler);
@@ -476,6 +528,7 @@ export function register() {
     R.Route(`IIDX28${method}`, handler);
     R.Route(`IIDX29${method}`, handler);
     R.Route(`IIDX30${method}`, handler);
+    R.Route(`IIDX31${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);

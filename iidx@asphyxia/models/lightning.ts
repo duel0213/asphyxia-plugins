@@ -12,7 +12,10 @@ export interface lightning_settings {
   slider: number[];
   light: number[];
   concentration: number;
-};
+
+  keyboard_kind: number; // epolis //
+  brightness: number;
+}
 
 export interface lightning_playdata {
   collection: "lightning_playdata";
@@ -21,7 +24,15 @@ export interface lightning_playdata {
 
   sp_num: number;
   dp_num: number;
-};
+}
+
+export interface lightning_custom {
+  collection: "lightning_custom";
+  version: number;
+
+  premium_skin: number;
+  premium_bg: number;
+}
 
 export interface eisei_grade {
   collection: "eisei_grade";
@@ -84,6 +95,27 @@ export interface musicmemo_data_new {
   music_ids: number[];
 }
 
+export interface lightning_musicfilter {
+  collection: "lightning_musicfilter";
+  version: number;
+
+  play_style: number;
+  folder_id: number;
+  filter_id: number;
+  is_valid: boolean;
+  value0: number;
+  value1: number;
+}
+
+export interface musicfilter_data {
+  play_style: number;
+  folder_id: number;
+  filter_id: number;
+  is_valid: boolean;
+  value0: number;
+  value1: number;
+}
+
 export const lm_playdata = {
   sp_num: 0,
   dp_num: 0,
@@ -113,4 +145,12 @@ export const lm_settings_new = {
   slider: [7, 7, 7, 7, 7, 15, 15],
   light: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   concentration: 0,
+
+  keyboard_kind: 10, // epolis //
+  brightness: 2,
+}
+
+export const lm_customdata = {
+  premium_skin: 0, // Icons //
+  premium_bg: 0, // Background (epolis) //
 }
