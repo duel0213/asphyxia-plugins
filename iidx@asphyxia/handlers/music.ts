@@ -479,7 +479,7 @@ export const musicreg: EPR = async (info, data, send) => {
   // SPB -> DPL [0~9] -> Heroic Verse //
   let pgArray = Array<number>(10).fill(0); // PGREAT //
   let gArray = Array<number>(10).fill(0); // GREAT //
-  let mArray = Array<number>(10).fill(0); // MISS //
+  let mArray = Array<number>(10).fill(-1); // MISS //
   let cArray = Array<number>(10).fill(0); // CLEAR FLAGS //
   let rArray = Array<number>(10).fill(-1); // RANK ID //
   let esArray = Array<number>(10).fill(0); // EXSCORE //
