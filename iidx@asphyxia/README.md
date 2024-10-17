@@ -153,5 +153,6 @@ Changelogs
   - Added music\_open on gameSystem.systemInfo response
   - Fixed where lightning settings doesn't get saved on logout
   - Fixed where Disable Music Preview, Disable HCN Color, VEFX Lock settings doesn't reflect
-  - Fixed where MISS COUNT has 0 as default
+  - Fixed where MISS COUNT has 0 as default (including score import)
+  - Fixed where unable to import DP scores
   - WebUI is now display values of corresponding version

@@ -307,7 +307,7 @@ export const importScoreData = async (data, send: WebUISend) => {
         let result = {
           pgArray: Array<number>(10).fill(0),
           gArray: Array<number>(10).fill(0),
-          mArray: Array<number>(10).fill(0),
+          mArray: Array<number>(10).fill(-1),
           cArray: Array<number>(10).fill(0),
           rArray: Array<number>(10).fill(-1),
           esArray: Array<number>(10).fill(0),
@@ -326,9 +326,9 @@ export const importScoreData = async (data, send: WebUISend) => {
 
         if (!_.isNil(sd_ver1[a].dpmArray)) {
           for (let b = 5; b < 10; b++) {
-            result.cArray[b] = sd_ver1[a].dpmArray[2 + b];
-            result.esArray[b] = sd_ver1[a].dpmArray[7 + b];
-            if (sd_ver1[a].dpmArray[12 + b] != -1) result.mArray[b] = sd_ver1[a].dpmArray[12 + b];
+            result.cArray[b] = sd_ver1[a].dpmArray[2 + (b - 5)];
+            result.esArray[b] = sd_ver1[a].dpmArray[7 + (b - 5)];
+            if (sd_ver1[a].dpmArray[12 + (b - 5)] != -1) result.mArray[b] = sd_ver1[a].dpmArray[12 + (b - 5)];
           }
         }
 
