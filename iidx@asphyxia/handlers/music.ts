@@ -538,7 +538,12 @@ export const musicreg: EPR = async (info, data, send) => {
       opt2Array[clid] = option_2;
       update = 1;
     } else {
-      if (exscore == pExscore && mnum < mArray[clid]) mArray[clid] = mnum;
+      // im not sure these are correct needs to be verify by others //
+      // lower MISS COUNT when EXSCORE is same and current MISS COUNT is lower than saved one //
+      // lower MISS COUNT when current lamp is FULL COMBO and current MISS COUNT is lower than saved one //
+      if (exscore == pExscore && mnum < mArray[clid] ||
+        cflg == 7 && mnum < mArray[clid])
+        mArray[clid] = Math.min(mArray[clid], mnum); 
 
       ghost = music_data[clid];
       if (version >= 27) ghost_gauge = music_data[clid + 10];
