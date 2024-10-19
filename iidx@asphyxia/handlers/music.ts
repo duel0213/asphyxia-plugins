@@ -538,6 +538,8 @@ export const musicreg: EPR = async (info, data, send) => {
       opt2Array[clid] = option_2;
       update = 1;
     } else {
+      if (exscore == pExscore && mnum < mArray[clid]) mArray[clid] = mnum;
+
       ghost = music_data[clid];
       if (version >= 27) ghost_gauge = music_data[clid + 10];
     }

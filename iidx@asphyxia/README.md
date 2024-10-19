@@ -155,4 +155,5 @@ Changelogs
   - Fixed where Disable Music Preview, Disable HCN Color, VEFX Lock settings doesn't reflect
   - Fixed where MISS COUNT has 0 as default (including score import)
   - Fixed where unable to import DP scores
+  - Fixed where MISS COUNT doesn't get updated when exscore is same
   - WebUI is now display values of corresponding version
