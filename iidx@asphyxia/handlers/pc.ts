@@ -4177,10 +4177,10 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (hasMusicFilter) {
       $(data).element("music_filter").elements("folder").forEach((res) => {
-        DB.Upsert<lightning_musicmemo>(
+        DB.Upsert<lightning_musicfilter>(
           refid,
           {
-            collection: "lightning_musicmemo",
+            collection: "lightning_musicfilter",
             version: version,
             play_style: parseInt(res.attr().play_style),
             folder_id: parseInt(res.attr().folder_id),
