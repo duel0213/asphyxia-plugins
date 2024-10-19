@@ -111,7 +111,7 @@ export interface musicfilter_data {
   play_style: number;
   folder_id: number;
   filter_id: number;
-  is_valid: boolean;
+  is_valid: number;
   value0: number;
   value1: number;
 }

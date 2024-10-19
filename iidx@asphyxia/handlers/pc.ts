@@ -968,7 +968,7 @@ export const pcget: EPR = async (info, data, send) => {
             folder_id: res.folder_id,
             filter_id: res.filter_id,
 
-            is_valid: res.is_valid,
+            is_valid: Number(res.is_valid),
             value0: res.value0,
             value1: res.value1,
           }
