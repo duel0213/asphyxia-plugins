@@ -552,6 +552,12 @@ export const musicreg: EPR = async (info, data, send) => {
     cArray[clid] = Math.max(cArray[clid], cflg);
   }
 
+  // migration for invalid miss count //
+  // if EXSCORE/MISS COUNT is 0 and CLEAR FLAG is NO PLAY then set MISS COUNT to -1 //
+  for (let a = 0; a < mArray.length; a++) {
+    if (esArray[a] == 0 && cArray[a] == 0 && mArray[a] == 0) mArray[a] = -1;
+  }
+
   if (version >= 27) { // TODO:: support old version //
     const score_top: score_top | null = await DB.FindOne<score_top>(null, {
       collection: "score_top",
