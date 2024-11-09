@@ -1460,9 +1460,7 @@ export const pcsave: EPR = async (info, data, send) => {
           version: version,
         },
         {
-          $set: {
-            lm_settings,
-          }
+          $set: lm_settings,
         }
       );
     }
