@@ -372,7 +372,15 @@ export const importScoreData = async (data, send: WebUISend) => {
           },
           {
             $set: {
-              ...sd_ver2[a]
+              pgArray: sd_ver2[a].pgArray,
+              gArray: sd_ver2[a].gArray,
+              mArray: sd_ver2[a].mArray,
+              cArray: sd_ver2[a].cArray,
+              rArray: sd_ver2[a].rArray,
+              esArray: sd_ver2[a].esArray,
+
+              optArray: sd_ver2[a].optArray,
+              opt2Array: sd_ver2[a].opt2Array,
             }
           }
         );
