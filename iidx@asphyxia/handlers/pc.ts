@@ -4334,7 +4334,7 @@ export const pcgetlanegacha: EPR = async (info, data, send) => {
 
     tArray.push(
       K.ATTR({
-        ticket_id: String(i),
+        ticket_id: String(i + 1),
         arrange_id: String(random),
         expire_date: String(4102326000),
       })
@@ -4375,7 +4375,7 @@ export const pcdrawlanegacha: EPR = async (info, data, send) => {
 
     tArray.push(
       K.ATTR({
-        ticket_id: String(i),
+        ticket_id: String(_.random(101, 10000)),
         arrange_id: String(random),
         expire_date: String(4102326000),
       })
