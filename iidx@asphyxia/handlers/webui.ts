@@ -365,6 +365,27 @@ export const importScoreData = async (data, send: WebUISend) => {
     case 2:
       let sd_ver2: score[] = content.data;
       for (let a = 0; a < count; a++) {
+        let result = {
+          pgArray: sd_ver2[a].pgArray,
+          gArray: sd_ver2[a].gArray,
+          mArray: sd_ver2[a].mArray,
+          cArray: sd_ver2[a].cArray,
+          rArray: sd_ver2[a].rArray,
+          esArray: sd_ver2[a].esArray,
+
+          optArray: sd_ver2[a].optArray,
+          opt2Array: sd_ver2[a].opt2Array,
+        };
+
+        for (let b = 0; b < 10; b++) {
+          if (_.isNil(sd_ver2[a][b])) continue;
+          result[b] = sd_ver2[a][b];
+
+          if (!_.isNil(sd_ver2[a][b + 10])) {
+            result[b + 10] = sd_ver2[a][b + 10];
+          }
+        }
+
         await DB.Upsert<score>(data.refid,
           {
             collection: "score",
@@ -372,15 +393,7 @@ export const importScoreData = async (data, send: WebUISend) => {
           },
           {
             $set: {
-              pgArray: sd_ver2[a].pgArray,
-              gArray: sd_ver2[a].gArray,
-              mArray: sd_ver2[a].mArray,
-              cArray: sd_ver2[a].cArray,
-              rArray: sd_ver2[a].rArray,
-              esArray: sd_ver2[a].esArray,
-
-              optArray: sd_ver2[a].optArray,
-              opt2Array: sd_ver2[a].opt2Array,
+              ...result,
             }
           }
         );
