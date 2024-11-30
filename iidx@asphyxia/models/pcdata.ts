@@ -1305,6 +1305,11 @@ export const IIDX29_pcdata = {
 
   leggendaria_flg1: Array<string>(3).fill("-1"),
 
+  dr_sprank: Array<number>(15).fill(0),
+  dr_sppoint: Array<number>(15).fill(0),
+  dr_dprank: Array<number>(15).fill(0),
+  dr_dppoint: Array<number>(15).fill(0),
+
   nr_spradar: Array<number>(6).fill(0),
   nr_dpradar: Array<number>(6).fill(0),
 
