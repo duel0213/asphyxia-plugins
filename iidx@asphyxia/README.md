@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.16**
+Plugin Version: **STAGING**
 
 ---
 
@@ -23,6 +23,7 @@ Supported Versions
   - beatmaniaIIDX 29 CastHour (2022082400)
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
+  - beatmaniaIIDX 32 Pinky Crush (TBD)
 
 ---
 
@@ -158,3 +159,6 @@ Changelogs
   - Fixed where MISS COUNT doesn't get updated when exscore is same
   - Fixed where lightning model settings saved incorrectly
   - WebUI is now display values of corresponding version
+
+**STAGING**
+  - TBD

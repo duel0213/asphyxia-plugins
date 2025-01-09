@@ -1,8 +1,8 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex, NumArraytoBase64 } from "../util";
-import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
+import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicfilter_sort, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicfilter_sort_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
 import { world_tourism } from "../models/worldtourism";
@@ -11,6 +11,7 @@ import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
 import { blueboss } from "../models/event";
 import { badge } from "../models/badge";
+import { activity } from "../models/activity";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -337,6 +338,33 @@ export const pccommon: EPR = async (info, data, send) => {
         tourism_booster: {},
       }
       break;
+    case 32:
+      result = {
+        ...result,
+        movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+        },
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        common_evnet: K.ATTR({ flg: String(-1) }),
+        /*system_voice: {
+          season: K.ATTR({
+            season: "",
+            s_m: "",
+            s_f: "",
+            e_m: "",
+            e_f: "",
+          }),
+        },*/
+        play_video: {},
+        music_retry: {},
+        display_asio_logo: {},
+        lane_gacha: {},
+        tourism_booster: {},
+      }
+      break;
 
     default:
       return send.deny();
@@ -420,6 +448,12 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 31:
       pcdata = IIDX31_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 32:
+      pcdata = IIDX32_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
@@ -530,6 +564,7 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_music_memo = await DB.Find<lightning_musicmemo>(refid, { collection: "lightning_musicmemo", version: version });
   const lm_music_memo_new = await DB.Find<lightning_musicmemo_new>(refid, { collection: "lightning_musicmemo_new", version: version });
   const lm_music_filter = await DB.Find<lightning_musicfilter>(refid, { collection: "lightning_musicfilter", version: version });
+  const lm_music_filter_sort = await DB.Find<lightning_musicfilter_sort>(refid, { collection: "lightning_musicfilter_sort", version: version });
   let lm_custom: any = await DB.FindOne<lightning_custom>(refid, { collection: "lightning_custom", version: version });
 
   if (_.isNil(pcdata)) return send.deny();
@@ -581,7 +616,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.hide_iidxid,
     custom.disable_beginner_option,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [], fsArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -977,6 +1012,19 @@ export const pcget: EPR = async (info, data, send) => {
         });
         fArray.sort((a: musicfilter_data, b: musicfilter_data): number => a.play_style - b.play_style || a.folder_id - b.folder_id);
       }
+
+      if (lm_music_filter_sort.length > 0) {
+        lm_music_filter_sort.forEach((res) => {
+          let musicfiltersort_data: musicfilter_sort_data = {
+            play_style: res.play_style,
+            folder_id: res.folder_id,
+            sort: res.sort
+          };
+
+          fsArray.push(musicfiltersort_data);
+        });
+        fsArray.sort((a: musicfilter_sort_data, b: musicfilter_sort_data): number => a.play_style - b.play_style || a.folder_id - b.folder_id);
+      }
     }
     else if (version >= 27) {
       if (lm_music_memo.length > 0) {
@@ -1095,6 +1143,7 @@ export const pcget: EPR = async (info, data, send) => {
           });
           break;
         case 31:
+        case 32:
           djLevel = badge.filter((res) => res.category_name === "djLevel");
           djLevel.forEach((res) => {
             bArray.push({
@@ -1175,6 +1224,92 @@ export const pcget: EPR = async (info, data, send) => {
       }
     }
 
+    // theres must be better way to do this but hey it works //
+    const date = new Date();
+    const monthStr = `${date.getMonth() + 1}`.padStart(2, "0");
+    const dayStr = `${date.getDate()}`.padStart(2, "0");
+    const activityDayId = date.getDay();
+    const activityTimestamp = Math.floor(date.valueOf() / 1000); // unix timestamp (seconds) //
+    const activityDateStr = parseInt(`${date.getFullYear()}${monthStr}${dayStr}`);
+    const activity = await DB.Find<activity>(refid, {
+      collection: "activity",
+      version: version,
+    });
+    const activityTodaySP = activity.find((res) => res.play_style == 0 && res.date == activityDateStr);
+    const activityTodayDP = activity.find((res) => res.play_style == 1 && res.date == activityDateStr);
+
+    let activityWeekSP = [];
+    let activityWeekDP = [];
+    let weekDates = [];
+    let weekDays = [Math.floor(date.valueOf() / 1000)];
+    for (let a = 1; a < 6; a++) {
+      weekDays.push(new Date(weekDays[a - 1]).getTime() - 7 * 24 * 60 * 60);
+    }
+    weekDays = weekDays.reverse();
+
+    weekDays.forEach((res) => {
+      let weekDate = new Date(Math.floor(res * 1000));
+      let weekDateMonthStr = `${weekDate.getMonth() + 1}`.padStart(2, "0");
+      let weekDateDayStr = `${weekDate.getDate()}`.padStart(2, "0");
+      weekDates.push(parseInt(`${weekDate.getFullYear()}${weekDateMonthStr}${weekDateDayStr}`));
+    });
+
+    for (let b = 0; b < 5; b++) {
+      activityWeekSP.push({
+        week_index: b,
+        week_id: b,
+        date: weekDays[b],
+
+        music_num: 0,
+        play_time: 0,
+        keyboard_num: 0,
+        scratch_num: 0,
+
+        clear_update_num: Array<number>(13).fill(0),
+        score_update_num: Array<number>(13).fill(0),
+      });
+
+      let activityWeekDataSP = activity.filter((res) => res.play_style == 0 && (res.date >= weekDates[b] && res.date < weekDates[b + 1]));
+      activityWeekDataSP.forEach((res) => {
+        activityWeekSP[b].music_num += res.music_num;
+        activityWeekSP[b].play_time += res.play_time;
+        activityWeekSP[b].keyboard_num += res.keyboard_num;
+        activityWeekSP[b].scratch_num += res.scratch_num;
+
+        for (let c = 0; c < 13; c++) {
+          activityWeekSP[b].clear_update_num[c] += res.clear_update_num[c];
+          activityWeekSP[b].score_update_num[c] += res.score_update_num[c];
+        }
+      });
+
+      activityWeekDP.push({
+        week_index: b,
+        week_id: b,
+        date: weekDays[b],
+
+        music_num: 0,
+        play_time: 0,
+        keyboard_num: 0,
+        scratch_num: 0,
+
+        clear_update_num: Array<number>(13).fill(0),
+        score_update_num: Array<number>(13).fill(0),
+      });
+
+      let activityWeekDataDP = activity.filter((res) => res.play_style == 1 && (res.date >= weekDates[b] && res.date < weekDates[b + 1]));
+      activityWeekDataDP.forEach((res) => {
+        activityWeekDP[b].music_num += res.music_num;
+        activityWeekDP[b].play_time += res.play_time;
+        activityWeekDP[b].keyboard_num += res.keyboard_num;
+        activityWeekDP[b].scratch_num += res.scratch_num;
+
+        for (let c = 0; c < 13; c++) {
+          activityWeekDP[b].clear_update_num[c] += res.clear_update_num[c];
+          activityWeekDP[b].score_update_num[c] += res.score_update_num[c];
+        }
+      });
+    }
+
     return send.pugFile(`pug/LDJ/${version}pcget.pug`, {
       profile,
       pcdata,
@@ -1185,6 +1320,7 @@ export const pcget: EPR = async (info, data, send) => {
       dArray,
       eArray,
       fArray,
+      fsArray,
       appendsettings,
       custom,
       rArray,
@@ -1216,6 +1352,12 @@ export const pcget: EPR = async (info, data, send) => {
       wArray,
       bArray,
       shop_data,
+      activityDayId,
+      activityTimestamp,
+      activityTodaySP,
+      activityTodayDP,
+      activityWeekSP,
+      activityWeekDP,
     });
   }
 
@@ -1321,6 +1463,12 @@ export const pctakeover: EPR = async (info, data, send) => {
       break;
     case 31:
       pcdata = IIDX31_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 32:
+      pcdata = IIDX32_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
@@ -1435,6 +1583,7 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip")));
   const hasMusicFilter = !(_.isNil($(data).element("music_filter")));
   const hasBadgeData = !(_.isNil($(data).element("badge")));
+  const hasActivityData = !(_.isNil($(data).element("activity_data")));
 
   if (cltype == 0) pcdata.spnum += 1;
   else pcdata.dpnum += 1;
@@ -3190,7 +3339,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
     }
 
-    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg) //
+    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg, ...) //
 
     // TODO:: fix event saving, these event savings hasn't fully tested //
     if (hasEventData) {
@@ -3381,6 +3530,11 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.s_classic_hispeed = parseInt($(data).attr().s_classic_hispeed);
       pcdata.d_classic_hispeed = parseInt($(data).attr().d_classic_hispeed);
     }
+    if (version >= 32) {
+      pcdata.category = parseInt($(data).attr().category);
+      pcdata.bgnflg = parseInt($(data).attr().bgnflg);
+      pcdata.movie_thumbnail = parseInt($(data).attr().movie_thumbnail);
+    }
 
     if (cltype == 0) {
       pcdata.s_liflen = parseInt($(data).attr().s_lift);
@@ -3393,6 +3547,10 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
       pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
       pcdata.secret_flg4 = $(data).element("secret").bigints("flg4").map(String);
+
+      if (version >= 32) {
+        pcdata.secret_flg5 = $(data).element("secret").bigints("flg5").map(String);
+      }
     }
 
     // use bigint if type is "s64", number may seems to work //
@@ -3404,6 +3562,10 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_secret_face = $(data).element("qpro_secret").bigints("face").map(String);
       custom.qpro_secret_body = $(data).element("qpro_secret").bigints("body").map(String);
       custom.qpro_secret_hand = $(data).element("qpro_secret").bigints("hand").map(String);
+
+      if (version >= 32) {
+        custom.qpro_secret_back = $(data).element("qpro_secret").bigints("back").map(String);
+      }
     }
 
     if (!_.isNil($(data).element("qpro_equip"))) {
@@ -3412,6 +3574,10 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
       custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+
+      if (version >= 32) {
+        custom.qpro_back = parseInt($(data).attr("qpro_equip").back);
+      }
     }
 
     if (hasStepUpData) {
@@ -3432,6 +3598,13 @@ export const pcsave: EPR = async (info, data, send) => {
         if (version >= 30) {
           pcdata.st_sp_fluctuation = parseInt($(data).attr("step").sp_fluctuation);
           pcdata.st_dp_fluctuation = parseInt($(data).attr("step").dp_fluctuation);
+        }
+
+        if (version >= 32) {
+          pcdata.st_sp_level_h = parseInt($(data).attr("step").sp_level_h);
+          pcdata.st_dp_level_h = parseInt($(data).attr("step").dp_level_h);
+          pcdata.st_sp_level_exh = parseInt($(data).attr("step").sp_level_exh);
+          pcdata.st_dp_level_exh = parseInt($(data).attr("step").dp_level_exh);
         }
       } else {
         pcdata.st_dp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_clear);
@@ -3482,10 +3655,11 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
     if (!_.isNil($(data).element("orb_data"))) {
-      if (version == 31) {
+      if (version >= 31) {
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb_normal);
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb_event);
         pcdata.present_orb += parseInt($(data).attr("orb_data").rest_orb);
+        // use_present_orb //
       }
       else {
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
@@ -3943,217 +4117,309 @@ export const pcsave: EPR = async (info, data, send) => {
       let badge_data = [];
       let badge = $(data).element("badge");
 
-      if (version == 30) {
-        if (!(_.isNil(badge.element("today_recommend")))) {
-          let badgeInfo = {
-            category_id: "today_recommend",
-            flg_id: 0,
-            flg: parseInt(badge.element("today_recommend").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("weekly_ranking")))) {
-          let badgeInfo = {
-            category_id: "weekly_ranking",
-            flg_id: 0,
-            flg: parseInt(badge.element("weekly_ranking").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("visitor")))) {
-          badge.elements("visitor").forEach((res) => {
+      switch (version) {
+        case 30:
+          if (!(_.isNil(badge.element("today_recommend")))) {
             let badgeInfo = {
-              category_id: "visitor",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("notes_radar")))) {
-          badge.elements("notes_radar").forEach((res) => {
-            let badgeInfo = {
-              category_id: "notes_radar",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("world_tourism")))) {
-          let badgeInfo = {
-            category_id: "world_tourism",
-            flg_id: 0,
-            flg: parseInt(badge.element("world_tourism").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("event1")))) {
-          badge.elements("event1").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event1",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("arena")))) {
-          badge.elements("arena").forEach((res) => {
-            let badgeInfo = {
-              category_id: "arena",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("iidx_exam")))) {
-          let badgeInfo = {
-            category_id: "iidx_exam",
-            flg_id: 0,
-            flg: parseInt(badge.element("iidx_exam").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-      }
-      else if (version == 31) {
-        if (!(_.isNil(badge.element("step_up")))) {
-          badge.elements("step_up").forEach((res) => {
-            let badgeInfo = {
-              category_id: "step_up",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("today_recommend")))) {
-          let badgeInfo = {
-            category_id: "today_recommend",
-            flg_id: 0,
-            flg: parseInt(badge.element("today_recommend").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("weekly_ranking")))) {
-          let badgeInfo = {
-            category_id: "weekly_ranking",
-            flg_id: 0,
-            flg: parseInt(badge.element("weekly_ranking").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("visitor")))) {
-          badge.elements("visitor").forEach((res) => {
-            let badgeInfo = {
-              category_id: "visitor",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("notes_radar")))) {
-          badge.elements("notes_radar").forEach((res) => {
-            let badgeInfo = {
-              category_id: "notes_radar",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("tsujigiri")))) {
-          let badgeInfo = {
-            category_id: "tsujigiri",
-            flg_id: 0,
-            flg: parseInt(badge.element("tsujigiri").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("iidx_exam")))) {
-          let badgeInfo = {
-            category_id: "iidx_exam",
-            flg_id: 0,
-            flg: parseInt(badge.element("iidx_exam").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("world_tourism")))) {
-          let badgeInfo = {
-            category_id: "world_tourism",
-            flg_id: 0,
-            flg: parseInt(badge.element("world_tourism").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("event1")))) {
-          badge.elements("event1").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event1",
+              category_id: "today_recommend",
               flg_id: 0,
-              flg: parseInt(res.attr().flg),
+              flg: parseInt(badge.element("today_recommend").attr().flg),
             };
 
             badge_data.push(badgeInfo);
-          });
-        }
+          }
 
-        if (!(_.isNil(badge.element("arena")))) {
-          badge.elements("arena").forEach((res) => {
+          if (!(_.isNil(badge.element("weekly_ranking")))) {
             let badgeInfo = {
-              category_id: "arena",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("event2")))) {
-          badge.elements("event2").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event2",
+              category_id: "weekly_ranking",
               flg_id: 0,
-              flg: parseInt(res.attr().flg),
+              flg: parseInt(badge.element("weekly_ranking").attr().flg),
             };
 
             badge_data.push(badgeInfo);
-          });
-        }
+          }
+
+          if (!(_.isNil(badge.element("visitor")))) {
+            badge.elements("visitor").forEach((res) => {
+              let badgeInfo = {
+                category_id: "visitor",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("notes_radar")))) {
+            badge.elements("notes_radar").forEach((res) => {
+              let badgeInfo = {
+                category_id: "notes_radar",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("world_tourism")))) {
+            let badgeInfo = {
+              category_id: "world_tourism",
+              flg_id: 0,
+              flg: parseInt(badge.element("world_tourism").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("event1")))) {
+            badge.elements("event1").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event1",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("arena")))) {
+            badge.elements("arena").forEach((res) => {
+              let badgeInfo = {
+                category_id: "arena",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("iidx_exam")))) {
+            let badgeInfo = {
+              category_id: "iidx_exam",
+              flg_id: 0,
+              flg: parseInt(badge.element("iidx_exam").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+          break;
+        case 31:
+          if (!(_.isNil(badge.element("step_up")))) {
+            badge.elements("step_up").forEach((res) => {
+              let badgeInfo = {
+                category_id: "step_up",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("today_recommend")))) {
+            let badgeInfo = {
+              category_id: "today_recommend",
+              flg_id: 0,
+              flg: parseInt(badge.element("today_recommend").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("weekly_ranking")))) {
+            let badgeInfo = {
+              category_id: "weekly_ranking",
+              flg_id: 0,
+              flg: parseInt(badge.element("weekly_ranking").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("visitor")))) {
+            badge.elements("visitor").forEach((res) => {
+              let badgeInfo = {
+                category_id: "visitor",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("notes_radar")))) {
+            badge.elements("notes_radar").forEach((res) => {
+              let badgeInfo = {
+                category_id: "notes_radar",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("tsujigiri")))) {
+            let badgeInfo = {
+              category_id: "tsujigiri",
+              flg_id: 0,
+              flg: parseInt(badge.element("tsujigiri").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("iidx_exam")))) {
+            let badgeInfo = {
+              category_id: "iidx_exam",
+              flg_id: 0,
+              flg: parseInt(badge.element("iidx_exam").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("world_tourism")))) {
+            let badgeInfo = {
+              category_id: "world_tourism",
+              flg_id: 0,
+              flg: parseInt(badge.element("world_tourism").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("event1")))) {
+            badge.elements("event1").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event1",
+                flg_id: 0,
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("arena")))) {
+            badge.elements("arena").forEach((res) => {
+              let badgeInfo = {
+                category_id: "arena",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("event2")))) {
+            badge.elements("event2").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event2",
+                flg_id: 0,
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+          break;
+        case 32:
+          if (!(_.isNil(badge.element("step_up")))) {
+            badge.elements("step_up").forEach((res) => {
+              let badgeInfo = {
+                category_id: "step_up",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("today_recommend")))) {
+            let badgeInfo = {
+              category_id: "today_recommend",
+              flg_id: 0,
+              flg: parseInt(badge.element("today_recommend").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("weekly_ranking")))) {
+            let badgeInfo = {
+              category_id: "weekly_ranking",
+              flg_id: 0,
+              flg: parseInt(badge.element("weekly_ranking").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("visitor")))) {
+            badge.elements("visitor").forEach((res) => {
+              let badgeInfo = {
+                category_id: "visitor",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("notes_radar")))) {
+            badge.elements("notes_radar").forEach((res) => {
+              let badgeInfo = {
+                category_id: "notes_radar",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("tsujigiri")))) {
+            let badgeInfo = {
+              category_id: "tsujigiri",
+              flg_id: 0,
+              flg: parseInt(badge.element("tsujigiri").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("iidx_exam")))) {
+            let badgeInfo = {
+              category_id: "iidx_exam",
+              flg_id: 0,
+              flg: parseInt(badge.element("iidx_exam").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("world_tourism")))) {
+            let badgeInfo = {
+              category_id: "world_tourism",
+              flg_id: 0,
+              flg: parseInt(badge.element("world_tourism").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+          break;
+
+        default:
+          break;
       }
 
       badge_data.forEach((res) => {
@@ -4192,6 +4458,77 @@ export const pcsave: EPR = async (info, data, send) => {
             },
           });
       });
+
+      let sort = $(data).element("music_filter").element("sort"); // Pinky Crush //
+      if (!_.isNil(sort)) {
+        DB.Upsert<lightning_musicfilter_sort>(
+          refid,
+          {
+            collection: "lightning_musicfilter_sort",
+            version: version,
+            play_style: parseInt(sort.attr().play_style),
+            folder_id: parseInt(sort.attr().folder_id),
+          },
+          {
+            $set: {
+              sort: parseInt(sort.attr().sort)
+            },
+          });
+      }
+    }
+
+    if (hasActivityData) {
+      const activityData = $(data).element("activity_data");
+      const play_style = parseInt($(data).attr("activity_data").play_style);
+      let music_num = parseInt($(data).attr("activity_data").music_num);
+      let play_time = parseInt($(data).attr("activity_data").play_time);
+      let keyboard_num = parseInt($(data).attr("activity_data").keyboard_num);
+      let scratch_num = parseInt($(data).attr("activity_data").scratch_num);
+      let clear_update_num = $(data).numbers("activity_data.clear_update_num");
+      let score_update_num = $(data).numbers("activity_data.score_update_num");
+
+      const date = new Date();
+      const monthStr = `${date.getMonth() + 1}`.padStart(2, "0");
+      const dayStr = `${date.getDate()}`.padStart(2, "0");
+      const dateStr = `${date.getFullYear()}${monthStr}${dayStr}`;
+
+      const dbData = await DB.FindOne<activity>(refid, {
+        collection: "activity",
+        version: version,
+        date: parseInt(dateStr),
+        play_style: play_style,
+      });
+
+      if (!_.isNil(dbData)) {
+        music_num += dbData.music_num;
+        play_time += dbData.play_time;
+        keyboard_num += dbData.keyboard_num;
+        scratch_num += dbData.scratch_num;
+
+        for (let a = 0; a < 13; a++) { // TODO:: verify //
+          clear_update_num[a] += dbData.clear_update_num[a];
+          score_update_num[a] += dbData.score_update_num[a];
+        }
+      }
+
+      await DB.Upsert<activity>(
+        refid,
+        {
+          collection: "activity",
+          version: version,
+          date: parseInt(dateStr),
+          play_style: play_style,
+        },
+        {
+          $set: {
+            music_num,
+            play_time,
+            keyboard_num,
+            scratch_num,
+            clear_update_num,
+            score_update_num,
+          }
+        });
     }
 
     if (hasSkinData) {
@@ -4341,18 +4678,12 @@ export const pcgetlanegacha: EPR = async (info, data, send) => {
     );
   }
 
+  // settings(sp, dp_left, dp_right), info(last_page) //
+
   return send.object({
     ticket: tArray,
-    settings: K.ATTR({
-      sp: String(-1),
-      dp_left: String(-1),
-      dp_right: String(-1),
-    }),
     free: K.ATTR({
       num: String(10),
-    }),
-    info: K.ATTR({
-      last_page: String(0),
     }),
   });
 };

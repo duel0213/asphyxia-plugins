@@ -72,6 +72,15 @@ export interface lightning_musicmemo {
   music_id: number;
 }
 
+export interface lightning_musicmemo_sort {
+  collection: "lightning_musicmemo";
+  version: number;
+
+  play_style: number;
+  folder_id: number;
+  sort: number;
+}
+
 export interface musicmemo_data {
   music_idx: number;
   play_style: number;
@@ -107,6 +116,15 @@ export interface lightning_musicfilter {
   value1: number;
 }
 
+export interface lightning_musicfilter_sort {
+  collection: "lightning_musicfilter_sort";
+  version: number;
+
+  play_style: number;
+  folder_id: number;
+  sort: number;
+}
+
 export interface musicfilter_data {
   play_style: number;
   folder_id: number;
@@ -114,6 +132,12 @@ export interface musicfilter_data {
   is_valid: number;
   value0: number;
   value1: number;
+}
+
+export interface musicfilter_sort_data {
+  play_style: number;
+  folder_id: number;
+  sort: number;
 }
 
 export const lm_playdata = {

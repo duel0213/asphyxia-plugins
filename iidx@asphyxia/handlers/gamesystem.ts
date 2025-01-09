@@ -39,7 +39,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   if (version >= 31) {
     result.arena_schedule = {
       ...result.arena_schedule,
-      rule_type: K.ITEM("u8", 0),
+      rule_type: K.ITEM("u8", 0), // arena rule for online //
     }
 
     result = {
@@ -66,7 +66,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
             class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
             index: K.ITEM("s32", result.grade_course.length),
             cube_num: K.ITEM("s32", 0),
-            kind: K.ITEM("s32", 0),
+            kind: K.ITEM("s32", grade[version][s][c].kind),
           });
         });
       });
@@ -145,6 +145,13 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         UnlockLeggendaria: K.ATTR({ val: String(1) }),
         BPLSerialCodePhase: K.ATTR({ val: String(0) }),
         Event1AllPlayerTotalGetMetron: K.ATTR({ val: String(2500) }),
+      }
+      break;
+    case 32:
+      result = {
+        ...result,
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        OldBPLBattleOpenPhase: K.ATTR({ val: String(2) }),
       }
       break;
 

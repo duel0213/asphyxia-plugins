@@ -306,26 +306,24 @@ export async function ReftoQPRO(refid: string, version: number) {
 
   let qpro_data = [];
   try {
-    switch (version) {
-      case 31:
-        qpro_data = [
-          custom.qpro_hair,
-          custom.qpro_head,
-          custom.qpro_face,
-          custom.qpro_body,
-          custom.qpro_hand,
-          custom.qpro_back,
-        ];
-        break;
-      default:
-        qpro_data = [
-          custom.qpro_hair,
-          custom.qpro_head,
-          custom.qpro_face,
-          custom.qpro_body,
-          custom.qpro_hand,
-        ];
-        break;
+    if (version >= 31) {
+      qpro_data = [
+        custom.qpro_hair,
+        custom.qpro_head,
+        custom.qpro_face,
+        custom.qpro_body,
+        custom.qpro_hand,
+        custom.qpro_back,
+      ];
+    }
+    else {
+      qpro_data = [
+        custom.qpro_hair,
+        custom.qpro_head,
+        custom.qpro_face,
+        custom.qpro_body,
+        custom.qpro_hand,
+      ];
     }
   } catch {
     qpro_data = [0, 0, 0, 0, 0, 0];

@@ -484,6 +484,8 @@ export function register() {
     default: 3,
   });
 
+  // Pinky Crush //
+
   // TODO:: Make a list of customize items //
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {
@@ -529,6 +531,7 @@ export function register() {
     R.Route(`IIDX29${method}`, handler);
     R.Route(`IIDX30${method}`, handler);
     R.Route(`IIDX31${method}`, handler);
+    R.Route(`IIDX32${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);
