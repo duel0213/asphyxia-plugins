@@ -120,10 +120,8 @@ export const graderaised: EPR = async (info, data, send) => {
   if (_.isNil(pcdata)) return send.deny();
   if (_.isNil(grade)) {
     if (cflg == 4) {
-      if (gtype == 0)
-        pcdata.sgid = Math.max(gid, pcdata.sgid);
-      else
-        pcdata.dgid = Math.max(gid, pcdata.dgid);
+      if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
+      else pcdata.dgid = Math.max(gid, pcdata.dgid);
 
       updatePcdata = true;
     }
@@ -137,7 +135,12 @@ export const graderaised: EPR = async (info, data, send) => {
       updateGrade = true;
     }
 
-    if (cflg == 4) updatePcdata = true;
+    if (cflg == 4) {
+      if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
+      else pcdata.dgid = Math.max(gid, pcdata.dgid);
+
+      updatePcdata = true;
+    }
   }
 
   if (updatePcdata) {

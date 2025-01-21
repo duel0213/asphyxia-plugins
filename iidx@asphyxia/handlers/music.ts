@@ -541,7 +541,7 @@ export const musicreg: EPR = async (info, data, send) => {
       if (version >= 27) ghost_gauge = music_data[clid + 10];
     }
 
-    mArray[clid] = mArray[clid] == -1 ? mnum : Math.min(mArray[clid], mnum);
+    if (mnum != -1) mArray[clid] = mArray[clid] == -1 ? mnum : Math.min(mArray[clid], mnum);
     cArray[clid] = Math.max(cArray[clid], cflg);
   }
 
