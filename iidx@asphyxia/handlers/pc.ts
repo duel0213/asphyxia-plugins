@@ -1023,7 +1023,7 @@ export const pcget: EPR = async (info, data, send) => {
           - 8    - 1 [notes_radar]
           - 10   - (none)
           - 11   - 1
-          - 12   - (none)
+          - 12   - (none) [tourism?]
           - 13   - (none) [event]
           - 14   - 1
           - 15   - (none)
@@ -1035,56 +1035,81 @@ export const pcget: EPR = async (info, data, send) => {
     ***/
 
     if (version >= 30 && badge.length > 0) {
-      let djLevel, clear, grade, step_up, visitor, notes_radar, event1, event2;
+      let djLevel, clear, grade, step_up, visitor, notes_radar, world_tourism, event1, event2;
+
+      // visitor, notes_radar, world_tourism, step_up //
+      if (version == 30) {
+        // this keep sending back on save //
+        // possibly wrong category_id but at least doesn't show as new badges //
+        visitor = badge.filter((res) => res.category_name === "visitor");
+        visitor.forEach((res) => {
+          bArray.push({
+            id: 6,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+
+        notes_radar = badge.filter((res) => res.category_name === "notes_radar");
+        notes_radar.forEach((res) => {
+          bArray.push({
+            id: 7,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+
+        world_tourism = badge.filter((res) => res.category_name === "world_tourism");
+        world_tourism.forEach((res) => {
+          bArray.push({
+            id: 8,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+      } else {
+        step_up = badge.filter((res) => res.category_name === "step_up");
+        step_up.forEach((res) => {
+          bArray.push({
+            id: 3,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+
+        // this keep sending back on save //
+        // possibly wrong category_id but at least doesn't show as new badges //
+        visitor = badge.filter((res) => res.category_name === "visitor");
+        visitor.forEach((res) => {
+          bArray.push({
+            id: 7,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+
+        notes_radar = badge.filter((res) => res.category_name === "notes_radar");
+        notes_radar.forEach((res) => {
+          bArray.push({
+            id: 8,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+
+        world_tourism = badge.filter((res) => res.category_name === "world_tourism");
+        world_tourism.forEach((res) => {
+          bArray.push({
+            id: 12,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        });
+      }
+
+      // event //
       switch (version) {
         case 30:
-          djLevel = badge.filter((res) => res.category_name === "djLevel");
-          djLevel.forEach((res) => {
-            bArray.push({
-              id: 0,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          clear = badge.filter((res) => res.category_name === "clear");
-          clear.forEach((res) => {
-            bArray.push({
-              id: 1,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          grade = badge.filter((res) => res.category_name === "grade");
-          grade.forEach((res) => {
-            bArray.push({
-              id: 2,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          // this keep sending back on save //
-          // possibly wrong category_id but at least doesn't show as new badges //
-          visitor = badge.filter((res) => res.category_name === "visitor");
-          visitor.forEach((res) => {
-            bArray.push({
-              id: 6,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-          notes_radar.forEach((res) => {
-            bArray.push({
-              id: 7,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
           event1 = badge.filter((res) => res.category_name === "event1");
           event1.forEach((res) => {
             bArray.push({
@@ -1095,62 +1120,6 @@ export const pcget: EPR = async (info, data, send) => {
           });
           break;
         case 31:
-          djLevel = badge.filter((res) => res.category_name === "djLevel");
-          djLevel.forEach((res) => {
-            bArray.push({
-              id: 0,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          clear = badge.filter((res) => res.category_name === "clear");
-          clear.forEach((res) => {
-            bArray.push({
-              id: 1,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          grade = badge.filter((res) => res.category_name === "grade");
-          grade.forEach((res) => {
-            bArray.push({
-              id: 2,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          step_up = badge.filter((res) => res.category_name === "step_up");
-          step_up.forEach((res) => {
-            bArray.push({
-              id: 3,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          // this keep sending back on save //
-          // possibly wrong category_id but at least doesn't show as new badges //
-          visitor = badge.filter((res) => res.category_name === "visitor");
-          visitor.forEach((res) => {
-            bArray.push({
-              id: 7,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-          notes_radar.forEach((res) => {
-            bArray.push({
-              id: 8,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
           event1 = badge.filter((res) => res.category_name === "event1");
           event1.forEach((res) => {
             bArray.push({
@@ -1173,6 +1142,36 @@ export const pcget: EPR = async (info, data, send) => {
         default:
           break;
       }
+
+      // default //
+      djLevel = badge.filter((res) => res.category_name === "djLevel");
+      djLevel.forEach((res) => {
+        bArray.push({
+          id: 0,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      clear = badge.filter((res) => res.category_name === "clear");
+      clear.forEach((res) => {
+        bArray.push({
+          id: 1,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      grade = badge.filter((res) => res.category_name === "grade");
+      grade.forEach((res) => {
+        bArray.push({
+          id: 2,
+          flg_id: res.flg_id,
+          flg: res.flg,
+        });
+      });
+
+      bArray.sort((a, b) => a.id - b.id || a.flg_id - b.flg_id);
     }
 
     return send.pugFile(`pug/LDJ/${version}pcget.pug`, {
