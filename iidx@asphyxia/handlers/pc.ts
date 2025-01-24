@@ -788,9 +788,8 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 20) {
-    if (!_.isNil(pcdata.st_stamp)) pcdata.st_stamp = NumArraytoHex(Base64toNumArray(pcdata.st_stamp));
-    if (!_.isNil(pcdata.st_help)) pcdata.st_help = NumArraytoHex(Base64toNumArray(pcdata.st_help));
-    if (_.isNil(pcdata.st_stamp)) pcdata.st_stamp = ""; // migration //
+    pcdata.st_stamp = _.isNil(pcdata.st_stamp) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_stamp));
+    pcdata.st_help = _.isNil(pcdata.st_help) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_help));
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
@@ -844,7 +843,7 @@ export const pcget: EPR = async (info, data, send) => {
 
     switch (version) {
       case 21:
-        if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
         link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
         tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
@@ -853,7 +852,7 @@ export const pcget: EPR = async (info, data, send) => {
         if (!_.isNil(boss1)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
         break;
       case 22:
-        if (!_.isNil(pcdata.st_album)) pcdata.st_album = NumArraytoHex(Base64toNumArray(pcdata.st_album));
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_album));
 
         chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
         pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
@@ -865,7 +864,7 @@ export const pcget: EPR = async (info, data, send) => {
         qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
         break;
       case 23:
-        if (!_.isNil(pcdata.st_tokimeki)) pcdata.st_tokimeki = NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
+        pcdata.st_tokimeki = _.isNil(pcdata.st_tokimeki) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
 
         open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
         mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
