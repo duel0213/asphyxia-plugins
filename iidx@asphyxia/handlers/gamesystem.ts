@@ -131,6 +131,19 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       }
       break;
     case 31:
+      let totalMetron = 0;
+      let eventData = await DB.Find(null, {
+        collection: "event_1",
+        version: version,
+        event_data: "myepo_map",
+      });
+
+      if (!_.isNil(eventData)) {
+        eventData.forEach((res: any) => {
+          totalMetron += Number(res.metron_total_get);
+        });
+      }
+
       result = {
         ...result,
         CommonBossPhase: K.ATTR({ val: String(3) }),
@@ -144,7 +157,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
         UnlockLeggendaria: K.ATTR({ val: String(1) }),
         BPLSerialCodePhase: K.ATTR({ val: String(0) }),
-        Event1AllPlayerTotalGetMetron: K.ATTR({ val: String(2500) }),
+        Event1AllPlayerTotalGetMetron: K.ATTR({ val: String(totalMetron) }), // total amount of all users metron //
       }
       break;
     case 32:
