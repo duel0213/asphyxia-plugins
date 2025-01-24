@@ -566,6 +566,14 @@ export const pcget: EPR = async (info, data, send) => {
     lm_custom = lm_customdata;
   }
 
+  // migration //
+  if (version == 29 && _.isNil(pcdata.dr_sprank)) {
+    pcdata.dr_sprank = IIDX29_pcdata.dr_sprank;
+    pcdata.dr_sppoint = IIDX29_pcdata.dr_sppoint;
+    pcdata.dr_dprank = IIDX29_pcdata.dr_dprank;
+    pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
+  }
+
   const appendsettings = appendSettingConverter(
     custom.rank_folder,
     custom.clear_folder,
