@@ -6,7 +6,7 @@
 -
   let rival_list=[["", "None", "0000-0000"]];
   profiles.forEach((res) => {
-    rival_list.push([res.refid, res.name, res.idstr])
+    rival_list.push([res.__refid, res.name, res.idstr])
   });
 
   let my_sp_rival = [], my_dp_rival = [];
@@ -33,7 +33,7 @@ div
                 select(name="sp_rival1")
                   each i in rival_list
                     if my_sp_rival[0] != null
-                      option(selected=(i[0]==my_sp_rival[0]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_sp_rival[0], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -41,7 +41,7 @@ div
                 select(name="sp_rival2")
                   each i in rival_list
                     if my_sp_rival[1] != null
-                      option(selected=(i[0]==my_sp_rival[1]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_sp_rival[1], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -49,7 +49,7 @@ div
                 select(name="sp_rival3")
                   each i in rival_list
                     if my_sp_rival[2] != null
-                      option(selected=(i[0]==my_sp_rival[2]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_sp_rival[2], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -57,7 +57,7 @@ div
                 select(name="sp_rival4")
                   each i in rival_list
                     if my_sp_rival[3] != null
-                      option(selected=(i[0]==my_sp_rival[3]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_sp_rival[3], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -65,7 +65,7 @@ div
                 select(name="sp_rival5")
                   each i in rival_list
                     if my_sp_rival[4] != null
-                      option(selected=(i[0]==my_sp_rival[4]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_sp_rival[4], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
         .field
@@ -76,7 +76,7 @@ div
                 select(name="dp_rival1")
                   each i in rival_list
                     if my_dp_rival[0] != null
-                      option(selected=(i[0]==my_dp_rival[0]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_dp_rival[0], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -84,7 +84,7 @@ div
                 select(name="dp_rival2")
                   each i in rival_list
                     if my_dp_rival[1] != null
-                      option(selected=(i[0]==my_dp_rival[1]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_dp_rival[1], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -92,7 +92,7 @@ div
                 select(name="dp_rival3")
                   each i in rival_list
                     if my_dp_rival[2] != null
-                      option(selected=(i[0]==my_dp_rival[2]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_dp_rival[2], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -100,7 +100,7 @@ div
                 select(name="dp_rival4")
                   each i in rival_list
                     if my_dp_rival[3] != null
-                      option(selected=(i[0]==my_dp_rival[3]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_dp_rival[3], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
             .control
@@ -108,7 +108,7 @@ div
                 select(name="dp_rival5")
                   each i in rival_list
                     if my_dp_rival[4] != null
-                      option(selected=(i[0]==my_dp_rival[4]) value=i[0]) #{i[1]} [#{i[2]}]
+                      option(selected=i[0]==my_dp_rival[4], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
         .field
