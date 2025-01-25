@@ -485,6 +485,12 @@ export function register() {
   });
 
   // Pinky Crush //
+  R.Config("pc_event1", {
+    name: "PINKY JUMP UP!",
+    desc: "PINKY JUMP UP! Phase",
+    type: "integer",
+    default: 1,
+  });
 
   // TODO:: Make a list of customize items //
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {

@@ -38,6 +38,13 @@ IIDX32pc(status="0")
   grade(sgid=pcdata.sgid dgid=pcdata.dgid)
     - for (let d of dArray)
       g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
+  kiwami_data
+    - for (let ed of eArray)
+      detail(grade_type=ed.grade_type grade_id=ed.grade_id option=ed.option stage_num=ed.stage_num clear_type=ed.clear_type)
+        past(__type="s32" __count="3") #{ed.past[0]} #{ed.past[1]} #{ed.past[2]}
+        selected_course(__type="s32" __count="3") #{ed.selected_course[0]} #{ed.selected_course[1]} #{ed.selected_course[2]}
+        max_past(__type="s32" __count="3") #{ed.max_past[0]} #{ed.max_past[1]} #{ed.max_past[2]}
+        max_selected_course(__type="s32" __count="3") #{ed.max_selected_course[0]} #{ed.max_selected_course[1]} #{ed.max_selected_course[2]}
   skin(__type="s32" __count="20") #{appendsettings} #{custom.note_burst} #{custom.bomb_size} #{custom.turntable} #{custom.judge_font} #{custom.note_skin} #{custom.note_size} #{Number(custom.disable_musicpreview)} #{Number(custom.vefx_lock)} #{custom.effect} #{custom.menu_music} #{Number(custom.disable_hcn_color)} #{custom.first_note_preview} #{custom.lane_cover} #{custom.pacemaker_cover} #{custom.lift_cover} #{custom.note_beam} #{custom.note_beam_size} #{custom.full_combo_splash} #{custom.frame}
   tdjskin(__type="s32" __count="4") #{lm_custom.premium_skin} #{lm_custom.premium_bg} 0 0
   qprodata(__type="u32" __count="6") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body} #{custom.qpro_back}
@@ -62,6 +69,14 @@ IIDX32pc(status="0")
   old_linkage_secret_flg(triple_tribe="-1" triple_tribe_2="-1")
   skin_customize_flg(skin_frame_flg="-1" skin_turntable_flg="-1" skin_bomb_flg="-1" skin_bgm_flg="-1" skin_lane_flg0="-1" skin_lane_flg1="-1" skin_lane_flg2="-1" skin_lane_flg3="-1" skin_lane_flg4="-1" skin_lane_flg5="-1" skin_notes_flg="-1" skin_fullcombo_flg="-1" skin_keybeam_flg="-1" skin_judgestring_flg="-1")
   tdjskin_customize_flg(skin_submonitor_flg="-1" skin_subbg_flg="-1")
+  event_1(event_play_num=pcdata.event_play_num last_select_booth_id=pcdata.event_last_select_id)
+    if pcdata.event_skip == true
+      is_skip
+    - for (let evt of evtArray)
+      booth_data(booth_id=evt.booth_id play_num=evt.play_num play_num_uc=evt.play_num_uc success_num=evt.success_num last_select_qpro_index=evt.last_select_qpro_index booth_prog=evt.booth_prog customer_n=evt.customer_n customer_h=evt.customer_h customer_a=evt.customer_a customer_l=evt.customer_l hire_num="0" flg_l="0")
+    - for (let evt2 of evtArray2)
+      booth_qpro_data(booth_id=evt2.booth_id index=evt2.index head_parts=evt2.head_parts hair_parts=evt2.hair_parts face_parts=evt2.face_parts body_parts=evt2.body_parts hand_parts=evt2.hand_parts param_n=evt2.param_n param_h=evt2.param_h param_a=evt2.param_a param_l=evt2.param_l exp=evt2.exp performance_date=evt2.performance_date)
+    //-rival(index iidx_id head hair face body hand back)
   ultimate_mobile_link(music_list="-1")
     link_flag
   valkyrie_linkage(music_list_1="-1" music_list_2="-1" music_list_3="-1")

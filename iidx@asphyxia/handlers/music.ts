@@ -45,7 +45,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
             [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
-          ), { v: String(verMid[0]) } )
+          ), { v: String(verMid[0]) })
         );
       }
 
@@ -190,7 +190,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
     }
 
     return send.object({
-      style: K.ATTR({type: String(cltype)}),
+      style: K.ATTR({ type: String(cltype) }),
       m,
       b,
       top,
@@ -292,7 +292,7 @@ export const musicappoint: EPR = async (info, data, send) => {
   const subtype = parseInt($(data).attr().subtype);
   let mid = parseInt($(data).attr().mid);
   let clid = parseInt($(data).attr().clid);
-  
+
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version < 20) {
     mid = OldMidToNewMid(mid);
@@ -372,7 +372,7 @@ export const musicappoint: EPR = async (info, data, send) => {
             riidxid: String(other_profile[2])
           });
         }
-        
+
         break;
 
       default:
@@ -493,7 +493,7 @@ export const musicreg: EPR = async (info, data, send) => {
 
   if (version == 14 || version == 15) ghost = HextoBase64($(data).str("ghost"));
   else ghost = NumArraytoBase64($(data).buffer("ghost"));
-  
+
   if (version >= 27) {
     ghost_gauge = NumArraytoBase64($(data).buffer("ghost_gauge"));
     style = parseInt($(data).element("music_play_log").attr().play_style);
@@ -893,6 +893,8 @@ export const musiccrate: EPR = async (info, data, send) => {
     let cFlgArray = Array<number>(10).fill(0);
     let fcFlgArray = Array<number>(10).fill(0);
 
+    if (_.isNil(res.cArray)) throw new Error("[music.crate] There is unsupported entry in Database");
+
     for (let a = 0; a < 10; a++) {
       if (res.cArray[a] != 0) totalArray[a] += 1;
       if (res.cArray[a] != 1) cFlgArray[a] += 1;
@@ -927,7 +929,7 @@ export const musiccrate: EPR = async (info, data, send) => {
       let verMid = OldMidToVerMid(parseInt(key));
 
       let str = cltype == 0 ?
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ`:
+        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ` :
         `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[6], cRate[7], cRate[8]])}ZZZZ`;
 
       cdata.push(

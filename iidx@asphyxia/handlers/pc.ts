@@ -1193,6 +1193,16 @@ export const pcget: EPR = async (info, data, send) => {
             });
           });
           break;
+        case 32:
+          event1 = badge.filter((res) => res.category_name === "event1");
+          event1.forEach((res) => {
+            bArray.push({
+              id: 13,
+              flg_id: res.flg_id,
+              flg: res.flg,
+            });
+          });
+          break;
 
         default:
           break;
@@ -4002,6 +4012,80 @@ export const pcsave: EPR = async (info, data, send) => {
           });
           break;
 
+        case 32:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = parseInt($(data).attr("event_1").last_select_booth_id);
+          pcdata.event_skip = false;
+
+          if (!_.isNil($(data).element("event_1").element("is_skip"))) {
+            pcdata.event_skip = true;
+          }
+
+          $(data).element("event_1").elements("booth_data").forEach((res) => {
+            event_data = {
+              booth_id: res.attr().booth_id,
+              play_num: res.attr().play_num,
+              play_num_uc: res.attr().play_num_uc,
+              success_num: res.attr().success_num,
+              last_select_qpro_index: res.attr().last_select_qpro_index,
+              booth_prog: res.attr().booth_prog,
+              customer_n: res.attr().customer_n,
+              customer_h: res.attr().customer_h,
+              customer_a: res.attr().customer_a,
+              customer_l: res.attr().customer_l,
+            }
+
+            if (!_.isNil(res.attr().hire_num)) {
+              event_data = {
+                ...event_data,
+                hire_num: res.attr().hire_num,
+                flg_l: res.bool("flg_l"),
+              }
+
+              console.log(JSON.stringify(res));
+            }
+
+            res.elements("booth_qpro_data").forEach((res) => {
+              DB.Upsert(
+                refid,
+                {
+                  collection: "event_1_sub",
+                  version: version,
+                  booth_id: event_data.booth_id,
+                  index: res.attr().index,
+                },
+                {
+                  $set: {
+                    head_parts: res.attr().head_parts,
+                    hair_parts: res.attr().hair_parts,
+                    face_parts: res.attr().face_parts,
+                    body_parts: res.attr().body_parts,
+                    hand_parts: res.attr().hand_parts,
+                    param_n: res.attr().param_n,
+                    param_h: res.attr().param_h,
+                    param_a: res.attr().param_a,
+                    param_l: res.attr().param_l,
+                    level: res.attr().level,
+                    exp: res.attr().exp,
+                    performance_date: res.attr().performance_date,
+                    // new_hire seems not referenced //
+                  },
+                });
+            });
+
+            DB.Upsert(
+              refid,
+              {
+                collection: "event_1",
+                version: version,
+                booth_id: event_data.booth_id
+              },
+              {
+                $set: event_data,
+              });
+          });
+          break;
+
         default:
           break;
       }
@@ -4420,6 +4504,30 @@ export const pcsave: EPR = async (info, data, send) => {
             };
 
             badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("event1")))) {
+            badge.elements("event1").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event1",
+                flg_id: 0,
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("arena")))) {
+            badge.elements("arena").forEach((res) => {
+              let badgeInfo = {
+                category_id: "arena",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
           }
           break;
 

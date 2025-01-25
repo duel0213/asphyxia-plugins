@@ -61,6 +61,7 @@ export const graderaised: EPR = async (info, data, send) => {
         eisei_max_past_selected_course = $(data).element("eisei_data").numbers("max_past_selected_course");
         break;
       case 31:
+      case 32:
         eisei_clear_type = parseInt($(data).attr("kiwami_data").clear_type);
         eisei_grade_id = parseInt($(data).attr("kiwami_data").grade_id);
         eisei_grade_type = parseInt($(data).attr("kiwami_data").grade_type);
