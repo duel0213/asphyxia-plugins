@@ -967,7 +967,7 @@ export const musicarenacpu: EPR = async (info, data, send) => {
     total_notes.forEach((res) => {
       score_list.push({
         score: K.ITEM("s32", _.random(res, res * 2)),
-        ghost: K.ITEM("u8", 0),
+        ghost: version > 30 ? K.ITEM("s8", 0) : K.ITEM("u8", 0),
         enable_score: K.ITEM("bool", 1),
         enable_ghost: K.ITEM("bool", 0),
       });
