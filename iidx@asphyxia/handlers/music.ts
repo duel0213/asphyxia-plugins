@@ -807,8 +807,9 @@ export const musicbreg: EPR = async (info, data, send) => {
 
   let pgArray = Array<number>(10).fill(0); // PGREAT //
   let gArray = Array<number>(10).fill(0); // GREAT //
-  let mArray = Array<number>(10).fill(0); // MISS //
+  let mArray = Array<number>(10).fill(-1); // MISS //
   let cArray = Array<number>(10).fill(0); // CLEAR FLAGS //
+  let rArray = Array<number>(10).fill(-1); // RANK ID //
   let esArray = Array<number>(10).fill(0); // EXSCORE //
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
@@ -816,17 +817,25 @@ export const musicbreg: EPR = async (info, data, send) => {
   if (_.isNil(music_data)) {
     pgArray[clid] = pgnum;
     gArray[clid] = gnum;
-    mArray[clid] = -1;
+    mArray[clid] = -1; // this is not being sent //
     cArray[clid] = cflg;
+    rArray[clid] = -1; // this is not being sent //
     esArray[clid] = exscore;
+    optArray[clid] = 0; // this is not being sent //
+    opt2Array[clid] = 0; // this is not being sent //
   } else {
     pgArray = music_data.pgArray;
     gArray = music_data.gArray;
     mArray = music_data.mArray;
     cArray = music_data.cArray;
     esArray = music_data.esArray;
-    optArray = music_data.optArray;
-    opt2Array = music_data.opt2Array;
+    if (!_.isNil(music_data.optArray)) { // migration //
+      optArray = music_data.optArray;
+      opt2Array = music_data.opt2Array;
+    }
+    if (!_.isNil(music_data.rArray)) {
+      rArray = music_data.rArray;
+    }
 
     const pExscore = esArray[clid];
     if (exscore > pExscore) {
@@ -850,6 +859,7 @@ export const musicbreg: EPR = async (info, data, send) => {
         gArray,
         mArray,
         cArray,
+        rArray,
         esArray,
         optArray,
         opt2Array,
