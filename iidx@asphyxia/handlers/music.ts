@@ -527,6 +527,12 @@ export const musicreg: EPR = async (info, data, send) => {
       rArray = music_data.rArray;
     }
 
+    // migration for invalid miss count //
+    // if EXSCORE/MISS COUNT is 0 and CLEAR FLAG is NO PLAY then set MISS COUNT to -1 //
+    for (let a = 0; a < mArray.length; a++) {
+      if (esArray[a] == 0 && cArray[a] == 0 && mArray[a] == 0) mArray[a] = -1;
+    }
+
     const pExscore = esArray[clid];
     if (exscore > pExscore) {
       pgArray[clid] = pgnum;
@@ -544,12 +550,6 @@ export const musicreg: EPR = async (info, data, send) => {
     if (mnum == -1) mArray[clid] = Math.max(mArray[clid], mnum); // this seems asking for not updating miss count //
     else mArray[clid] = mArray[clid] == -1 ? mnum : Math.min(mArray[clid], mnum);
     cArray[clid] = Math.max(cArray[clid], cflg);
-  }
-
-  // migration for invalid miss count //
-  // if EXSCORE/MISS COUNT is 0 and CLEAR FLAG is NO PLAY then set MISS COUNT to -1 //
-  for (let a = 0; a < mArray.length; a++) {
-    if (esArray[a] == 0 && cArray[a] == 0 && mArray[a] == 0) mArray[a] = -1;
   }
 
   if (version >= 27) { // TODO:: support old version //
