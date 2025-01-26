@@ -122,3 +122,11 @@ IIDX32pc(status="0")
           week(week_index=b.week_index week_id=b.week_id date=b.date music_num=b.music_num play_time=b.play_time keyboard_num=b.keyboard_num scratch_num=b.scratch_num)
             clear_update_num(__type="s32" __count="13") #{b.clear_update_num[0]} #{b.clear_update_num[1]} #{b.clear_update_num[2]} #{b.clear_update_num[3]} #{b.clear_update_num[4]} #{b.clear_update_num[5]} #{b.clear_update_num[6]} #{b.clear_update_num[7]} #{b.clear_update_num[8]} #{b.clear_update_num[9]} #{b.clear_update_num[10]} #{b.clear_update_num[11]} #{b.clear_update_num[12]}
             score_update_num(__type="s32" __count="13") #{b.score_update_num[0]} #{b.score_update_num[1]} #{b.score_update_num[2]} #{b.score_update_num[3]} #{b.score_update_num[4]} #{b.score_update_num[5]} #{b.score_update_num[6]} #{b.score_update_num[7]} #{b.score_update_num[8]} #{b.score_update_num[9]} #{b.score_update_num[10]} #{b.score_update_num[11]} #{b.score_update_num[12]}
+    mynews
+      - for (let a of activityMynews)
+        detail(play_style=a.play_style kind=a.kind news_no=a.news_no index=a.index day_id=a.day_id music_id=a.music_id note_id=a.note_id best_score=a.best_score now_score=a.now_score now_clear=a.now_clear news_time=a.news_time)
+    best_result
+      - for (let a of activityMybest)
+        best_data(play_style=a.play_style kind=a.kind play_side=a.play_side music_id=a.music_id note_id=a.note_id target_graph=a.target_graph target_score=a.target_score pacemaker=a.pacemaker best_clear=a.best_clear best_score=a.best_score best_misscount=a.best_misscount now_clear=a.now_clear now_score=a.now_score now_misscount=a.now_misscount now_pgreat=a.now_pgreat now_great=a.now_great now_good=a.now_good now_bad=a.now_bad now_poor=a.now_poor now_combo=a.now_combo now_fast=a.now_fast now_slow=a.now_slow option=a.option option2=a.option_2 gauge_type=a.gauge_type result_type=a.result_type update_date=a.update_date)
+          ghost_gauge_data(__type="bin") #{a.ghost_gauge_data}
+          is_special_result(__type="bool") #{a.is_special_result}

@@ -11,7 +11,7 @@ import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
 import { blueboss } from "../models/event";
 import { badge } from "../models/badge";
-import { activity } from "../models/activity";
+import { activity, activity_mybest } from "../models/activity";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -870,6 +870,7 @@ export const pcget: EPR = async (info, data, send) => {
       mirage_lib_sub = [],
       delabity_lab = null,
       delabity_lab_sub = [],
+      anniv20 = null,
       epo_res = null,
       epo_res_sub = [],
       event_1 = null,
@@ -940,6 +941,8 @@ export const pcget: EPR = async (info, data, send) => {
 
         delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
         delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+
+        anniv20 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "anniv20_data" });
         break;
       case 31:
         let myepo_map = await DB.Find(refid, { collection: "event_1", version: version, event_data: "myepo_map" });
@@ -1325,55 +1328,320 @@ export const pcget: EPR = async (info, data, send) => {
       });
     }
 
-    return send.pugFile(`pug/LDJ/${version}pcget.pug`, {
+    const activity_mybest_sp = await DB.Find<activity_mybest>(refid, {
+      collection: "activity_mybest",
+      version: version,
+      play_style: 0,
+    });
+    const activity_mybest_dp = await DB.Find<activity_mybest>(refid, {
+      collection: "activity_mybest",
+      version: version,
+      play_style: 1,
+    });
+
+    // TODO:: actually sort by today's gameplay //
+    let activityMybest = [], activityMynews = [];
+    if (activity_mybest_sp.length > 0) {
+      activity_mybest_sp.sort((a, b) => b.now_clear - a.now_clear);
+      activityMybest.push({
+        play_style: activity_mybest_sp[0].play_style,
+        play_side: activity_mybest_sp[0].play_side,
+        music_id: activity_mybest_sp[0].music_id,
+        note_id: activity_mybest_sp[0].note_id,
+
+        kind: 0,
+
+        target_graph: activity_mybest_sp[0].target_graph,
+        target_score: activity_mybest_sp[0].target_score,
+        pacemaker: activity_mybest_sp[0].pacemaker,
+        best_clear: activity_mybest_sp[0].best_clear,
+        best_score: activity_mybest_sp[0].best_score,
+        best_misscount: activity_mybest_sp[0].best_misscount,
+        now_clear: activity_mybest_sp[0].now_clear,
+        now_score: activity_mybest_sp[0].now_score,
+        now_misscount: activity_mybest_sp[0].now_misscount,
+        now_pgreat: activity_mybest_sp[0].now_pgreat,
+        now_great: activity_mybest_sp[0].now_great,
+        now_good: activity_mybest_sp[0].now_good,
+        now_bad: activity_mybest_sp[0].now_bad,
+        now_poor: activity_mybest_sp[0].now_poor,
+        now_combo: activity_mybest_sp[0].now_combo,
+        now_fast: activity_mybest_sp[0].now_fast,
+        now_slow: activity_mybest_sp[0].now_slow,
+        option: activity_mybest_sp[0].option,
+        option_2: activity_mybest_sp[0].option_2,
+        ghost_gauge_data: NumArraytoHex(Base64toNumArray(activity_mybest_sp[0].ghost_gauge_data)),
+        gauge_type: activity_mybest_sp[0].gauge_type,
+        result_type: activity_mybest_sp[0].result_type,
+        is_special_result: activity_mybest_sp[0].is_special_result,
+
+        update_date: activity_mybest_sp[0].update_date,
+      });
+
+      activity_mybest_sp.sort((a, b) =>b.now_score - a.now_score);
+      activityMybest.push({
+        play_style: activity_mybest_sp[0].play_style,
+        play_side: activity_mybest_sp[0].play_side,
+        music_id: activity_mybest_sp[0].music_id,
+        note_id: activity_mybest_sp[0].note_id,
+
+        kind: 1,
+
+        target_graph: activity_mybest_sp[0].target_graph,
+        target_score: activity_mybest_sp[0].target_score,
+        pacemaker: activity_mybest_sp[0].pacemaker,
+        best_clear: activity_mybest_sp[0].best_clear,
+        best_score: activity_mybest_sp[0].best_score,
+        best_misscount: activity_mybest_sp[0].best_misscount,
+        now_clear: activity_mybest_sp[0].now_clear,
+        now_score: activity_mybest_sp[0].now_score,
+        now_misscount: activity_mybest_sp[0].now_misscount,
+        now_pgreat: activity_mybest_sp[0].now_pgreat,
+        now_great: activity_mybest_sp[0].now_great,
+        now_good: activity_mybest_sp[0].now_good,
+        now_bad: activity_mybest_sp[0].now_bad,
+        now_poor: activity_mybest_sp[0].now_poor,
+        now_combo: activity_mybest_sp[0].now_combo,
+        now_fast: activity_mybest_sp[0].now_fast,
+        now_slow: activity_mybest_sp[0].now_slow,
+        option: activity_mybest_sp[0].option,
+        option_2: activity_mybest_sp[0].option_2,
+        ghost_gauge_data: NumArraytoHex(Base64toNumArray(activity_mybest_sp[0].ghost_gauge_data)),
+        gauge_type: activity_mybest_sp[0].gauge_type,
+        result_type: activity_mybest_sp[0].result_type,
+        is_special_result: activity_mybest_sp[0].is_special_result,
+
+        update_date: activity_mybest_sp[0].update_date,
+      });
+
+      activity_mybest_sp.sort((a, b) => b.update_date - a.update_date);
+      activity_mybest_sp.forEach((res, idx) => {
+        activityMynews.push({
+          play_style: res.play_style,
+          kind: 0, // unknown //
+          news_no: idx,
+          index: idx,
+          day_id: new Date(res.update_date * 1000).getDay(),
+          music_id: res.music_id,
+          note_id: res.note_id,
+          best_score: res.best_score,
+          now_score: res.now_score,
+          now_clear: res.now_clear,
+          news_time: res.update_date,
+        });
+      });
+    }
+
+    if (activity_mybest_dp.length > 0) {
+      activity_mybest_dp.sort((a, b) => b.now_clear - a.now_clear);
+      activityMybest.push({
+        play_style: activity_mybest_dp[0].play_style,
+        play_side: activity_mybest_dp[0].play_side,
+        music_id: activity_mybest_dp[0].music_id,
+        note_id: activity_mybest_dp[0].note_id,
+
+        kind: 0,
+
+        target_graph: activity_mybest_dp[0].target_graph,
+        target_score: activity_mybest_dp[0].target_score,
+        pacemaker: activity_mybest_dp[0].pacemaker,
+        best_clear: activity_mybest_dp[0].best_clear,
+        best_score: activity_mybest_dp[0].best_score,
+        best_misscount: activity_mybest_dp[0].best_misscount,
+        now_clear: activity_mybest_dp[0].now_clear,
+        now_score: activity_mybest_dp[0].now_score,
+        now_misscount: activity_mybest_dp[0].now_misscount,
+        now_pgreat: activity_mybest_dp[0].now_pgreat,
+        now_great: activity_mybest_dp[0].now_great,
+        now_good: activity_mybest_dp[0].now_good,
+        now_bad: activity_mybest_dp[0].now_bad,
+        now_poor: activity_mybest_dp[0].now_poor,
+        now_combo: activity_mybest_dp[0].now_combo,
+        now_fast: activity_mybest_dp[0].now_fast,
+        now_slow: activity_mybest_dp[0].now_slow,
+        option: activity_mybest_dp[0].option,
+        option_2: activity_mybest_dp[0].option_2,
+        ghost_gauge_data: NumArraytoHex(Base64toNumArray(activity_mybest_dp[0].ghost_gauge_data)),
+        gauge_type: activity_mybest_dp[0].gauge_type,
+        result_type: activity_mybest_dp[0].result_type,
+        is_special_result: activity_mybest_dp[0].is_special_result,
+
+        update_date: activity_mybest_dp[0].update_date,
+      });
+
+      activity_mybest_dp.sort((a, b) => b.now_score - a.now_score);
+      activityMybest.push({
+        play_style: activity_mybest_dp[0].play_style,
+        play_side: activity_mybest_dp[0].play_side,
+        music_id: activity_mybest_dp[0].music_id,
+        note_id: activity_mybest_dp[0].note_id,
+
+        kind: 1,
+
+        target_graph: activity_mybest_dp[0].target_graph,
+        target_score: activity_mybest_dp[0].target_score,
+        pacemaker: activity_mybest_dp[0].pacemaker,
+        best_clear: activity_mybest_dp[0].best_clear,
+        best_score: activity_mybest_dp[0].best_score,
+        best_misscount: activity_mybest_dp[0].best_misscount,
+        now_clear: activity_mybest_dp[0].now_clear,
+        now_score: activity_mybest_dp[0].now_score,
+        now_misscount: activity_mybest_dp[0].now_misscount,
+        now_pgreat: activity_mybest_dp[0].now_pgreat,
+        now_great: activity_mybest_dp[0].now_great,
+        now_good: activity_mybest_dp[0].now_good,
+        now_bad: activity_mybest_dp[0].now_bad,
+        now_poor: activity_mybest_dp[0].now_poor,
+        now_combo: activity_mybest_dp[0].now_combo,
+        now_fast: activity_mybest_dp[0].now_fast,
+        now_slow: activity_mybest_dp[0].now_slow,
+        option: activity_mybest_dp[0].option,
+        option_2: activity_mybest_dp[0].option_2,
+        ghost_gauge_data: NumArraytoHex(Base64toNumArray(activity_mybest_dp[0].ghost_gauge_data)),
+        gauge_type: activity_mybest_dp[0].gauge_type,
+        result_type: activity_mybest_dp[0].result_type,
+        is_special_result: activity_mybest_dp[0].is_special_result,
+
+        update_date: activity_mybest_dp[0].update_date,
+      });
+
+      activity_mybest_dp.sort((a, b) => b.update_date - a.update_date);
+      activity_mybest_dp.forEach((res, idx) => {
+        activityMynews.push({
+          play_style: res.play_style,
+          kind: 0, // unknown //
+          news_no: idx,
+          index: idx,
+          day_id: new Date(res.update_date * 1000).getDay(),
+          music_id: res.music_id,
+          note_id: res.note_id,
+          best_score: res.best_score,
+          now_score: res.now_score,
+          now_clear: res.now_clear,
+          news_time: res.update_date,
+        });
+      });
+    }
+
+    let result: any = {
       profile,
       pcdata,
-      lm_playdata,
-      lm_settings,
-      lm_custom,
-      mArray,
       dArray,
-      eArray,
-      fArray,
-      fsArray,
       appendsettings,
       custom,
       rArray,
-      evtArray,
-      evtArray2,
-      evtArray3,
-      boss1,
-      link5,
-      tricolettepark,
-      chrono_diver,
-      qpronicle_chord,
-      qpronicle_chord_sub,
-      qpronicle_phase3,
-      pendual_talis,
-      open_tokotoko,
-      mystery_line,
-      mystery_line_sub,
-      siege_sinobuz,
-      siege_sinobuz_sub,
-      ninja_shichikyoden,
-      rush_cannonracer,
-      rush_cannonracer_sub,
-      mirage_lib,
-      mirage_lib_sub,
-      delabity_lab,
-      delabity_lab_sub,
-      epo_res,
-      epo_res_sub,
-      wArray,
-      bArray,
       shop_data,
-      activityDayId,
-      activityTimestamp,
-      activityTodaySP,
-      activityTodayDP,
-      activityWeekSP,
-      activityWeekDP,
-    });
+    };
+
+    switch (version) {
+      case 21:
+        result = {
+          ...result,
+          link5,
+          tricolettepark,
+          boss1,
+        };
+        break;
+      case 22:
+        result = {
+          ...result,
+          chrono_diver,
+          qpronicle_chord,
+          qpronicle_chord_sub,
+          qpronicle_phase3,
+          pendual_talis,
+        };
+        break;
+      case 23:
+        result = {
+          ...result,
+          open_tokotoko,
+          mystery_line,
+          mystery_line_sub,
+        };
+        break;
+      case 24:
+        result = {
+          ...result,
+          siege_sinobuz,
+          siege_sinobuz_sub,
+          ninja_shichikyoden,
+        };
+        break;
+      case 25:
+        result = {
+          ...result,
+          rush_cannonracer,
+          rush_cannonracer_sub,
+        };
+        break;
+      case 26:
+        result = {
+          ...result,
+          mirage_lib,
+          mirage_lib_sub,
+          delabity_lab,
+          delabity_lab_sub,
+          anniv20,
+        };
+        break;
+      case 31:
+        result = {
+          ...result,
+          epo_res,
+          epo_res_sub,
+        };
+        break;
+
+      default:
+        break;
+    }
+
+    switch (version) {
+      case 32:
+        result = {
+          ...result,
+          fsArray,
+        };
+      case 31:
+        result = {
+          ...result,
+          fArray,
+          activityDayId,
+          activityTimestamp,
+          activityTodaySP,
+          activityTodayDP,
+          activityWeekSP,
+          activityWeekDP,
+          activityMynews,
+          activityMybest,
+        };
+      case 30:
+        result = {
+          ...result,
+          bArray,
+        };
+      case 28:
+        result = {
+          ...result,
+          mArray,
+          wArray,
+        };
+      case 27:
+        result = {
+          ...result,
+          lm_playdata,
+          lm_settings,
+          lm_custom,
+          eArray,
+          evtArray,
+          evtArray2,
+          evtArray3,
+        };
+      default: break;
+    }
+
+    return send.pugFile(`pug/LDJ/${version}pcget.pug`, result);
   }
 
   return send.deny();

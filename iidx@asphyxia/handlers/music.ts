@@ -4,11 +4,12 @@ import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { badge } from "../models/badge";
+import { activity_mybest } from "../models/activity";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const cltype = parseInt($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -16,11 +17,11 @@ export const musicgetrank: EPR = async (info, data, send) => {
   );
 
   const rival_refids = [
-    [parseInt($(data).attr().iidxid0), await IDtoRef(parseInt($(data).attr().iidxid0))],
-    [parseInt($(data).attr().iidxid1), await IDtoRef(parseInt($(data).attr().iidxid1))],
-    [parseInt($(data).attr().iidxid2), await IDtoRef(parseInt($(data).attr().iidxid2))],
-    [parseInt($(data).attr().iidxid3), await IDtoRef(parseInt($(data).attr().iidxid3))],
-    [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
+    [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+    [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+    [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+    [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+    [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
   let m = [], top = [], b = [], t = [];
@@ -209,19 +210,19 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
 export const musicgetralive: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const cltype = parseInt($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
     })
   );
   const rival_refids = [
-    [parseInt($(data).attr().iidxid0), await IDtoRef(parseInt($(data).attr().iidxid0))],
-    [parseInt($(data).attr().iidxid1), await IDtoRef(parseInt($(data).attr().iidxid1))],
-    [parseInt($(data).attr().iidxid2), await IDtoRef(parseInt($(data).attr().iidxid2))],
-    [parseInt($(data).attr().iidxid3), await IDtoRef(parseInt($(data).attr().iidxid3))],
-    [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
+    [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+    [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+    [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+    [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+    [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
   let result = {
@@ -287,11 +288,11 @@ export const musicappoint: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   // clid, ctype, grd, iidxid, lv, mid, subtype //
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const ctype = parseInt($(data).attr().ctype);
-  const subtype = parseInt($(data).attr().subtype);
-  let mid = parseInt($(data).attr().mid);
-  let clid = parseInt($(data).attr().clid);
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const ctype = Number($(data).attr().ctype);
+  const subtype = Number($(data).attr().subtype);
+  let mid = Number($(data).attr().mid);
+  let clid = Number($(data).attr().clid);
 
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version < 20) {
@@ -436,7 +437,7 @@ export const musicappoint: EPR = async (info, data, send) => {
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
 
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
@@ -446,12 +447,12 @@ export const musicreg: EPR = async (info, data, send) => {
   });
 
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const mnum = parseInt($(data).attr().mnum);
-  const cflg = parseInt($(data).attr().cflg);
-  let mid = parseInt($(data).attr().mid);
-  let clid = parseInt($(data).attr().clid);
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const mnum = Number($(data).attr().mnum);
+  const cflg = Number($(data).attr().cflg);
+  let mid = Number($(data).attr().mid);
+  let clid = Number($(data).attr().clid);
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0, rid = -1;
@@ -487,8 +488,8 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (!_.isNil($(data).attr().rid)) rid = parseInt($(data).attr().rid);
-  else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
+  if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
+  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
   if (version == 14 || version == 15) ghost = HextoBase64($(data).str("ghost"));
@@ -496,11 +497,11 @@ export const musicreg: EPR = async (info, data, send) => {
 
   if (version >= 27) {
     ghost_gauge = NumArraytoBase64($(data).buffer("ghost_gauge"));
-    style = parseInt($(data).element("music_play_log").attr().play_style);
+    style = Number($(data).element("music_play_log").attr().play_style);
 
     if (version >= 29) {
-      option = parseInt($(data).element("music_play_log").attr().option1);
-      option_2 = parseInt($(data).element("music_play_log").attr().option2);
+      option = Number($(data).element("music_play_log").attr().option1);
+      option_2 = Number($(data).element("music_play_log").attr().option2);
     }
   }
 
@@ -635,11 +636,11 @@ export const musicreg: EPR = async (info, data, send) => {
           collection: "badge",
           version: version,
           category_name: "djLevel",
-          flg_id: parseInt($(data).attr("badge").djLevel_badge_flg_id),
+          flg_id: Number($(data).attr("badge").djLevel_badge_flg_id),
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").djLevel_badge_flg),
+            flg: Number($(data).attr("badge").djLevel_badge_flg),
           }
         }
       );
@@ -652,11 +653,11 @@ export const musicreg: EPR = async (info, data, send) => {
           collection: "badge",
           version: version,
           category_name: "clear",
-          flg_id: parseInt($(data).attr("badge").clear_badge_flg_id),
+          flg_id: Number($(data).attr("badge").clear_badge_flg_id),
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").clear_badge_flg),
+            flg: Number($(data).attr("badge").clear_badge_flg),
           }
         }
       );
@@ -673,11 +674,55 @@ export const musicreg: EPR = async (info, data, send) => {
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").rivalChallenge_badge_flg),
+            flg: Number($(data).attr("badge").rivalChallenge_badge_flg),
           }
         }
       );
     }
+  }
+
+  if (!_.isNil($(data).element("best_result"))) {
+    await DB.Upsert<activity_mybest>(
+      refid,
+      {
+        collection: "activity_mybest",
+        version: version,
+
+        play_style: Number($(data).attr("best_result").play_style),
+        play_side: Number($(data).attr("best_result").play_side),
+        music_id: Number($(data).attr("best_result").music_id),
+        note_id: Number($(data).attr("best_result").note_id),
+      },
+      {
+        $set: {
+          target_graph: Number($(data).attr("best_result").target_graph),
+          target_score: Number($(data).attr("best_result").target_score),
+          pacemaker: Number($(data).attr("best_result").pacemaker),
+          best_clear: Number($(data).attr("best_result").best_clear),
+          best_score: Number($(data).attr("best_result").best_score),
+          best_misscount: Number($(data).attr("best_result").best_misscount),
+          now_clear: Number($(data).attr("best_result").now_clear),
+          now_score: Number($(data).attr("best_result").now_score),
+          now_misscount: Number($(data).attr("best_result").now_misscount),
+          now_pgreat: Number($(data).attr("best_result").now_pgreat),
+          now_great: Number($(data).attr("best_result").now_great),
+          now_good: Number($(data).attr("best_result").now_good),
+          now_bad: Number($(data).attr("best_result").now_bad),
+          now_poor: Number($(data).attr("best_result").now_poor),
+          now_combo: Number($(data).attr("best_result").now_combo),
+          now_fast: Number($(data).attr("best_result").now_fast),
+          now_slow: Number($(data).attr("best_result").now_slow),
+          option: Number($(data).attr("best_result").option),
+          option_2: Number($(data).attr("best_result").option2),
+          ghost_gauge_data: NumArraytoBase64($(data).element("best_result").buffer("ghost_gauge_data")),
+          gauge_type: Number($(data).attr("best_result").gauge_type),
+          result_type: Number($(data).attr("best_result").result_type),
+          is_special_result: Number($(data).element("best_result").bool("is_special_result")),
+
+          update_date: Math.floor(new Date().valueOf() / 1000),
+        }
+      }
+    );
   }
 
   let shop_rank = -1, shop_rank_data = [];
@@ -791,11 +836,11 @@ export const musicbreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   // mid pgnum gnum cflg //
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const cflg = parseInt($(data).attr().cflg);
-  let mid = parseInt($(data).attr().mid);
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const cflg = Number($(data).attr().cflg);
+  let mid = Number($(data).attr().mid);
   let clid = 0; // SP BEGINNER //
   let exscore = (pgnum * 2 + gnum);
 
@@ -879,7 +924,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
-  const cltype = parseInt($(data).attr().cltype);
+  const cltype = Number($(data).attr().cltype);
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
@@ -926,7 +971,7 @@ export const musiccrate: EPR = async (info, data, send) => {
 
     let indices = [1, 2, 3, 6, 7, 8];
     if (version == 14 || version == 15) {
-      let verMid = OldMidToVerMid(parseInt(key));
+      let verMid = OldMidToVerMid(Number(key));
 
       let str = cltype == 0 ?
         `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ` :
