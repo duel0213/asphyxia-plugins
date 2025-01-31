@@ -33,6 +33,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       temp_mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(temp_mid);
 
@@ -80,6 +82,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
   else if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       temp_mid = NewMidToOldMid(res.mid);
       let mVersion = Math.floor(temp_mid / 100);
       if (mVersion > version) return;
@@ -125,6 +129,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     else indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       let mVersion = Math.floor(res.mid / 1000);
       if (mVersion > version) return;
 
@@ -233,6 +239,8 @@ export const musicgetralive: EPR = async (info, data, send) => {
   let indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
   music_data.forEach((res: score) => {
+    if (_.isNil(res.cArray)) throw new Error("[music.getralive] There is unsupported entry in Database");
+
     myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
   });
 
