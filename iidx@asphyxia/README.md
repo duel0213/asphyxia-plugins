@@ -158,8 +158,8 @@ Changelogs
   - Fixed where MISS COUNT doesn't get updated when exscore is same
   - Fixed where lightning model settings saved incorrectly
   - Fixed where unable to import score if user has DP scores
-  - FIxed where unable to achieve dan if you failed once
-  - FIxed where unable to login (tricoro, CastHour)
+  - Fixed where unable to achieve dan if you failed once
+  - Fixed where unable to login (tricoro, CastHour)
   - Fixed where unable to specify rival in WebUI
   - Fixed where music.arenaCPU isn't working as intended due to change of type (EPOLIS ~)
   - WebUI is now display values of corresponding version
