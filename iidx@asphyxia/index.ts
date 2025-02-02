@@ -489,7 +489,7 @@ export function register() {
     name: "PINKY JUMP UP!",
     desc: "PINKY JUMP UP! Phase",
     type: "integer",
-    default: 1,
+    default: 2,
   });
 
   // TODO:: Make a list of customize items //

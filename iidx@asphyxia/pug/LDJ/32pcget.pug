@@ -82,10 +82,12 @@ IIDX32pc(status="0")
     if pcdata.event_skip == true
       is_skip
     - for (let evt of evtArray)
-      booth_data(booth_id=evt.booth_id play_num=evt.play_num play_num_uc=evt.play_num_uc success_num=evt.success_num last_select_qpro_index=evt.last_select_qpro_index booth_prog=evt.booth_prog customer_n=evt.customer_n customer_h=evt.customer_h customer_a=evt.customer_a customer_l=evt.customer_l hire_num="0" flg_l="0")
+      booth_data(booth_id=evt.booth_id play_num=evt.play_num play_num_uc=evt.play_num_uc success_num=evt.success_num last_select_qpro_index=evt.last_select_qpro_index booth_prog=evt.booth_prog customer_n=evt.customer_n customer_h=evt.customer_h customer_a=evt.customer_a customer_l=evt.customer_l hire_num=evt.hire_num)
+        flg_l(__type="bool") #{evt.flg_l}
     - for (let evt2 of evtArray2)
       booth_qpro_data(booth_id=evt2.booth_id index=evt2.index head_parts=evt2.head_parts hair_parts=evt2.hair_parts face_parts=evt2.face_parts body_parts=evt2.body_parts hand_parts=evt2.hand_parts param_n=evt2.param_n param_h=evt2.param_h param_a=evt2.param_a param_l=evt2.param_l exp=evt2.exp performance_date=evt2.performance_date)
-    //-rival(index iidx_id head hair face body hand back)
+    - for (let evt3 of evtArray3)
+      rival(index=evt3.index name=evt3.name iidx_id=evt3.iidx_id head=evt3.head hair=evt3.hair face=evt3.face body=evt3.body hand=evt3.hand back=evt3.back)
   ultimate_mobile_link(music_list="-1")
     link_flag
   valkyrie_linkage(music_list_1="-1" music_list_2="-1" music_list_3="-1")

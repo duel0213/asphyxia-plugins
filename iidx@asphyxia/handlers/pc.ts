@@ -609,6 +609,12 @@ export const pcget: EPR = async (info, data, send) => {
     pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
   }
 
+  // temporary solution until figure out why this happening on others //
+  if (_.isNil(pcdata.orb)) {
+    pcdata.orb = 0;
+    pcdata.present_orb = 0;
+  }
+
   const appendsettings = appendSettingConverter(
     custom.rank_folder,
     custom.clear_folder,
@@ -963,6 +969,40 @@ export const pcget: EPR = async (info, data, send) => {
 
         epo_res = await DB.FindOne(refid, { collection: "event_1", version: version, event_data: "epores" });
         epo_res_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "epores_system" });
+        break;
+      case 32:
+        event_1 = await DB.Find(refid, { collection: "event_1", version: version });
+        event_1s = await DB.Find(refid, { collection: "event_1_sub", version: version });
+
+        if (event_1.length > 0) {
+          for (let evt of event_1) {
+            evt.hire_num = _.isNil(evt.hire_num) ? 0 : evt.hire_num;
+            evt.flg_l = _.isNil(evt.flg_l) ? 0 : Number(evt.flg_l);
+            evtArray.push(evt);
+          }
+        }
+
+        if (event_1s.length > 0) {
+          for (let evt of event_1s) {
+            evtArray2.push(evt);
+          }
+        }
+
+        rArray.forEach((res, idx) => {
+          evtArray3.push({
+            index: idx,
+
+            iidx_id: res.profile[2],
+            name: res.profile[0],
+
+            head: res.qprodata[1],
+            hair: res.qprodata[0],
+            face: res.qprodata[2],
+            body: res.qprodata[3],
+            hand: res.qprodata[4],
+            back: res.qprodata[5],
+          });
+        });
         break;
 
       default:
@@ -4309,8 +4349,6 @@ export const pcsave: EPR = async (info, data, send) => {
                 hire_num: res.attr().hire_num,
                 flg_l: res.bool("flg_l"),
               }
-
-              console.log(JSON.stringify(res));
             }
 
             res.elements("booth_qpro_data").forEach((res) => {
