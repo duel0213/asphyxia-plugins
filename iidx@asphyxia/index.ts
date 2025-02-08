@@ -255,7 +255,7 @@ export function register() {
     default: 9,
   });
   R.Config("pd_boss", {
-    name: "Event Phase (SP)",
+    name: "Event Phase (PD)",
     desc: "Chrono Seeker / Qpronicle Chord / PENDUAL TALISMAN",
     type: "integer",
     default: 3,
