@@ -1642,11 +1642,6 @@ export const pcget: EPR = async (info, data, send) => {
         result = {
           ...result,
           fsArray,
-        };
-      case 31:
-        result = {
-          ...result,
-          fArray,
           activityDayId,
           activityTimestamp,
           activityTodaySP,
@@ -1656,11 +1651,17 @@ export const pcget: EPR = async (info, data, send) => {
           activityMynews,
           activityMybest,
         };
+      case 31:
+        result = {
+          ...result,
+          fArray,
+        };
       case 30:
         result = {
           ...result,
           bArray,
         };
+      case 29:
       case 28:
         result = {
           ...result,
