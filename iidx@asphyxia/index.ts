@@ -333,7 +333,7 @@ export function register() {
     name: "忍々七鍵伝",
     desc: "忍々七鍵伝 Phase",
     type: "integer",
-    default: 2,
+    default: 1,
   });
   R.Config("sb_extraboss",
   {

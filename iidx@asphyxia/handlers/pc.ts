@@ -3063,8 +3063,6 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_pace = parseInt($(data).attr().d_pace);
     pcdata.s_gno = parseInt($(data).attr().s_gno);
     pcdata.d_gno = parseInt($(data).attr().d_gno);
-    pcdata.s_sub_gno = parseInt($(data).attr().s_sub_gno);
-    pcdata.d_sub_gno = parseInt($(data).attr().d_sub_gno);
     pcdata.s_gtype = parseInt($(data).attr().s_gtype);
     pcdata.d_gtype = parseInt($(data).attr().d_gtype);
     pcdata.s_sdlen = parseInt($(data).attr().s_sdlen);

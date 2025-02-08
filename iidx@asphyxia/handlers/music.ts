@@ -934,20 +934,15 @@ export const musiccrate: EPR = async (info, data, send) => {
         K.ITEM("str", str, { ver: String(verMid[0]) })
       );
     }
-    else if (version < 27) {
-      c.push(
-        K.ARRAY("u8", [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])], { mid: key }),
-      );
-    }
     else {
-      c.push(
-        K.ARRAY("s32", [...cRate, ...fcRate], { mid: key }),
-      );
+      let rateArray = version < 27 ? [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])] : [...cRate, ...fcRate];
+      let rateResult = version < 24 ? K.ARRAY("u8", rateArray, { mid: key }) : K.ARRAY("s32", rateArray, { mid: key });
+
+      c.push(rateResult);
     }
   }
 
-  if (version == 14 || version == 15) result = { cdata };
-  else result = { c };
+  result = (version == 14 || version == 15) ? { cdata } : { c };
 
   return send.object(result);
 }
