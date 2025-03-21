@@ -1,7 +1,7 @@
 import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, Base64toNumArray, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, NumArraytoHex, NumArraytoBase64 } from "../util";
+import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data } from "../models/rival";
@@ -121,7 +121,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         pre_play: K.ATTR({ phase: String(U.GetConfig("pd_preplay")) }),
         toho_remix: K.ATTR({ phase: String(U.GetConfig("pd_tohoremix")) }),
@@ -144,7 +144,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         boss: K.ATTR({ phase: String(U.GetConfig("cp_boss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("cp_event1")) }),
@@ -167,7 +167,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         boss: K.ATTR({ phase: String(U.GetConfig("sb_boss")) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("sb_extraboss")) }),
@@ -184,7 +184,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         boss: K.ATTR({ phase: String(U.GetConfig("cb_boss")) }),
         event1_phase: K.ATTR({ phase: String(U.GetConfig("cb_event1")) }),
@@ -200,7 +200,7 @@ export const pccommon: EPR = async (info, data, send) => {
       result = {
         ...result,
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         boss: K.ATTR({ phase: String(U.GetConfig("rt_boss")) }),
         extra_boss_event: K.ATTR({ phase: String(U.GetConfig("rt_extraboss")) }),
@@ -221,7 +221,7 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         boss: K.ATTR({ phase: String(U.GetConfig("hv_boss")) }),
         vip_pass_black: {},
@@ -244,7 +244,7 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         boss: K.ATTR({ phase: String(U.GetConfig("bo_boss")) }),
@@ -271,7 +271,7 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         boss: K.ATTR({ phase: String(1) }), // TODO:: verify //
@@ -299,7 +299,7 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         vip_pass_black: {},
@@ -321,7 +321,7 @@ export const pccommon: EPR = async (info, data, send) => {
         ...result,
         movie_agreement: K.ATTR({ version: String(1) }),
         license: {
-          string: K.ITEM("bin", [0x00]), // TODO:: figure out what this does (alloc size: 600) //
+          string: K.ITEM("bin", Buffer.from([0x00])), // TODO:: figure out what this does (alloc size: 600) //
         },
         movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
         vip_pass_black: {},
@@ -574,6 +574,12 @@ export const pcget: EPR = async (info, data, send) => {
     pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
   }
 
+  // temporary solution until figure out why this happening on others //
+  if (_.isNil(pcdata.orb)) {
+    pcdata.orb = 0;
+    pcdata.present_orb = 0;
+  }
+
   const appendsettings = appendSettingConverter(
     custom.rank_folder,
     custom.clear_folder,
@@ -589,7 +595,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.hide_iidxid,
     custom.disable_beginner_option,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [], fsArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -753,9 +759,9 @@ export const pcget: EPR = async (info, data, send) => {
 
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
     if (!_.isNil(event)) {
-      event.cf = NumArraytoHex(Base64toNumArray(event.cf));
-      event.pf = NumArraytoHex(Base64toNumArray(event.pf));
-      event.mf = NumArraytoHex(Base64toNumArray(event.mf));
+      event.cf = Buffer.from(event.cf, "base64").toString("hex");
+      event.pf = Buffer.from(event.pf, "base64").toString("hex");
+      event.mf = Buffer.from(event.mf, "base64").toString("hex");
     }
 
     return send.pugFile("pug/JDZ/pcget.pug", {
@@ -772,9 +778,9 @@ export const pcget: EPR = async (info, data, send) => {
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
 
     if (!_.isNil(event)) {
-      event.cf = NumArraytoHex(Base64toNumArray(event.cf));
-      event.qcf = NumArraytoHex(Base64toNumArray(event.qcf));
-      event.piece = NumArraytoHex(Base64toNumArray(event.piece));
+      event.cf = Buffer.from(event.cf, "base64").toString("hex");
+      event.qcf = Buffer.from(event.qcf, "base64").toString("hex");
+      event.piece = Buffer.from(event.piece, "base64").toString("hex");
     }
 
     return send.pugFile("pug/KDZ/pcget.pug", {
@@ -788,8 +794,8 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 20) {
-    pcdata.st_stamp = _.isNil(pcdata.st_stamp) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_stamp));
-    pcdata.st_help = _.isNil(pcdata.st_help) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_help));
+    pcdata.st_stamp = _.isNil(pcdata.st_stamp) ? "00" : Buffer.from(pcdata.st_stamp, "base64").toString("hex");
+    pcdata.st_help = _.isNil(pcdata.st_help) ? "00" : Buffer.from(pcdata.st_help, "base64").toString("hex");
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
@@ -797,7 +803,7 @@ export const pcget: EPR = async (info, data, send) => {
     let blueboss = await DB.FindOne<blueboss>(refid, { collection: "event_1", version: version, event_name: "blueboss" });
     let yellowboss = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "yellowboss" });
 
-    if (!_.isNil(blueboss)) blueboss.durability = NumArraytoHex(Base64toNumArray(blueboss.durability));
+    if (!_.isNil(blueboss)) blueboss.durability = Buffer.from(blueboss.durability, "base64").toString("hex");
 
     return send.pugFile("pug/LDJ/pcget.pug", {
       profile,
@@ -835,6 +841,7 @@ export const pcget: EPR = async (info, data, send) => {
       mirage_lib_sub = [],
       delabity_lab = null,
       delabity_lab_sub = [],
+      anniv20 = null,
       epo_res = null,
       epo_res_sub = [],
       event_1 = null,
@@ -843,16 +850,16 @@ export const pcget: EPR = async (info, data, send) => {
 
     switch (version) {
       case 21:
-        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_album));
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album, "base64").toString("hex");
 
         link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
         tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
 
         boss1 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss1" });
-        if (!_.isNil(boss1)) boss1.durability = NumArraytoHex(Base64toNumArray(boss1.durability));
+        if (!_.isNil(boss1)) boss1.durability = Buffer.from(boss1.durability, "base64").toString("hex");
         break;
       case 22:
-        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_album));
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album, "base64").toString("hex");
 
         chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
         pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
@@ -864,7 +871,7 @@ export const pcget: EPR = async (info, data, send) => {
         qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
         break;
       case 23:
-        pcdata.st_tokimeki = _.isNil(pcdata.st_tokimeki) ? "00" : NumArraytoHex(Base64toNumArray(pcdata.st_tokimeki));
+        pcdata.st_tokimeki = _.isNil(pcdata.st_tokimeki) ? "00" : Buffer.from(pcdata.st_tokimeki, "base64").toString("hex");
 
         open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
         mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
@@ -875,16 +882,16 @@ export const pcget: EPR = async (info, data, send) => {
         siege_sinobuz_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
         siege_sinobuz_sub.forEach((res) => {
           res.is_clear = Number(res.is_clear);
-          res.ninjyutsu = NumArraytoHex(Base64toNumArray(res.ninjyutsu));
-          res.card_damage = NumArraytoHex(Base64toNumArray(res.card_damage));
-          res.card_clear = NumArraytoHex(Base64toNumArray(res.card_clear));
+          res.ninjyutsu = Buffer.from(res.ninjyutsu, "base64").toString("hex");
+          res.card_damage = Buffer.from(res.card_damage, "base64").toString("hex");
+          res.card_clear = Buffer.from(res.card_clear, "base64").toString("hex");
         });
 
         ninja_shichikyoden = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
         if (!_.isNil(ninja_shichikyoden))
-          ninja_shichikyoden.last_select_dojo = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.last_select_dojo));
+          ninja_shichikyoden.last_select_dojo = Buffer.from(ninja_shichikyoden.last_select_dojo, "base64").toString("hex");
         if (!_.isNil(ninja_shichikyoden))
-          ninja_shichikyoden.enemy_damage = NumArraytoHex(Base64toNumArray(ninja_shichikyoden.enemy_damage));
+          ninja_shichikyoden.enemy_damage = Buffer.from(ninja_shichikyoden.enemy_damage, "base64").toString("hex");
         break;
       case 25:
         rush_cannonracer = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
@@ -896,15 +903,17 @@ export const pcget: EPR = async (info, data, send) => {
       case 26:
         mirage_lib = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
         if (!_.isNil(mirage_lib))
-          mirage_lib.quiz_control_list = NumArraytoHex(Base64toNumArray(mirage_lib.quiz_control_list));
+          mirage_lib.quiz_control_list = Buffer.from(mirage_lib.quiz_control_list, "base64").toString("hex");
 
         mirage_lib_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event1_data" });
         mirage_lib_sub.forEach((res) => {
-          res.map_route_damage = NumArraytoHex(Base64toNumArray(res.map_route_damage));
+          res.map_route_damage = Buffer.from(res.map_route_damage, "base64").toString("hex");
         });
 
         delabity_lab = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
         delabity_lab_sub = await DB.Find(refid, { collection: "event_1_sub", version: version, event_name: "event2_data" });
+
+        anniv20 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "anniv20_data" });
         break;
       case 31:
         let myepo_map = await DB.Find(refid, { collection: "event_1", version: version, event_data: "myepo_map" });
@@ -946,10 +955,10 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil(pcdata.sp_mlist)) {
-      pcdata.sp_mlist = NumArraytoHex(Base64toNumArray(pcdata.sp_mlist));
-      pcdata.sp_clist = NumArraytoHex(Base64toNumArray(pcdata.sp_clist));
-      pcdata.dp_mlist = NumArraytoHex(Base64toNumArray(pcdata.dp_mlist));
-      pcdata.dp_clist = NumArraytoHex(Base64toNumArray(pcdata.dp_clist));
+      pcdata.sp_mlist = Buffer.from(pcdata.sp_mlist, "base64").toString("hex");
+      pcdata.sp_clist = Buffer.from(pcdata.sp_clist, "base64").toString("hex");
+      pcdata.dp_mlist = Buffer.from(pcdata.dp_mlist, "base64").toString("hex");
+      pcdata.dp_clist = Buffer.from(pcdata.dp_clist, "base64").toString("hex");
     }
 
     if (version >= 30) {
@@ -1181,48 +1190,113 @@ export const pcget: EPR = async (info, data, send) => {
       bArray.sort((a, b) => a.id - b.id || a.flg_id - b.flg_id);
     }
 
-    return send.pugFile(`pug/LDJ/${version}pcget.pug`, {
+    let result: any = {
       profile,
       pcdata,
-      lm_playdata,
-      lm_settings,
-      lm_custom,
-      mArray,
       dArray,
-      eArray,
-      fArray,
       appendsettings,
       custom,
       rArray,
-      evtArray,
-      evtArray2,
-      evtArray3,
-      boss1,
-      link5,
-      tricolettepark,
-      chrono_diver,
-      qpronicle_chord,
-      qpronicle_chord_sub,
-      qpronicle_phase3,
-      pendual_talis,
-      open_tokotoko,
-      mystery_line,
-      mystery_line_sub,
-      siege_sinobuz,
-      siege_sinobuz_sub,
-      ninja_shichikyoden,
-      rush_cannonracer,
-      rush_cannonracer_sub,
-      mirage_lib,
-      mirage_lib_sub,
-      delabity_lab,
-      delabity_lab_sub,
-      epo_res,
-      epo_res_sub,
-      wArray,
-      bArray,
       shop_data,
-    });
+    };
+
+    switch (version) {
+      case 21:
+        result = {
+          ...result,
+          link5,
+          tricolettepark,
+          boss1,
+        };
+        break;
+      case 22:
+        result = {
+          ...result,
+          chrono_diver,
+          qpronicle_chord,
+          qpronicle_chord_sub,
+          qpronicle_phase3,
+          pendual_talis,
+        };
+        break;
+      case 23:
+        result = {
+          ...result,
+          open_tokotoko,
+          mystery_line,
+          mystery_line_sub,
+        };
+        break;
+      case 24:
+        result = {
+          ...result,
+          siege_sinobuz,
+          siege_sinobuz_sub,
+          ninja_shichikyoden,
+        };
+        break;
+      case 25:
+        result = {
+          ...result,
+          rush_cannonracer,
+          rush_cannonracer_sub,
+        };
+        break;
+      case 26:
+        result = {
+          ...result,
+          mirage_lib,
+          mirage_lib_sub,
+          delabity_lab,
+          delabity_lab_sub,
+          anniv20,
+        };
+        break;
+      case 31:
+        result = {
+          ...result,
+          epo_res,
+          epo_res_sub,
+        };
+        break;
+
+      default:
+        break;
+    }
+
+    switch (version) {
+      case 31:
+        result = {
+          ...result,
+          fArray,
+        };
+      case 30:
+        result = {
+          ...result,
+          bArray,
+        };
+      case 29:
+      case 28:
+        result = {
+          ...result,
+          mArray,
+          wArray,
+        };
+      case 27:
+        result = {
+          ...result,
+          lm_playdata,
+          lm_settings,
+          lm_custom,
+          eArray,
+          evtArray,
+          evtArray2,
+          evtArray3,
+        };
+      default: break;
+    }
+
+    return send.pugFile(`pug/LDJ/${version}pcget.pug`, result);
   }
 
   return send.deny();
@@ -1802,8 +1876,8 @@ export const pcsave: EPR = async (info, data, send) => {
         pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       }
       pcdata.st_review = parseInt($(data).attr("step").review);
-      pcdata.st_stamp = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
-      pcdata.st_help = NumArraytoBase64($(data).element("step").buffer("help"));
+      pcdata.st_stamp = $(data).buffer("step").toString("base64"); // TODO:: verify //
+      pcdata.st_help = $(data).element("step").buffer("help").toString("base64");
     }
     
     if (!_.isNil($(data).element("achievements"))) {
@@ -2080,10 +2154,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2115,7 +2189,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_last_select = parseInt($(data).attr("step").last_select);
-      pcdata.st_album = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
+      pcdata.st_album = $(data).buffer("step").toString("base64"); // TODO:: verify //
     }
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
@@ -2345,10 +2419,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2388,7 +2462,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_age_list = parseInt($(data).attr("step").age_list);
-      pcdata.st_album = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
+      pcdata.st_album = $(data).buffer("step").toString("base64"); // TODO:: verify //
       pcdata.st_is_present = parseInt($(data).attr("step").is_present);
       pcdata.st_is_future = parseInt($(data).attr("step").is_future);
     }
@@ -2581,10 +2655,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2624,7 +2698,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
       pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_mission_gauge = parseInt($(data).attr("step").mission_gauge);
-      pcdata.st_tokimeki = NumArraytoBase64($(data).buffer("step")); // TODO:: verify //
+      pcdata.st_tokimeki = $(data).buffer("step").toString("base64"); // TODO:: verify //
     }
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
@@ -2751,10 +2825,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -2938,10 +3012,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -3109,10 +3183,10 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = NumArraytoBase64($(data).element("favorite").buffer("sp_mlist"));
-      pcdata.sp_clist = NumArraytoBase64($(data).element("favorite").buffer("sp_clist"));
-      pcdata.dp_mlist = NumArraytoBase64($(data).element("favorite").buffer("dp_mlist"));
-      pcdata.dp_clist = NumArraytoBase64($(data).element("favorite").buffer("dp_clist"));
+      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
+      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
+      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
+      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -3143,12 +3217,12 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.st_dp_dj_mission_level = parseInt($(data).attr("step").dp_dj_mission_level);
       pcdata.st_sp_clear_mission_level = parseInt($(data).attr("step").sp_clear_mission_level);
       pcdata.st_dp_clear_mission_level = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_sp_dj_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_dp_dj_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_sp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_dp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_sp_mplay = parseInt($(data).attr("step").dp_clear_mission_level);
-      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_clear_mission_level);
+      pcdata.st_sp_dj_mission_clear = parseInt($(data).attr("step").sp_dj_mission_clear);
+      pcdata.st_dp_dj_mission_clear = parseInt($(data).attr("step").dp_dj_mission_clear);
+      pcdata.st_sp_clear_mission_clear = parseInt($(data).attr("step").sp_clear_mission_clear);
+      pcdata.st_dp_clear_mission_clear = parseInt($(data).attr("step").dp_clear_mission_clear);
+      pcdata.st_sp_mplay = parseInt($(data).attr("step").sp_mplay);
+      pcdata.st_dp_mplay = parseInt($(data).attr("step").dp_mplay);
       pcdata.st_tips_read_list = parseInt($(data).attr("step").tips_read_list);
     }
 
@@ -3194,7 +3268,7 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.present_orb += parseInt($(data).attr("orb_data").present_orb);
     }
 
-    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg) //
+    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg, ...) //
 
     // TODO:: fix event saving, these event savings hasn't fully tested //
     if (hasEventData) {
@@ -3486,10 +3560,11 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (!_.isNil($(data).element("deller"))) pcdata.deller += parseInt($(data).attr("deller").deller);
     if (!_.isNil($(data).element("orb_data"))) {
-      if (version == 31) {
+      if (version >= 31) {
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb_normal);
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb_event);
         pcdata.present_orb += parseInt($(data).attr("orb_data").rest_orb);
+        // use_present_orb //
       }
       else {
         pcdata.orb += parseInt($(data).attr("orb_data").add_orb);
@@ -3947,217 +4022,222 @@ export const pcsave: EPR = async (info, data, send) => {
       let badge_data = [];
       let badge = $(data).element("badge");
 
-      if (version == 30) {
-        if (!(_.isNil(badge.element("today_recommend")))) {
-          let badgeInfo = {
-            category_id: "today_recommend",
-            flg_id: 0,
-            flg: parseInt(badge.element("today_recommend").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("weekly_ranking")))) {
-          let badgeInfo = {
-            category_id: "weekly_ranking",
-            flg_id: 0,
-            flg: parseInt(badge.element("weekly_ranking").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("visitor")))) {
-          badge.elements("visitor").forEach((res) => {
+      switch (version) {
+        case 30:
+          if (!(_.isNil(badge.element("today_recommend")))) {
             let badgeInfo = {
-              category_id: "visitor",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("notes_radar")))) {
-          badge.elements("notes_radar").forEach((res) => {
-            let badgeInfo = {
-              category_id: "notes_radar",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("world_tourism")))) {
-          let badgeInfo = {
-            category_id: "world_tourism",
-            flg_id: 0,
-            flg: parseInt(badge.element("world_tourism").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("event1")))) {
-          badge.elements("event1").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event1",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("arena")))) {
-          badge.elements("arena").forEach((res) => {
-            let badgeInfo = {
-              category_id: "arena",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("iidx_exam")))) {
-          let badgeInfo = {
-            category_id: "iidx_exam",
-            flg_id: 0,
-            flg: parseInt(badge.element("iidx_exam").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-      }
-      else if (version == 31) {
-        if (!(_.isNil(badge.element("step_up")))) {
-          badge.elements("step_up").forEach((res) => {
-            let badgeInfo = {
-              category_id: "step_up",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("today_recommend")))) {
-          let badgeInfo = {
-            category_id: "today_recommend",
-            flg_id: 0,
-            flg: parseInt(badge.element("today_recommend").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("weekly_ranking")))) {
-          let badgeInfo = {
-            category_id: "weekly_ranking",
-            flg_id: 0,
-            flg: parseInt(badge.element("weekly_ranking").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("visitor")))) {
-          badge.elements("visitor").forEach((res) => {
-            let badgeInfo = {
-              category_id: "visitor",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("notes_radar")))) {
-          badge.elements("notes_radar").forEach((res) => {
-            let badgeInfo = {
-              category_id: "notes_radar",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("tsujigiri")))) {
-          let badgeInfo = {
-            category_id: "tsujigiri",
-            flg_id: 0,
-            flg: parseInt(badge.element("tsujigiri").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("iidx_exam")))) {
-          let badgeInfo = {
-            category_id: "iidx_exam",
-            flg_id: 0,
-            flg: parseInt(badge.element("iidx_exam").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("world_tourism")))) {
-          let badgeInfo = {
-            category_id: "world_tourism",
-            flg_id: 0,
-            flg: parseInt(badge.element("world_tourism").attr().flg),
-          };
-
-          badge_data.push(badgeInfo);
-        }
-
-        if (!(_.isNil(badge.element("event1")))) {
-          badge.elements("event1").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event1",
+              category_id: "today_recommend",
               flg_id: 0,
-              flg: parseInt(res.attr().flg),
+              flg: parseInt(badge.element("today_recommend").attr().flg),
             };
 
             badge_data.push(badgeInfo);
-          });
-        }
+          }
 
-        if (!(_.isNil(badge.element("arena")))) {
-          badge.elements("arena").forEach((res) => {
+          if (!(_.isNil(badge.element("weekly_ranking")))) {
             let badgeInfo = {
-              category_id: "arena",
-              flg_id: parseInt(res.attr().flg_id),
-              flg: parseInt(res.attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          });
-        }
-
-        if (!(_.isNil(badge.element("event2")))) {
-          badge.elements("event2").forEach((res) => {
-            let badgeInfo = {
-              category_id: "event2",
+              category_id: "weekly_ranking",
               flg_id: 0,
-              flg: parseInt(res.attr().flg),
+              flg: parseInt(badge.element("weekly_ranking").attr().flg),
             };
 
             badge_data.push(badgeInfo);
-          });
-        }
+          }
+
+          if (!(_.isNil(badge.element("visitor")))) {
+            badge.elements("visitor").forEach((res) => {
+              let badgeInfo = {
+                category_id: "visitor",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("notes_radar")))) {
+            badge.elements("notes_radar").forEach((res) => {
+              let badgeInfo = {
+                category_id: "notes_radar",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("world_tourism")))) {
+            let badgeInfo = {
+              category_id: "world_tourism",
+              flg_id: 0,
+              flg: parseInt(badge.element("world_tourism").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("event1")))) {
+            badge.elements("event1").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event1",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("arena")))) {
+            badge.elements("arena").forEach((res) => {
+              let badgeInfo = {
+                category_id: "arena",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("iidx_exam")))) {
+            let badgeInfo = {
+              category_id: "iidx_exam",
+              flg_id: 0,
+              flg: parseInt(badge.element("iidx_exam").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+          break;
+        case 31:
+          if (!(_.isNil(badge.element("step_up")))) {
+            badge.elements("step_up").forEach((res) => {
+              let badgeInfo = {
+                category_id: "step_up",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("today_recommend")))) {
+            let badgeInfo = {
+              category_id: "today_recommend",
+              flg_id: 0,
+              flg: parseInt(badge.element("today_recommend").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("weekly_ranking")))) {
+            let badgeInfo = {
+              category_id: "weekly_ranking",
+              flg_id: 0,
+              flg: parseInt(badge.element("weekly_ranking").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("visitor")))) {
+            badge.elements("visitor").forEach((res) => {
+              let badgeInfo = {
+                category_id: "visitor",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("notes_radar")))) {
+            badge.elements("notes_radar").forEach((res) => {
+              let badgeInfo = {
+                category_id: "notes_radar",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("tsujigiri")))) {
+            let badgeInfo = {
+              category_id: "tsujigiri",
+              flg_id: 0,
+              flg: parseInt(badge.element("tsujigiri").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("iidx_exam")))) {
+            let badgeInfo = {
+              category_id: "iidx_exam",
+              flg_id: 0,
+              flg: parseInt(badge.element("iidx_exam").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("world_tourism")))) {
+            let badgeInfo = {
+              category_id: "world_tourism",
+              flg_id: 0,
+              flg: parseInt(badge.element("world_tourism").attr().flg),
+            };
+
+            badge_data.push(badgeInfo);
+          }
+
+          if (!(_.isNil(badge.element("event1")))) {
+            badge.elements("event1").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event1",
+                flg_id: 0,
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("arena")))) {
+            badge.elements("arena").forEach((res) => {
+              let badgeInfo = {
+                category_id: "arena",
+                flg_id: parseInt(res.attr().flg_id),
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+
+          if (!(_.isNil(badge.element("event2")))) {
+            badge.elements("event2").forEach((res) => {
+              let badgeInfo = {
+                category_id: "event2",
+                flg_id: 0,
+                flg: parseInt(res.attr().flg),
+              };
+
+              badge_data.push(badgeInfo);
+            });
+          }
+          break;
+
+        default:
+          break;
       }
 
       badge_data.forEach((res) => {
@@ -4345,18 +4425,12 @@ export const pcgetlanegacha: EPR = async (info, data, send) => {
     );
   }
 
+  // settings(sp, dp_left, dp_right), info(last_page) //
+
   return send.object({
     ticket: tArray,
-    settings: K.ATTR({
-      sp: String(-1),
-      dp_left: String(-1),
-      dp_right: String(-1),
-    }),
     free: K.ATTR({
       num: String(10),
-    }),
-    info: K.ATTR({
-      last_page: String(0),
     }),
   });
 };

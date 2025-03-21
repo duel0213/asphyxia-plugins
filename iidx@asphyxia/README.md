@@ -142,8 +142,8 @@ Changelogs
   - Added Experimental Badge saving support
   - Added Experimental score import/export
   - Fixed where plugin may fail to register due to missing types in dev mode (invalid setup for dev, just enough to get around)
-  - Fixed where pacemaker isn't working as intended due to malformed ghost data on music.appoint response (~ DJ TROOPERS)
   - Fixed where unable to login after first-play (SPADA, SINOBUZ, Rootage)
+  - Fixed where pacemaker isn't working as intended due to malformed ghost data on music.appoint response (~ DJ TROOPERS)
   - Fixed where pacemaker isn't working as intented due to wrong condition check (HEROIC VERSE ~)
   - Fixed where pacemaker sub-type isn't load correctly (HEROIC VERSE ~)
   - Fixed where QPRO data doesn't get saved in WebUI
@@ -154,7 +154,13 @@ Changelogs
   - Fixed where lightning settings doesn't get saved on logout
   - Fixed where Disable Music Preview, Disable HCN Color, VEFX Lock settings doesn't reflect
   - Fixed where MISS COUNT has 0 as default (including score import)
-  - Fixed where unable to import DP scores
   - Fixed where MISS COUNT doesn't get updated when exscore is same
   - Fixed where lightning model settings saved incorrectly
+  - Fixed where unable to import score if user has DP scores
+  - Fixed where unable to achieve dan if you failed once
+  - Fixed where unable to login (tricoro, CastHour, Rootage)
+  - Fixed where unable to specify rival in WebUI
+  - Fixed where music.arenaCPU isn't working as intended due to change of type (EPOLIS ~)
+  - Added error message for invalid score database entries
+  - Reverted `v0.1.15` dev mode related code changes (now requires proper dev setup, refer parent README.md)
   - WebUI is now display values of corresponding version

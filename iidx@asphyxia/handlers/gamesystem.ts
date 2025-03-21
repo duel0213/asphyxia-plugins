@@ -17,7 +17,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   }
 
   // following datas are made up needs to figure out correct way to do it //
-  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json"));
+  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json", "utf-8"));
   if (!_.isNil(music_open[version])) {
     result = {
       ...result,
@@ -36,41 +36,45 @@ export const gssysteminfo: EPR = async (info, data, send) => {
     });
   }
 
-  if (version >= 31) {
-    result.arena_schedule = {
-      ...result.arena_schedule,
-      rule_type: K.ITEM("u8", 0),
-    }
+  switch (version) {
+    case 31:
+      result.arena_schedule = {
+        ...result.arena_schedule,
+        rule_type: K.ITEM("u8", 0), // arena rule for online //
+      }
 
-    result = {
-      ...result,
-      grade_course: [],
-    }
+      result = {
+        ...result,
+        grade_course: [],
+      }
 
-    // following datas are made up needs to figure out correct way to do it //
-    let grade = JSON.parse(await IO.ReadFile("data/grade.json"));
-    if (!_.isNil(grade[version])) {
-      Object.keys(grade[version]).forEach(s => {
-        Object.keys(grade[version][s]).forEach(c => {
-          result.grade_course.push({
-            play_style: K.ITEM("s32", parseInt(s)),
-            grade_id: K.ITEM("s32", parseInt(c)),
-            is_valid: K.ITEM("bool", true),
-            music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
-            class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
-            music_id_1: K.ITEM("s32", grade[version][s][c].music_id[1]),
-            class_id_1: K.ITEM("s32", grade[version][s][c].class_id[1]),
-            music_id_2: K.ITEM("s32", grade[version][s][c].music_id[2]),
-            class_id_2: K.ITEM("s32", grade[version][s][c].class_id[2]),
-            music_id_3: K.ITEM("s32", grade[version][s][c].music_id[3]),
-            class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
-            index: K.ITEM("s32", result.grade_course.length),
-            cube_num: K.ITEM("s32", 0),
-            kind: K.ITEM("s32", 0),
+      // following datas are made up needs to figure out correct way to do it //
+      let grade = JSON.parse(await IO.ReadFile("data/grade.json", "utf-8"));
+      if (!_.isNil(grade[version])) {
+        Object.keys(grade[version]).forEach(s => {
+          Object.keys(grade[version][s]).forEach(c => {
+            result.grade_course.push({
+              play_style: K.ITEM("s32", parseInt(s)),
+              grade_id: K.ITEM("s32", parseInt(c)),
+              is_valid: K.ITEM("bool", true),
+              music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
+              class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
+              music_id_1: K.ITEM("s32", grade[version][s][c].music_id[1]),
+              class_id_1: K.ITEM("s32", grade[version][s][c].class_id[1]),
+              music_id_2: K.ITEM("s32", grade[version][s][c].music_id[2]),
+              class_id_2: K.ITEM("s32", grade[version][s][c].class_id[2]),
+              music_id_3: K.ITEM("s32", grade[version][s][c].music_id[3]),
+              class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
+              index: K.ITEM("s32", result.grade_course.length),
+              cube_num: K.ITEM("s32", 0),
+              kind: K.ITEM("s32", grade[version][s][c].kind),
+            });
           });
         });
-      });
-    }
+      }
+
+    default:
+      break;
   }
 
   // arena_music_difficult //

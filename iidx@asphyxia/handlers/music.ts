@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64, NumArraytoBase64, NumArraytoHex } from "../util";
+import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -7,8 +7,8 @@ import { badge } from "../models/badge";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const cltype = parseInt($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -16,11 +16,11 @@ export const musicgetrank: EPR = async (info, data, send) => {
   );
 
   const rival_refids = [
-    [parseInt($(data).attr().iidxid0), await IDtoRef(parseInt($(data).attr().iidxid0))],
-    [parseInt($(data).attr().iidxid1), await IDtoRef(parseInt($(data).attr().iidxid1))],
-    [parseInt($(data).attr().iidxid2), await IDtoRef(parseInt($(data).attr().iidxid2))],
-    [parseInt($(data).attr().iidxid3), await IDtoRef(parseInt($(data).attr().iidxid3))],
-    [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
+    [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+    [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+    [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+    [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+    [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
   let m = [], top = [], b = [], t = [];
@@ -32,6 +32,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       temp_mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(temp_mid);
 
@@ -45,7 +47,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
           K.ITEM("str", NumArrayToString(
             [7, 4, 13, 3, 3],
             [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
-          ), { v: String(verMid[0]) } )
+          ), { v: String(verMid[0]) })
         );
       }
 
@@ -79,6 +81,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
   else if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       temp_mid = NewMidToOldMid(res.mid);
       let mVersion = Math.floor(temp_mid / 100);
       if (mVersion > version) return;
@@ -124,6 +128,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     else indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
     music_data.forEach((res: score) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
       let mVersion = Math.floor(res.mid / 1000);
       if (mVersion > version) return;
 
@@ -190,7 +196,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
     }
 
     return send.object({
-      style: K.ATTR({type: String(cltype)}),
+      style: K.ATTR({ type: String(cltype) }),
       m,
       b,
       top,
@@ -209,19 +215,19 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
 export const musicgetralive: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const cltype = parseInt($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
     })
   );
   const rival_refids = [
-    [parseInt($(data).attr().iidxid0), await IDtoRef(parseInt($(data).attr().iidxid0))],
-    [parseInt($(data).attr().iidxid1), await IDtoRef(parseInt($(data).attr().iidxid1))],
-    [parseInt($(data).attr().iidxid2), await IDtoRef(parseInt($(data).attr().iidxid2))],
-    [parseInt($(data).attr().iidxid3), await IDtoRef(parseInt($(data).attr().iidxid3))],
-    [parseInt($(data).attr().iidxid4), await IDtoRef(parseInt($(data).attr().iidxid4))],
+    [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+    [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+    [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+    [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+    [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
   let result = {
@@ -232,6 +238,8 @@ export const musicgetralive: EPR = async (info, data, send) => {
   let indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
   music_data.forEach((res: score) => {
+    if (_.isNil(res.cArray)) throw new Error("[music.getralive] There is unsupported entry in Database");
+
     myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
   });
 
@@ -287,12 +295,12 @@ export const musicappoint: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   // clid, ctype, grd, iidxid, lv, mid, subtype //
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const ctype = parseInt($(data).attr().ctype);
-  const subtype = parseInt($(data).attr().subtype);
-  let mid = parseInt($(data).attr().mid);
-  let clid = parseInt($(data).attr().clid);
-  
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const ctype = Number($(data).attr().ctype);
+  const subtype = Number($(data).attr().subtype);
+  let mid = Number($(data).attr().mid);
+  let clid = Number($(data).attr().clid);
+
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version < 20) {
     mid = OldMidToNewMid(mid);
@@ -320,8 +328,8 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
     }
 
-    if (version < 16) mydata = K.ITEM("str", NumArraytoHex(Base64toNumArray(music_data[clid])));
-    else mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
+    if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
+    else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
   }
 
   /*** ctype
@@ -357,7 +365,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
         if (version < 16) {
-          sdata = K.ITEM("str", NumArraytoHex(Base64toNumArray(other_musicdata[clid])), {
+          sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
             score: String(other_musicdata.esArray[clid]),
             pid: String(other_profile[1]),
             name: String(other_profile[0]),
@@ -365,14 +373,14 @@ export const musicappoint: EPR = async (info, data, send) => {
           });
         }
         else {
-          sdata = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
+          sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
             score: String(other_musicdata.esArray[clid]),
             pid: String(other_profile[1]),
             name: String(other_profile[0]),
             riidxid: String(other_profile[2])
           });
         }
-        
+
         break;
 
       default:
@@ -383,8 +391,8 @@ export const musicappoint: EPR = async (info, data, send) => {
   if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
 
   if (version >= 27) {
-    let my_gauge_data = null;
-    if (!_.isNil(music_data)) my_gauge_data = Base64toNumArray(music_data[clid + 10]);
+    let my_gauge_data = Buffer.alloc(0), other_gauge_data = Buffer.alloc(0);
+    if (!_.isNil(music_data[clid + 10])) my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
 
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // migration //
@@ -392,7 +400,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         other_musicdata.opt2Array = Array<number>(10).fill(0);
       }
 
-      let other_data = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
+      let other_data = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
         score: String(other_musicdata.esArray[clid]),
         achieve: String(other_pcdata[ClidToPlaySide(clid) + 2]),
         pid: String(other_profile[1]),
@@ -402,9 +410,10 @@ export const musicappoint: EPR = async (info, data, send) => {
         option2: String(other_musicdata.opt2Array[clid]),
       });
 
+      if (!_.isNil(other_musicdata[clid + 10])) other_gauge_data = Buffer.from(other_musicdata[clid + 10], "base64");
       sdata = {
         ...other_data,
-        gauge_data: K.ITEM("bin", Base64toNumArray(other_musicdata[clid + 10]))
+        gauge_data: K.ITEM("bin", other_gauge_data)
       };
     }
 
@@ -436,7 +445,7 @@ export const musicappoint: EPR = async (info, data, send) => {
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
 
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
@@ -446,12 +455,12 @@ export const musicreg: EPR = async (info, data, send) => {
   });
 
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const mnum = parseInt($(data).attr().mnum);
-  const cflg = parseInt($(data).attr().cflg);
-  let mid = parseInt($(data).attr().mid);
-  let clid = parseInt($(data).attr().clid);
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const mnum = Number($(data).attr().mnum);
+  const cflg = Number($(data).attr().cflg);
+  let mid = Number($(data).attr().mid);
+  let clid = Number($(data).attr().clid);
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0, rid = -1;
@@ -487,20 +496,20 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (!_.isNil($(data).attr().rid)) rid = parseInt($(data).attr().rid);
-  else if (!_.isNil($(data).attr().dj_level)) rid = parseInt($(data).attr().dj_level);
+  if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
+  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
-  if (version == 14 || version == 15) ghost = HextoBase64($(data).str("ghost"));
-  else ghost = NumArraytoBase64($(data).buffer("ghost"));
-  
+  if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  else ghost = $(data).buffer("ghost").toString("base64");
+
   if (version >= 27) {
-    ghost_gauge = NumArraytoBase64($(data).buffer("ghost_gauge"));
-    style = parseInt($(data).element("music_play_log").attr().play_style);
+    ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
+    style = Number($(data).element("music_play_log").attr().play_style);
 
     if (version >= 29) {
-      option = parseInt($(data).element("music_play_log").attr().option1);
-      option_2 = parseInt($(data).element("music_play_log").attr().option2);
+      option = Number($(data).element("music_play_log").attr().option1);
+      option_2 = Number($(data).element("music_play_log").attr().option2);
     }
   }
 
@@ -635,11 +644,11 @@ export const musicreg: EPR = async (info, data, send) => {
           collection: "badge",
           version: version,
           category_name: "djLevel",
-          flg_id: parseInt($(data).attr("badge").djLevel_badge_flg_id),
+          flg_id: Number($(data).attr("badge").djLevel_badge_flg_id),
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").djLevel_badge_flg),
+            flg: Number($(data).attr("badge").djLevel_badge_flg),
           }
         }
       );
@@ -652,11 +661,11 @@ export const musicreg: EPR = async (info, data, send) => {
           collection: "badge",
           version: version,
           category_name: "clear",
-          flg_id: parseInt($(data).attr("badge").clear_badge_flg_id),
+          flg_id: Number($(data).attr("badge").clear_badge_flg_id),
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").clear_badge_flg),
+            flg: Number($(data).attr("badge").clear_badge_flg),
           }
         }
       );
@@ -673,7 +682,7 @@ export const musicreg: EPR = async (info, data, send) => {
         },
         {
           $set: {
-            flg: parseInt($(data).attr("badge").rivalChallenge_badge_flg),
+            flg: Number($(data).attr("badge").rivalChallenge_badge_flg),
           }
         }
       );
@@ -791,11 +800,11 @@ export const musicbreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   // mid pgnum gnum cflg //
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const cflg = parseInt($(data).attr().cflg);
-  let mid = parseInt($(data).attr().mid);
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const cflg = Number($(data).attr().cflg);
+  let mid = Number($(data).attr().mid);
   let clid = 0; // SP BEGINNER //
   let exscore = (pgnum * 2 + gnum);
 
@@ -879,7 +888,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
-  const cltype = parseInt($(data).attr().cltype);
+  const cltype = Number($(data).attr().cltype);
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
@@ -892,6 +901,8 @@ export const musiccrate: EPR = async (info, data, send) => {
     let totalArray = Array<number>(10).fill(0);
     let cFlgArray = Array<number>(10).fill(0);
     let fcFlgArray = Array<number>(10).fill(0);
+
+    if (_.isNil(res.cArray)) throw new Error("[music.crate] There is unsupported entry in Database");
 
     for (let a = 0; a < 10; a++) {
       if (res.cArray[a] != 0) totalArray[a] += 1;
@@ -924,10 +935,10 @@ export const musiccrate: EPR = async (info, data, send) => {
 
     let indices = [1, 2, 3, 6, 7, 8];
     if (version == 14 || version == 15) {
-      let verMid = OldMidToVerMid(parseInt(key));
+      let verMid = OldMidToVerMid(Number(key));
 
       let str = cltype == 0 ?
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ`:
+        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ` :
         `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[6], cRate[7], cRate[8]])}ZZZZ`;
 
       cdata.push(
