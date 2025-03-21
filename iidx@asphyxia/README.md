@@ -159,11 +159,12 @@ Changelogs
   - Fixed where lightning model settings saved incorrectly
   - Fixed where unable to import score if user has DP scores
   - Fixed where unable to achieve dan if you failed once
-  - Fixed where unable to login (tricoro, CastHour)
+  - Fixed where unable to login (tricoro, CastHour, Rootage)
   - Fixed where unable to specify rival in WebUI
   - Fixed where music.arenaCPU isn't working as intended due to change of type (EPOLIS ~)
+  - Added error message for invalid score database entries
+  - Reverted `v0.1.15` dev mode related code changes (now requires proper dev setup, refer parent README.md)
   - WebUI is now display values of corresponding version
 
 **STAGING**
   - Added Initial support for Pinky Crush
-  - Added error message for invalid score database entries

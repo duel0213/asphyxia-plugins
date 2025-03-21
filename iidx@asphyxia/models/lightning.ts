@@ -72,15 +72,6 @@ export interface lightning_musicmemo {
   music_id: number;
 }
 
-export interface lightning_musicmemo_sort {
-  collection: "lightning_musicmemo";
-  version: number;
-
-  play_style: number;
-  folder_id: number;
-  sort: number;
-}
-
 export interface musicmemo_data {
   music_idx: number;
   play_style: number;

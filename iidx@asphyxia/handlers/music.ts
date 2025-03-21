@@ -1,4 +1,4 @@
-import { IDtoRef, Base64toNumArray, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, HextoBase64, NumArraytoBase64, NumArraytoHex } from "../util";
+import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -329,8 +329,8 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
     }
 
-    if (version < 16) mydata = K.ITEM("str", NumArraytoHex(Base64toNumArray(music_data[clid])));
-    else mydata = K.ITEM("bin", Base64toNumArray(music_data[clid]));
+    if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
+    else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
   }
 
   /*** ctype
@@ -366,7 +366,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
 
         if (version < 16) {
-          sdata = K.ITEM("str", NumArraytoHex(Base64toNumArray(other_musicdata[clid])), {
+          sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
             score: String(other_musicdata.esArray[clid]),
             pid: String(other_profile[1]),
             name: String(other_profile[0]),
@@ -374,7 +374,7 @@ export const musicappoint: EPR = async (info, data, send) => {
           });
         }
         else {
-          sdata = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
+          sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
             score: String(other_musicdata.esArray[clid]),
             pid: String(other_profile[1]),
             name: String(other_profile[0]),
@@ -392,8 +392,8 @@ export const musicappoint: EPR = async (info, data, send) => {
   if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
 
   if (version >= 27) {
-    let my_gauge_data = null;
-    if (!_.isNil(music_data)) my_gauge_data = Base64toNumArray(music_data[clid + 10]);
+    let my_gauge_data = Buffer.alloc(0), other_gauge_data = Buffer.alloc(0);
+    if (!_.isNil(music_data[clid + 10])) my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
 
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // migration //
@@ -401,7 +401,7 @@ export const musicappoint: EPR = async (info, data, send) => {
         other_musicdata.opt2Array = Array<number>(10).fill(0);
       }
 
-      let other_data = K.ITEM("bin", Base64toNumArray(other_musicdata[clid]), {
+      let other_data = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
         score: String(other_musicdata.esArray[clid]),
         achieve: String(other_pcdata[ClidToPlaySide(clid) + 2]),
         pid: String(other_profile[1]),
@@ -411,9 +411,10 @@ export const musicappoint: EPR = async (info, data, send) => {
         option2: String(other_musicdata.opt2Array[clid]),
       });
 
+      if (!_.isNil(other_musicdata[clid + 10])) other_gauge_data = Buffer.from(other_musicdata[clid + 10], "base64");
       sdata = {
         ...other_data,
-        gauge_data: K.ITEM("bin", Base64toNumArray(other_musicdata[clid + 10]))
+        gauge_data: K.ITEM("bin", other_gauge_data)
       };
     }
 
@@ -500,11 +501,11 @@ export const musicreg: EPR = async (info, data, send) => {
   else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
-  if (version == 14 || version == 15) ghost = HextoBase64($(data).str("ghost"));
-  else ghost = NumArraytoBase64($(data).buffer("ghost"));
+  if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  else ghost = $(data).buffer("ghost").toString("base64");
 
   if (version >= 27) {
-    ghost_gauge = NumArraytoBase64($(data).buffer("ghost_gauge"));
+    ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
     style = Number($(data).element("music_play_log").attr().play_style);
 
     if (version >= 29) {
@@ -722,7 +723,7 @@ export const musicreg: EPR = async (info, data, send) => {
           now_slow: Number($(data).attr("best_result").now_slow),
           option: Number($(data).attr("best_result").option),
           option_2: Number($(data).attr("best_result").option2),
-          ghost_gauge_data: NumArraytoBase64($(data).element("best_result").buffer("ghost_gauge_data")),
+          ghost_gauge_data: $(data).element("best_result").buffer("ghost_gauge_data").toString("base64"),
           gauge_type: Number($(data).attr("best_result").gauge_type),
           result_type: Number($(data).attr("best_result").result_type),
           is_special_result: Number($(data).element("best_result").bool("is_special_result")),

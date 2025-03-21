@@ -17,7 +17,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   }
 
   // following datas are made up needs to figure out correct way to do it //
-  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json"));
+  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json", "utf-8"));
   if (!_.isNil(music_open[version])) {
     result = {
       ...result,
@@ -56,7 +56,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       }
 
       // following datas are made up needs to figure out correct way to do it //
-      let grade = JSON.parse(await IO.ReadFile("data/grade.json"));
+      let grade = JSON.parse(await IO.ReadFile("data/grade.json", "utf-8"));
       if (!_.isNil(grade[version])) {
         Object.keys(grade[version]).forEach(s => {
           Object.keys(grade[version][s]).forEach(c => {

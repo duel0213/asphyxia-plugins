@@ -27,7 +27,7 @@ IIDX32pc(status="0")
       folder(play_style=f.play_style folder_id=f.folder_id filter_id=f.filter_id value0=f.value0 value1=f.value1)
         is_valid(__type="bool") #{f.is_valid}
     - for (let fs of fsArray)
-      sort(play_style=fs.play_style folder_id=fs.folder_id sort=fs_sort) 
+      sort(play_style=fs.play_style folder_id=fs.folder_id sort=fs.sort) 
   qpro_secret
     head(__type="s64" __count="7") #{custom.qpro_secret_head[0]} #{custom.qpro_secret_head[1]} #{custom.qpro_secret_head[2]} #{custom.qpro_secret_head[3]} #{custom.qpro_secret_head[4]} #{custom.qpro_secret_head[5]} #{custom.qpro_secret_head[6]}
     hair(__type="s64" __count="7") #{custom.qpro_secret_hair[0]} #{custom.qpro_secret_hair[1]} #{custom.qpro_secret_hair[2]} #{custom.qpro_secret_hair[3]} #{custom.qpro_secret_hair[4]} #{custom.qpro_secret_hair[5]} #{custom.qpro_secret_hair[6]}
