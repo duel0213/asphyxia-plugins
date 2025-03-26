@@ -32,8 +32,7 @@ Features
   - EVENT (Partial)
   - ARENA (LOCAL only)
   - RANDOME LANE TICKET
-  - FAVORITE/SONG SELECTION NOTES (Partial)
-    - EXTRA FAVORITE does not support yet
+  - FAVORITE/SONG SELECTION NOTES
   - ORIGINAL FILTER
 
 ---
@@ -151,6 +150,7 @@ Changelogs
 **v0.1.16**
   - Added Initial support for EPOLIS
   - Added music\_open on gameSystem.systemInfo response
+  - Added EXTRA FAVORITE support
   - Fixed where lightning settings doesn't get saved on logout
   - Fixed where Disable Music Preview, Disable HCN Color, VEFX Lock settings doesn't reflect
   - Fixed where MISS COUNT has 0 as default (including score import)
