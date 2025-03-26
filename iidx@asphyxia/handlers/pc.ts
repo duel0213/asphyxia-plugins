@@ -11,6 +11,7 @@ import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
 import { blueboss } from "../models/event";
 import { badge } from "../models/badge";
+import { extra_favorite } from "../models/favorite";
 import { activity, activity_mybest } from "../models/activity";
 
 export const pccommon: EPR = async (info, data, send) => {
@@ -557,6 +558,7 @@ export const pcget: EPR = async (info, data, send) => {
   const expert = await DB.Find<expert>(refid, { collection: "expert", version: version });
   const world_tourism = await DB.Find<world_tourism>(refid, { collection: "world_tourism", version: version });
   const badge = await DB.Find<badge>(refid, { collection: "badge", version: version });
+  const extra_favorite = await DB.Find<extra_favorite>(refid, { collection: "extra_favorite", version: version });
 
   const lm_settings = await DB.FindOne<lightning_settings>(refid, { collection: "lightning_settings", version: version });
   const lm_playdata = await DB.FindOne<lightning_playdata>(refid, { collection: "lightning_playdata", version: version });
@@ -630,7 +632,7 @@ export const pcget: EPR = async (info, data, send) => {
     custom.hide_iidxid,
     custom.disable_beginner_option,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [], fsArray = [];
+  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [], fsArray = [], efArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -829,8 +831,8 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 20) {
-    pcdata.st_stamp = _.isNil(pcdata.st_stamp) ? "00" : Buffer.from(pcdata.st_stamp, "base64").toString("hex");
-    pcdata.st_help = _.isNil(pcdata.st_help) ? "00" : Buffer.from(pcdata.st_help, "base64").toString("hex");
+    pcdata.st_stamp = _.isNil(pcdata.st_stamp) ? "00" : Buffer.from(pcdata.st_stamp as string, "base64").toString("hex");
+    pcdata.st_help = _.isNil(pcdata.st_help) ? "00" : Buffer.from(pcdata.st_help as string, "base64").toString("hex");
 
     let link5 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "link5" });
     let tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "tricolettepark" });
@@ -885,7 +887,7 @@ export const pcget: EPR = async (info, data, send) => {
 
     switch (version) {
       case 21:
-        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album, "base64").toString("hex");
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album as string, "base64").toString("hex");
 
         link5 = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "link5" });
         tricolettepark = await DB.FindOne(refid, { collection: "event_1", version: 20, event_name: "tricolettepark" });
@@ -894,7 +896,7 @@ export const pcget: EPR = async (info, data, send) => {
         if (!_.isNil(boss1)) boss1.durability = Buffer.from(boss1.durability, "base64").toString("hex");
         break;
       case 22:
-        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album, "base64").toString("hex");
+        pcdata.st_album = _.isNil(pcdata.st_album) ? "00" : Buffer.from(pcdata.st_album as string, "base64").toString("hex");
 
         chrono_diver = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "chrono_diver" });
         pendual_talis = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "boss_event_3" });
@@ -906,7 +908,7 @@ export const pcget: EPR = async (info, data, send) => {
         qpronicle_phase3 = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "qpronicle_phase3" });
         break;
       case 23:
-        pcdata.st_tokimeki = _.isNil(pcdata.st_tokimeki) ? "00" : Buffer.from(pcdata.st_tokimeki, "base64").toString("hex");
+        pcdata.st_tokimeki = _.isNil(pcdata.st_tokimeki) ? "00" : Buffer.from(pcdata.st_tokimeki as string, "base64").toString("hex");
 
         open_tokotoko = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event1_data" });
         mystery_line = await DB.FindOne(refid, { collection: "event_1", version: version, event_name: "event2_data" });
@@ -1024,10 +1026,23 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     if (!_.isNil(pcdata.sp_mlist)) {
-      pcdata.sp_mlist = Buffer.from(pcdata.sp_mlist, "base64").toString("hex");
-      pcdata.sp_clist = Buffer.from(pcdata.sp_clist, "base64").toString("hex");
-      pcdata.dp_mlist = Buffer.from(pcdata.dp_mlist, "base64").toString("hex");
-      pcdata.dp_clist = Buffer.from(pcdata.dp_clist, "base64").toString("hex");
+      pcdata.sp_mlist = Buffer.from(pcdata.sp_mlist as string, "base64").toString("hex");
+      pcdata.sp_clist = Buffer.from(pcdata.sp_clist as string, "base64").toString("hex");
+      pcdata.dp_mlist = Buffer.from(pcdata.dp_mlist as string, "base64").toString("hex");
+      pcdata.dp_clist = Buffer.from(pcdata.dp_clist as string, "base64").toString("hex");
+    }
+
+    if (extra_favorite.length > 0) {
+      extra_favorite.forEach((res) => {
+        efArray.push({
+          folder_id: res.folder_id,
+
+          sp_mlist: Buffer.from(res.sp_mlist as string, "base64").toString("hex"),
+          sp_clist: Buffer.from(res.sp_clist as string, "base64").toString("hex"),
+          dp_mlist: Buffer.from(res.dp_mlist as string, "base64").toString("hex"),
+          dp_clist: Buffer.from(res.dp_clist as string, "base64").toString("hex")
+        });
+      });
     }
 
     if (version >= 30) {
@@ -1595,6 +1610,7 @@ export const pcget: EPR = async (info, data, send) => {
       case 23:
         result = {
           ...result,
+          efArray,
           open_tokotoko,
           mystery_line,
           mystery_line_sub,
@@ -1603,6 +1619,7 @@ export const pcget: EPR = async (info, data, send) => {
       case 24:
         result = {
           ...result,
+          efArray,
           siege_sinobuz,
           siege_sinobuz_sub,
           ninja_shichikyoden,
@@ -1611,6 +1628,7 @@ export const pcget: EPR = async (info, data, send) => {
       case 25:
         result = {
           ...result,
+          efArray,
           rush_cannonracer,
           rush_cannonracer_sub,
         };
@@ -3054,6 +3072,27 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
+    let extra_favorite = $(data).elements("extra_favorite");
+    if (extra_favorite.length > 0) {
+      extra_favorite.forEach((res) => {
+        DB.Upsert<extra_favorite>(refid,
+          {
+            collection: "extra_favorite",
+            version: version,
+            folder_id: Number(res.attr().folder_id),
+          },
+          {
+            $set: {
+              sp_mlist: res.buffer("sp_mlist").toString("base64"),
+              sp_clist: res.buffer("sp_clist").toString("base64"),
+              dp_mlist: res.buffer("dp_mlist").toString("base64"),
+              dp_clist: res.buffer("dp_clist").toString("base64")
+            },
+          }
+        );
+      });
+    }
+
     if (!_.isNil($(data).element("qpro_secret"))) {
       custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
       custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
@@ -3222,6 +3261,27 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
       pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
       pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
+    }
+
+    let extra_favorite = $(data).elements("extra_favorite");
+    if (extra_favorite.length > 0) {
+      extra_favorite.forEach((res) => {
+        DB.Upsert<extra_favorite>(refid,
+          {
+            collection: "extra_favorite",
+            version: version,
+            folder_id: Number(res.attr().folder_id),
+          },
+          {
+            $set: {
+              sp_mlist: res.buffer("sp_mlist").toString("base64"),
+              sp_clist: res.buffer("sp_clist").toString("base64"),
+              dp_mlist: res.buffer("dp_mlist").toString("base64"),
+              dp_clist: res.buffer("dp_clist").toString("base64")
+            },
+          }
+        );
+      });
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {
@@ -3411,6 +3471,27 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
+    let extra_favorite = $(data).elements("extra_favorite");
+    if (extra_favorite.length > 0) {
+      extra_favorite.forEach((res) => {
+        DB.Upsert<extra_favorite>(refid,
+          {
+            collection: "extra_favorite",
+            version: version,
+            folder_id: Number(res.attr().folder_id),
+          },
+          {
+            $set: {
+              sp_mlist: res.buffer("sp_mlist").toString("base64"),
+              sp_clist: res.buffer("sp_clist").toString("base64"),
+              dp_mlist: res.buffer("dp_mlist").toString("base64"),
+              dp_clist: res.buffer("dp_clist").toString("base64")
+            },
+          }
+        );
+      });
+    }
+
     if (!_.isNil($(data).element("qpro_secret"))) {
       custom.qpro_secret_head = $(data).element("qpro_secret").bigints("head").map(String);
       custom.qpro_secret_hair = $(data).element("qpro_secret").bigints("hair").map(String);
@@ -3573,13 +3654,6 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.secret_flg1 = $(data).element("secret").bigints("flg1").map(String);
       pcdata.secret_flg2 = $(data).element("secret").bigints("flg2").map(String);
       pcdata.secret_flg3 = $(data).element("secret").bigints("flg3").map(String);
-    }
-
-    if (!_.isNil($(data).element("favorite"))) {
-      pcdata.sp_mlist = $(data).element("favorite").buffer("sp_mlist").toString("base64");
-      pcdata.sp_clist = $(data).element("favorite").buffer("sp_clist").toString("base64");
-      pcdata.dp_mlist = $(data).element("favorite").buffer("dp_mlist").toString("base64");
-      pcdata.dp_clist = $(data).element("favorite").buffer("dp_clist").toString("base64");
     }
 
     if (!_.isNil($(data).element("qpro_secret"))) {

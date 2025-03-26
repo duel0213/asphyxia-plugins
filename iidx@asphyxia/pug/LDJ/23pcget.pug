@@ -13,6 +13,12 @@ IIDX23pc(status="0")
       sp_clist(__type="bin") #{pcdata.sp_clist}
       dp_mlist(__type="bin") #{pcdata.dp_mlist}
       dp_clist(__type="bin") #{pcdata.dp_clist}
+  - for (let ef of efArray)
+    extra_favorite(folder_id=ef.folder_id)
+      sp_mlist(__type="bin") #{ef.sp_mlist}
+      sp_clist(__type="bin") #{ef.sp_clist}
+      dp_mlist(__type="bin") #{ef.dp_mlist}
+      dp_clist(__type="bin") #{ef.dp_clist}
   qpro_secret
     head(__type="s64" __count="4") -1 -1 -1 -1
     hair(__type="s64" __count="4") -1 -1 -1 -1

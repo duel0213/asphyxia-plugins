@@ -148,8 +148,8 @@ export interface pcdata {
   st_sp_round: number;
   st_dp_round: number;
   st_review: number;
-  st_stamp: any;
-  st_help: any; // save as base64 string, sent as buffer //
+  st_stamp: string | Buffer; // save as base64 string, sent as buffer //
+  st_help: string | Buffer; 
 
   st_damage: number; // SPADA //
   st_defeat: number;
@@ -165,7 +165,7 @@ export interface pcdata {
   st_sp_mplay: number;
   st_dp_mplay: number;
   st_last_select: number;
-  st_album: any;
+  st_album: string | Buffer; // save as base64 string, sent as buffer //
 
   st_is_secret: number; // PENDUAL //
   st_age_list: number;
@@ -176,7 +176,7 @@ export interface pcdata {
   st_station_clear: number;
   st_station_play: number;
   st_mission_gauge: number;
-  st_tokimeki: any;
+  st_tokimeki: string | Buffer; // save as base64 string, sent as buffer //
 
   st_point: number; // Cannon Ballers //
 
@@ -217,10 +217,10 @@ export interface pcdata {
   p3: number[];
   p4: number[];
 
-  sp_mlist: any; // favorite (SPADA), save as base64 string, sent as buffer //
-  sp_clist: any;
-  dp_mlist: any;
-  dp_clist: any;
+  sp_mlist: string | Buffer; // favorite (SPADA), save as base64 string, sent as buffer //
+  sp_clist: string | Buffer;
+  dp_mlist: string | Buffer;
+  dp_clist: string | Buffer;
 
   eb_keyorb: number; // extra boss (Heroic Verse) //
   eb_bossorb0: number;
