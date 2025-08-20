@@ -2849,7 +2849,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
     }
 
     if (!_.isNil($(data).element("achievements"))) {
@@ -3106,7 +3106,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
     }
 
     if (!_.isNil($(data).element("achievements"))) {
@@ -3297,7 +3297,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
     }
 
     if (hasStepUpData) {
@@ -3505,7 +3505,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
     }
 
     if (hasStepUpData) {
@@ -3669,7 +3669,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
     }
 
     if (hasStepUpData) {
@@ -3969,7 +3969,7 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.qpro_hair = parseInt($(data).attr("qpro_equip").hair);
       custom.qpro_face = parseInt($(data).attr("qpro_equip").face);
       custom.qpro_body = parseInt($(data).attr("qpro_equip").body);
-      custom.qpro_hand = parseInt($(data).attr("qpro_equip").head);
+      custom.qpro_hand = parseInt($(data).attr("qpro_equip").hand);
 
       if (version >= 32) {
         custom.qpro_back = parseInt($(data).attr("qpro_equip").back);
