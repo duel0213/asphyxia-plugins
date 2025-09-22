@@ -1,7 +1,13 @@
 import { Profile } from '../models/profile';
 import { MusicRecord } from '../models/music_record';
+import { Item } from '../models/item';
 import { getVersion, IDToCode, GetCounter } from '../utils';
 import { Mix } from '../models/mix';
+import { fstat } from 'fs';
+import { error } from 'console';
+import { setMaxIdleHTTPParsers } from 'http';
+import { unpackS3P } from '../s3p';
+import { secureHeapUsed } from 'crypto';
 
 export const updateProfile = async (data: {
   refid: string;
@@ -15,6 +21,13 @@ export const updateProfile = async (data: {
   stampB?: string;
   stampC?: string;
   stampD?: string;
+  stampA_R?: string;
+  stampB_R?: string;
+  stampC_R?: string;
+  stampD_R?: string;
+  mainbg?: string;
+  appeal_frame?: string;
+  support_team?: string;
 }) => {
   if (data.refid == null) return;
 
@@ -36,6 +49,16 @@ export const updateProfile = async (data: {
   if (data.akaname && data.akaname.length > 0) {
     const validAka = parseInt(data.akaname);
     if (!_.isNaN(validAka)) update.akaname = validAka;
+  }
+
+  if (data.appeal_frame && data.appeal_frame.length > 0) {
+    const validAppealFrame = parseInt(data.appeal_frame);
+    if (!_.isNaN(validAppealFrame)) update.appeal_frame = validAppealFrame;
+  }
+
+  if (data.support_team && data.support_team.length > 0) {
+    const validSupportTeam = parseInt(data.support_team);
+    if (!_.isNaN(validSupportTeam)) update.support_team = validSupportTeam;
   }
 
   if (data.nemsys && data.nemsys.length > 0) {
@@ -71,6 +94,31 @@ export const updateProfile = async (data: {
   if (data.stampD && data.stampD.length > 0) {
     const validStampD = parseInt(data.stampD);
     if (!_.isNaN(validStampD)) update.stampD = validStampD;
+  }
+
+  if (data.stampA_R && data.stampA_R.length > 0) {
+    const validStampA_R = parseInt(data.stampA_R);
+    if (!_.isNaN(validStampA_R)) update.stampA_R = validStampA_R;
+  }
+
+  if (data.stampB_R && data.stampB_R.length > 0) {
+    const validStampB_R = parseInt(data.stampB_R);
+    if (!_.isNaN(validStampB_R)) update.stampB_R = validStampB_R;
+  }
+
+  if (data.stampC_R && data.stampC_R.length > 0) {
+    const validStampC_R = parseInt(data.stampC_R);
+    if (!_.isNaN(validStampC_R)) update.stampC_R = validStampC_R;
+  }
+
+  if (data.stampD_R && data.stampD_R.length > 0) {
+    const validStampD_R = parseInt(data.stampD_R);
+    if (!_.isNaN(validStampD_R)) update.stampD_R = validStampD_R;
+  }
+
+  if (data.mainbg && data.mainbg.length > 0) {
+    const validMainbg = parseInt(data.mainbg);
+    if (!_.isNaN(validMainbg)) update.mainbg = validMainbg;
   }
 
   await DB.Update<Profile>(
@@ -155,4 +203,266 @@ export const deleteMix = async (data: { code: string }) => {
   await DB.Remove<Mix>({ collection: 'mix', code: data.code });
 };
 
+export const make_hexa_easier = async(data:{
+  refid:string;
+}, send: WebUISend) => {
+  let all_hexa = await DB.Find<Item>(data.refid,  { collection: 'item' ,type:16 })
+  let playedNum = [] // Prevent previous unlocked hexa from being locked again
+  all_hexa.forEach((item:Item)=>{
+    console.log(item.id)
+    if(item.param == 10000){
+      playedNum.push(item.id)
+    }
+  });
 
+  for(let i = 1; i <= 71; i++){ // Hexa Diver 7, up to id = 50
+    if(!playedNum.includes(i)){
+      await DB.Upsert<Item>(
+        data.refid,
+        {collection:'item', id:i, type:16},
+        {collection:'item', id:i, type:16, param:9000}
+        )
+    }
+  }
+
+  send.json({status:"ok"})
+}
+
+export const converted_received = async (data: { zip_file:any }, send: WebUISend) => {
+
+}
+
+
+export const import_assets = async (data: { path: string }, send: WebUISend) => {
+  
+  // await init(wasmUrl);
+  // let ffmpeg = await Wasmer.fromRegistry("wasmer/ffmpeg");
+  let Admzip = require('../../_shared/lib/adm-zip')
+  let path = data.path
+  console.log(path)
+  let fs = require('fs')
+  if (!fs.existsSync(path + '/data/graphics/')) {
+    console.log('Path for Graphics does not exist.')
+    send.error(400,'Path for Graphics does not exist.')
+    return 
+  }
+
+  await fs.promises.cp(path + "/data/graphics/ap_card", './plugins/sdvx@asphyxia/webui/asset/ap_card', {recursive: true}).catch((err: any) => {
+    console.log(err)
+  })
+  await fs.promises.cp(path + "/data/graphics/chat_stamp", './plugins/sdvx@asphyxia/webui/asset/chat_stamp', {recursive: true}).catch((err: any) => {
+    console.log(err)
+  })
+  await fs.promises.cp(path + "/data/graphics/game_nemsys", './plugins/sdvx@asphyxia/webui/asset/nemsys', {recursive: true}).catch((err: any) => {
+    console.log(err)
+  })
+  await fs.promises.cp(path + "/data/graphics/submonitor_bg", './plugins/sdvx@asphyxia/webui/asset/submonitor_bg', {recursive: true}).catch((err: any) => {
+    console.log(err)
+  })
+
+  if (!fs.existsSync(path + '/data/sound/')) {
+    console.log('Path for sound does not exist.')
+    send.error(400,'Path for sound does not exist.')
+    return 
+  }
+
+  let zip = new Admzip()
+  await fs.promises.readdir(path + "/data/sound/custom").then((files: any) => {
+    // let file = files[0]
+    console.log(files)
+
+    for(let i in files){
+      let file = files[i]
+      if(file.endsWith('.s3p')){
+        fs.mkdirSync('./plugins/sdvx@asphyxia/webui/asset/temp/'+file, { recursive: true });
+        // fs.mkdirSync('./plugins/sdvx@asphyxia/webui/asset/audio/'+file.substring(0, 9), { recursive: true });
+        unpackS3P('./plugins/sdvx@asphyxia/webui/asset/temp/'+file, path + "/data/sound/custom/" + file, {})
+        // fs.promises.readFileSync('./plugins/sdvx@asphyxia/webui/asset/temp/'+file+'/0.wma').then(async (data: any) => {
+          // const instance = await ffmpeg.entrypoint.run({
+          //   args: ["-i", "-", "-f", "wav", "-"],
+          //   stdin: new Uint8Array(data),
+          // });
+          // const { stdout } = await instance.wait();
+          // fs.writeFileSync('./plugins/sdvx@asphyxia/webui/asset/audio/'+file.substring(0, 9)+'/0.wav', stdout);
+          
+        // })
+        // exec(shell([ffmpeg, '-i', './plugins/sdvx@asphyxia/webui/asset/temp/'+file+'/0.wma', './plugins/sdvx@asphyxia/webui/asset/audio/'+file.substring(0, 9)+'/0.mp3']), (err: any, stdout: any, stderr: any) => {
+        //   console.log(err)
+        // })
+
+        // exec(shell([ffmpeg, '-i', './plugins/sdvx@asphyxia/webui/asset/temp/'+file+'/1.wma', './plugins/sdvx@asphyxia/webui/asset/audio/'+file.substring(0, 9)+'/1.mp3']), (err: any, stdout: any, stderr: any) => {
+        //   console.log(err)
+        // })
+
+        // if(fs.existsSync('./plugins/sdvx@asphyxia/webui/asset/temp/'+file+'/2.wma')){
+          // exec(shell([ffmpeg, '-i', './plugins/sdvx@asphyxia/webui/asset/temp/'+file+'/2.wma', './plugins/sdvx@asphyxia/webui/asset/audio/'+file.substring(0, 9)+'/2.mp3']), (err: any, stdout: any, stderr: any) => {
+          //   console.log(err)
+          // })
+        // }
+      }
+    }
+
+
+
+    
+  }).finally(() => {
+    
+    zip.addLocalFolder('./plugins/sdvx@asphyxia/webui/asset/temp', 'temp')
+    zip.writeZip('./plugins/sdvx@asphyxia/webui/asset/temp.zip')
+  })
+
+  await fs.promises.rm('./plugins/sdvx@asphyxia/webui/asset/temp', { recursive: true, force: true }).catch((err: any) => {
+    console.log(err)
+  })
+
+  
+
+  
+
+  console.log('Assets imported. Now converting audio files on browser...')
+  send.file('webui/asset/temp.zip')
+
+  // fs.promises.rm('./plugins/sdvx@asphyxia/webui/asset/temp.zip', { force: true }).catch((err: any) => {
+  //   console.log(err)
+  // })
+  // send.json({status:"ok"})
+};
+
+export const update_webui_nemsys_data = async (data: any, send: WebUISend) => {
+  let string = data.file
+  let nemsys_xml = U.parseXML(string)
+
+  const fs = require('fs')
+  const filename = "../webui/asset/json/data.json"
+  const datajson = require(filename)
+
+  nemsys_xml.custom_nemsys_data.info.filter((e: any) => e.id != 8 && e.id != 9 && e.id != 10 && e.id != 11).forEach((item: any) => {
+    if(datajson.nemsys.filter((e: any) => e.value == item.id).length == 0){
+      datajson.nemsys.push({
+        value: item.id,
+        name: item.texture_name
+      })
+    }
+  })
+
+  fs.writeFileSync("./plugins/sdvx@asphyxia/webui/asset/json/data.json", JSON.stringify(datajson, null, 2))
+  send.json({status:"ok"})
+}
+
+export const update_webui_stamp_data = async (data: any, send: WebUISend) => {
+  let string = data.file
+  let chat_stamp_xml = U.parseXML(string)
+
+  const fs = require('fs')
+  const filename = "../webui/asset/json/data.json"
+  const datajson = require(filename)
+
+  chat_stamp_xml.chat_stamp_data.info.forEach((item: any) => {
+    if(datajson.stamp.filter((e: any) => e.value == item.id).length == 0){
+      let addition = ""
+      if(item.filename != ""){
+        addition = item.filename.substring(item.filename.length - 2)
+      }
+
+      datajson.stamp.push({
+        value: item.id,
+        name: item.title + " " +addition
+      })
+    }
+  })
+  
+  fs.writeFileSync("./plugins/sdvx@asphyxia/webui/asset/json/data.json", JSON.stringify(datajson, null, 2))
+  send.json({status:"ok"})
+}
+
+export const update_webui_subbg_data = async (data: any, send: WebUISend) => {
+  const fs = require('fs')
+  const filename = "../webui/asset/json/data.json"
+  const datajson = require(filename)
+
+  let subbg_folder = fs.readdirSync("./plugins/sdvx@asphyxia/webui/asset/submonitor_bg")
+  let subbg_entry = {}
+  subbg_folder.forEach((item: any) => {
+    if(item.endsWith(".png")||item.endsWith(".mp4")){
+      if(subbg_entry[item.substring(6, 10)] == undefined){
+        subbg_entry[item.substring(6, 10)] = {"count":1, "video":false}
+      }else{
+        subbg_entry[item.substring(6, 10)]["count"] += 1
+      }
+    }
+    if(item.endsWith(".mp4")){
+      subbg_entry[item.substring(6, 10)]["video"] = true
+    }
+  })
+
+  console.log(JSON.stringify(subbg_entry, null, 2))
+
+  Object.keys(subbg_entry).forEach((item: any) => {
+    if(datajson.subbg.filter((e: any) => e.value == item).length == 0){
+      if(subbg_entry[item]["video"]){
+        datajson.subbg.push({
+          value: parseInt(item),
+          name: "SubBG "+ item,
+          video: true,
+        })
+      }else if(subbg_entry[item]["count"] > 1){
+        datajson.subbg.push({
+          value: parseInt(item),
+          name: "SubBG "+ item,
+          multi: true,
+        })
+      }else{
+        datajson.subbg.push({
+          value: parseInt(item),
+          name: "SubBG "+ item,
+        })
+      }
+    }else{
+      if(subbg_entry[item]["video"]){
+        datajson.subbg.forEach((e: any) => {
+          if(e.value == parseInt(item)){
+            e.video = true
+          }
+        })
+      }else if(subbg_entry[item]["count"] > 1){
+        datajson.subbg.forEach((e: any) => {
+          if(e.value == parseInt(item)){
+            e.multi = true
+          }
+        })
+      }
+    }
+  })
+
+  fs.writeFileSync("./plugins/sdvx@asphyxia/webui/asset/json/data.json", JSON.stringify(datajson, null, 2))
+  send.json({status:"ok"})
+}
+
+export const update_webui_bgm_data = async (data: any, send: WebUISend) => {
+  const fs = require('fs')
+  const filename = "../webui/asset/json/data.json"
+  const datajson = require(filename)
+
+  let bgm_folder = fs.readdirSync("./plugins/sdvx@asphyxia/webui/asset/audio")
+  let bgm_entry = []
+
+  bgm_folder.forEach((item: any) => {
+    if(item.substring(0, 6) == "custom"){
+      bgm_entry.push(parseInt(item.substring(item.length - 2)))
+    }
+  })
+
+  console.log(bgm_entry)
+
+  bgm_entry.forEach((item: any) => {
+    if(datajson.bgm.filter((e: any) => e.value == item).length == 0){
+      datajson.bgm.push({
+        value: parseInt(item),
+        name: "BGM "+ item,
+      })
+    }
+  })
+
+  fs.writeFileSync("./plugins/sdvx@asphyxia/webui/asset/json/data.json", JSON.stringify(datajson, null, 2))
+  send.json({status:"ok"})
+}
