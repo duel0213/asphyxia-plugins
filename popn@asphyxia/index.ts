@@ -4,7 +4,6 @@ import * as sunny from "./handler/sunny";
 import * as lapistoria from "./handler/lapistoria";
 import * as eclale from "./handler/eclale";
 import * as usaneko from "./handler/usaneko";
-import { importPnmData } from "./handler/webui";
 import { Rivals } from "./models/common";
 
 const getVersion = (req: any) => {
@@ -36,8 +35,6 @@ export function register() {
     type: "boolean",
     default: true,
   });
-
-  R.WebUIEvent('importPnmData', importPnmData);
 
   R.WebUIEvent('updatePnmPlayerInfo', async (data: any) => {
     await DB.Update(data.refid, { collection: 'profile' }, { $set: { name: data.name } });

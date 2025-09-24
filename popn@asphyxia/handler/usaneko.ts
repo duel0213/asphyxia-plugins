@@ -1,5 +1,5 @@
 import { AchievementsUsaneko } from "../models/achievements";
-import { ExtraData, Params, Phase } from "../models/common";
+import { ExtraData, Phase } from "../models/common";
 import * as utils from "./utils";
 
 export const setRoutes = () => {
@@ -37,7 +37,7 @@ const getInfoCommon = (req: EamuseInfo) => {
     }
 
     // Choco
-    for (let i = 1; i <= 5; ++i) {
+    for (let i = 0; i < 5; ++i) {
         result.choco.push({
             choco_id: K.ITEM('s16', i),
             param: K.ITEM('s32', -1),
@@ -45,8 +45,8 @@ const getInfoCommon = (req: EamuseInfo) => {
     }
 
     // Goods
-    for (let i = 1; i <= 98; ++i) {
-        let price = 200;
+    for (let i = 0; i < GAME_MAX_DECO_ID[version]; ++i) {
+        let price = 250;
         if (i < 15) {
             price = 30;
         } else if (i < 30) {
@@ -55,10 +55,12 @@ const getInfoCommon = (req: EamuseInfo) => {
             price = 60;
         } else if (i < 60) {
             price = 80;
+        } else if (i < 98) {
+            price = 200;
         }
 
         result.goods.push({
-            item_id: K.ITEM('s32', i),
+            item_id: K.ITEM('s32', i + 1),
             item_type: K.ITEM('s16', 3),
             price: K.ITEM('s32', price),
             goods_type: K.ITEM('s16', 0),
@@ -66,13 +68,15 @@ const getInfoCommon = (req: EamuseInfo) => {
     }
 
     // Area
-    for (let i = 1; i <= 16; ++i) {
-        result.area.push({
-            area_id: K.ITEM('s16', i),
-            end_date: K.ITEM('u64', BigInt(0)),
-            medal_id: K.ITEM('s16', i),
-            is_limit: K.ITEM('bool', 0),
-        });
+    if(version == 'v24') {
+        for (let i = 0; i < 16; ++i) {
+            result.area.push({
+                area_id: K.ITEM('s16', i),
+                end_date: K.ITEM('u64', BigInt(0)),
+                medal_id: K.ITEM('s16', i),
+                is_limit: K.ITEM('bool', 0),
+            });
+        }
     }
 
     // TODO : Course ranking
@@ -388,7 +392,7 @@ const getProfile = async (refid: string, version: string, name?: string) => {
 
     // Add version specific datas
     let params = await utils.readParams(refid, version);
-    utils.addExtraData(player, params, EXTRA_DATA);
+    utils.addExtraData(player, params, getExtraData(version));
 
     const achievements = <AchievementsUsaneko>await utils.readAchievements(refid, version, { ...defaultAchievements, version });
 
@@ -554,6 +558,34 @@ const getProfile = async (refid: string, version: string, name?: string) => {
         }
     }
 
+    // Unilab events
+    if (version == 'v27') {
+        const teams = achievements.team || [];
+        const batteries = achievements.battery || [];
+
+        player.event_p27.first_play = K.ITEM('bool', teams.length != 0);
+        player.event_p27.elem_first_play = K.ITEM('bool', batteries.length != 0);
+
+        player.event_p27.team = [];        
+        for (const team of teams) {
+            player.event_p27.team.push({
+                team_id: K.ITEM('s16', team.team_id || 0),
+                ex_no: K.ITEM('s16', team.ex_no || 0),
+                point: K.ITEM('u32', team.point || 0),
+                is_cleared: K.ITEM('bool', team.is_cleared || false),
+            });
+        };
+
+        player.event_p27.battery = [];
+        for (const battery of batteries) {
+            player.event_p27.battery.push({
+                battery_id: K.ITEM('s16', battery.battery_id || 0),
+                energy: K.ITEM('u32', battery.energy || 0),
+                is_cleared: K.ITEM('bool', battery.is_cleared || false),
+            });
+        };
+    }
+
     return player;
 }
 
@@ -569,7 +601,7 @@ const write = async (req: EamuseInfo, data: any, send: EamuseSend): Promise<any>
     const params = await utils.readParams(refid, version);
     const achievements = <AchievementsUsaneko>await utils.readAchievements(refid, version, { ...defaultAchievements, version });
 
-    utils.getExtraData(data, params, EXTRA_DATA);
+    utils.getExtraData(data, params, getExtraData(version, true));
 
     // areas
     let areas = _.get(data, 'area', []);
@@ -765,6 +797,59 @@ const write = async (req: EamuseInfo, data: any, send: EamuseSend): Promise<any>
         }
     }
 
+    // Unilab (v27)
+    if (version == 'v27') {
+        let eventData = _.get(data, 'event_p27', []);
+        let team = _.get(eventData, 'team', null);
+        if(_.isPlainObject(team)) {            
+            if (_.isNil(achievements.team)) {
+                achievements.team = [];
+            }
+
+            const team_id = $(team).number('team_id');
+            const ex_no = $(team).number('ex_no');
+            const point = $(team).number('point');
+            const is_cleared = $(team).bool('is_cleared');
+
+            let savedTeam = _.find(achievements.team, {'team_id': team_id});
+            if(_.isUndefined(savedTeam)) {
+                achievements.team.push({
+                    team_id,
+                    ex_no,
+                    point,
+                    is_cleared
+                });
+            } else {
+                savedTeam.ex_no = ex_no;
+                savedTeam.point = point;
+                savedTeam.is_cleared = is_cleared;
+            }
+        }
+        
+        let battery = _.get(eventData, 'battery', null);
+        if(_.isPlainObject(battery)) {            
+            if (_.isNil(achievements.battery)) {
+                achievements.battery = [];
+            }
+
+            const battery_id = $(battery).number('battery_id');
+            const energy = $(battery).number('energy');
+            const is_cleared = $(battery).bool('is_cleared');
+
+            let savedBattery = _.find(achievements.battery, {'battery_id': battery_id});
+            if(_.isUndefined(savedBattery)) {
+                achievements.battery.push({
+                    battery_id,
+                    energy,
+                    is_cleared
+                });
+            } else {
+                savedBattery.energy = energy;
+                savedBattery.is_cleared = is_cleared;
+            }
+        }
+    }
+
     await utils.writeParams(refid, version, params);
     await utils.writeAchievements(refid, version, achievements);
 
@@ -806,6 +891,9 @@ const friend = async (req: EamuseInfo, data: any, send: EamuseSend): Promise<any
 const getPhase = (version: String): Phase[] => {
     let phase = [];
     switch(version) {
+        case 'v27':
+            phase = PHASE['v27'];
+            break;
         case 'v26':
             phase = PHASE['v26'];
         case 'v25':
@@ -814,6 +902,23 @@ const getPhase = (version: String): Phase[] => {
             phase = _.unionBy(phase, PHASE['v24'], 'id');
     }
     return _.sortBy(phase, 'id');
+}
+
+const getExtraData = (version: String, full: boolean = false): ExtraData => {
+    let extraData = EXTRA_DATA_COMMON;
+    if (full) {
+        extraData = _.merge(extraData, EXTRA_DATA_V27, EXTRA_DATA_V26);
+    } else {
+        switch(version) {
+            case 'v27':
+                extraData = _.merge(extraData, EXTRA_DATA_V27);
+                break;
+            case 'v26':
+                extraData = _.merge(extraData, EXTRA_DATA_V26);
+                break;
+        }
+    }
+    return extraData;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -826,9 +931,11 @@ const getVersion = (req: EamuseInfo): string => {
     }
 
     const date: number = parseInt(req.model.match(/:(\d*)$/)[1]);
-    if (date > 2020120900) {
+    if (date >= 2022091300) {
+        return 'v27';
+    } else if (date >= 2021042600 && date < 2022091300) {
         return 'v26';
-    } else if (date >= 2018101700 && date <= 2020120900) {
+    } else if (date >= 2018101700 && date < 2021042600 ) {
         return 'v25';
     } else {
         return 'v24';
@@ -838,7 +945,15 @@ const getVersion = (req: EamuseInfo): string => {
 const GAME_MAX_MUSIC_ID = {
     v24: 1704,
     v25: 1877,
-    v26: 2019
+    v26: 2019,
+    v27: 2188
+}
+
+const GAME_MAX_DECO_ID = {
+    v24: 97,
+    v25: 133,
+    v26: 133,
+    v27: 81
 }
 
 const defaultAchievements: AchievementsUsaneko = {
@@ -852,64 +967,71 @@ const defaultAchievements: AchievementsUsaneko = {
     stamps: {},
     riddles: {},
     missions: {},
+    team: [],
+    battery: []
 }
 
 const PHASE = {
     v24: [
-        { id: 0, p: 11 }, // Default song phase availability (0-11)
-        { id: 1, p: 2 },
-        { id: 2, p: 2 },
-        { id: 3, p: 4 },
-        { id: 4, p: 1 },
-        { id: 5, p: 0 }, // Enable Net Taisen (0-1)
-        { id: 6, p: 1 }, // Enable NAVI-kun shunkyoku toujou, allows song 1608 to be unlocked (0-1)
-        { id: 7, p: 1 },
-        { id: 8, p: 2 },
-        { id: 9, p: 2 }, // Daily Mission (0-2)
+        { id: 0, p: 11 },  // Default song phase availability (0-11)
+        { id: 1, p: 2 },   // Unknown event (0-2)
+        { id: 2, p: 2 },   // Holiday Greeting (0-2)
+        { id: 3, p: 4 },   // Unknown event (0-2)
+        { id: 4, p: 1 },   // Unknown event (0-1)
+        { id: 5, p: 0 },   // Enable Net Taisen (0-1)
+        { id: 6, p: 1 },   // Enable NAVI-kun shunkyoku toujou, allows song 1608 to be unlocked (0-1)
+        { id: 7, p: 1 },   // Unknown event (0-1)
+        { id: 8, p: 2 },   // Unknown event (0-2)
+        { id: 9, p: 2 },   // Daily Mission (0-2)
         { id: 10, p: 15 }, // NAVI-kun Song phase availability (0-15)
-        { id: 11, p: 1 },
-        { id: 12, p: 2 },
-        { id: 13, p: 1 }, // Enable Pop'n Peace preview song (0-1)
+        { id: 11, p: 1 },  // Unknown event (0-1)
+        { id: 12, p: 2 },  // Unknown event (0-2)
+        { id: 13, p: 1 },  // Enable Pop'n Peace preview song (0-1)
     ],
     v25: [
-        { id: 0, p: 23 },
-        { id: 1, p: 4 },
-        { id: 10, p: 30 },
-        // New params
-        { id: 14, p: 39 },
-        { id: 15, p: 2 },
-        { id: 16, p: 3 },
-        { id: 17, p: 8 },
-        { id: 18, p: 1 },
-        { id: 19, p: 1 },
-        { id: 20, p: 13 },
-        { id: 21, p: 20 }, // pop'n event archive
-        { id: 22, p: 2 },
-        { id: 23, p: 1 },
-        { id: 24, p: 1 },
+        { id: 0, p: 23 },  // Default song phase availability (0-23)
+        { id: 1, p: 4 },   // Unknown event (0-4)
+        { id: 10, p: 30 }, // NAVI-kun Song phase availability (0-30)
+        { id: 14, p: 39 }, // Stamp Card Rally (0-39)
+        { id: 15, p: 2 },  // Unknown event (0-2)
+        { id: 16, p: 3 },  // Unknown event (0-3)
+        { id: 17, p: 8 },  // Unknown event (0-8)
+        { id: 18, p: 1 },  // FLOOR INFECTION event (0-1)
+        { id: 19, p: 1 },  // Pop'n music × NOSTALGIA kyouenkai (0-1)
+        { id: 20, p: 13 }, // Event archive (0-13)
+        { id: 21, p: 20 }, // Pop'n event archive (0-20)
+        { id: 22, p: 2 },  // バンめし♪ ふるさとグランプリ (0-2)
+        { id: 23, p: 1 },  // いちかのBEMANI投票選抜戦2019 (0-1)
+        { id: 24, p: 1 },  // ダンキラ!!! × pop'n music (0-1)
     ],
     v26: [
-        // Music phase
-        // Phase 24: Seize The Day, 知りたい
-        // Phase 25: Triple Cross
-        // Phase 26: GO²TOS, Jailbreaker
-        // Phase 27: Aftermath
-        // Phase 28: 「Sweet Love」
-        // Phase 29: GET WILD (UPPER), シュガーソングとビターステップ (UPPER)
-        // Phase 30 (MAX): 群像夏
-        { id: 0, p: 30 },
-        // New params
+        { id: 0, p: 30 },  // Music phase (0: No unlock, 1-30: steps)
         { id: 25, p: 62 }, // M&N event (0: disable, 62: all characters)
-        { id: 26, p: 3 }, // Unknown event (0-3)
-        { id: 27, p: 2 }, // peace soundtrack hatsubai kinen SP (0: not started, 1: enabled, 2: ended)
-        { id: 28, p: 2 }, // MZD no kimagure tanteisha joshu (0: not started, 1: enabled, 2: ended)
-        { id: 29, p: 5 }, // Shutchou! pop'n quest Lively (0: not started, 1-4: step enabled, 5: ended)
-        { id: 30, p: 6 }, // Shutchou! pop'n quest Lively II (0: not started, 1-5: step enabled, 6: ended)
+        { id: 26, p: 3 },  // Unknown event (0-3)
+        { id: 27, p: 2 },  // peace soundtrack hatsubai kinen SP (0: not started, 1: enabled, 2: ended)
+        { id: 28, p: 2 },  // MZD no kimagure tanteisha joshu (0: not started, 1: enabled, 2: ended)
+        { id: 29, p: 5 },  // Shutchou! pop'n quest Lively (0: not started, 1-4: step enabled, 5: ended)
+        { id: 30, p: 6 },  // Shutchou! pop'n quest Lively II (0: not started, 1-5: step enabled, 6: ended)
+    ],
+    v27: [
+        { id: 0, p: 6 },  // Music phase (0: No unlock, 1-6: steps)
+        { id: 1, p: 6 },  // Shutchou! pop'n quest Lively II (0: not started, 1-5: steps, 6: ended)
+        { id: 2, p: 4 },  // KAC 2023 (0/2/4: disabled, 1: Caldwell 99, 3: Hexer / mathematical good-bye)
+        { id: 3, p: 0 },  // Net Taisen (0: diabled, 1: enabled, 2: enabled + local)
+        { id: 4, p: 7 },  // Unknown event (0-7)
+        { id: 5, p: 48 }, // Narunaru♪ UniLab jikkenshitsu! event (0: not started, 1-47: steps, 48: ended)
+        { id: 6, p: 2 },  // Super Unilab BOOST! (0: disabled, 1: enabled, 2: ended)
+        { id: 7, p: 6 },  // Unknown event (0-6)
+        { id: 8, p: 2 },  // Unknown event (0-2)
+        { id: 9, p: 44 }, // Kakusei no Elem event (0: not started, 1-44: steps)
+        { id: 10, p: 1 }, // Awakening Elem (0: disabled, 1: enabled)
+        { id: 11, p: 2 }, // CanCan's Super Awakening Boost (0: disabled, 1: enabled, 2: ended)
+        { id: 12, p: 2 }, // Unknown event (0-2)
+        { id: 13, p: 2 }, // Unknown event (0-2)
     ]
 }
 
-const EXTRA_DATA: ExtraData = {
-
+const EXTRA_DATA_COMMON: ExtraData = {
     play_id: { type: 's32', path: 'account', default: 0 },
     start_type: { type: 's8', path: 'account', default: 0 },
     tutorial: { type: 's16', path: 'account', default: -1 },
@@ -934,15 +1056,6 @@ const EXTRA_DATA: ExtraData = {
     power_point: { type: 's32', path: 'account', default: 0 },
     player_point: { type: 's32', path: 'account', default: 300 },
     power_point_list: { type: 's32', path: 'account', default: [0], isArray: true },
-
-    //v26
-    card_again_count: { type: 's16', path: 'account', default: 0 },
-    sp_riddles_id: { type: 's16', path: 'account', default: -1 },
-    point: { type: 'u32', path: 'event2021', default: 0 }, // for peace soundtrack hatsubai kinen SP
-    step: { type: 'u8', path: 'event2021', default: 0 }, // for Shutchou! pop'n quest Lively
-    quest_point: { type: 'u32', path: 'event2021', default: Array(8).fill(0), isArray: true }, // for Shutchou! pop'n quest Lively
-    step_nos: { type: 'u8', path: 'event2021', default: 0 }, // for Shutchou! pop'n quest Lively II
-    quest_point_nos: { type: 'u32', path: 'event2021', default: Array(13).fill(0), isArray: true }, // for Shutchou! pop'n quest Lively II
 
     mode: { type: 'u8', path: 'config', default: 0 },
     chara: { type: 's16', path: 'config', default: 0 },
@@ -984,4 +1097,22 @@ const EXTRA_DATA: ExtraData = {
     hukidashi: { type: 'u16', path: 'customize', default: 0 },
     comment_1: { type: 'u16', path: 'customize', default: 0 },
     comment_2: { type: 'u16', path: 'customize', default: 0 },
+}
+
+const EXTRA_DATA_V26: ExtraData = {
+    card_again_count: { type: 's16', path: 'account', default: 0 },
+    sp_riddles_id: { type: 's16', path: 'account', default: -1 },
+    point: { type: 'u32', path: 'event2021', default: 0 }, // for peace soundtrack hatsubai kinen SP
+    step: { type: 'u8', path: 'event2021', default: 0 }, // for Shutchou! pop'n quest Lively
+    quest_point: { type: 'u32', path: 'event2021', default: Array(8).fill(0), isArray: true }, // for Shutchou! pop'n quest Lively
+    step_nos: { type: 'u8', path: 'event2021', default: 0 }, // for Shutchou! pop'n quest Lively II
+    quest_point_nos: { type: 'u32', path: 'event2021', default: Array(13).fill(0), isArray: true }, // for Shutchou! pop'n quest Lively II
+}
+
+const EXTRA_DATA_V27: ExtraData = {
+    lift: { type: 'bool', path: 'option', default: 0 },
+    lift_rate: { type: 's16', path: 'option', default: 0 },
+    team_id: { type: 's16', path: 'event_p27', default: 0 },
+    select_battery_id: { type: 's16', path: 'event_p27', default: 1 },
+    today_first_play: { type: 'bool', path: 'event_p27', default: 1 },
 }

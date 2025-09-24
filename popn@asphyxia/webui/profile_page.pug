@@ -62,25 +62,3 @@ div
         label There is a limit of 4 rivals maximum (only the 2 firsts will be used for Sunny Park and lower).
       div
         label The score sharing option also affect scores get from rivals.
-  .card
-    .card-header
-      p.card-header-title
-        span.icon
-          i.mdi.mdi-account-edit
-        | Import data
-    .card-content
-      .field
-        label.label Import data from previous Asphyxia (non-core)
-      .field
-        input.input(type="text" id="profile" name="profile" placeholder="Put content of popn.json")
-      .field
-        input.input(type="text" id="scores" name="scores" placeholder="Put content of popn_scores.json")
-      .field
-        label.help.is-danger /!\ Please backup your savedata.db before importing data /!\
-      .field
-        button.button.is-primary#import-click
-            span.icon
-              i.mdi.mdi-file-import-outline
-            span Import
-
-script(src="static/js/profile_page.js")
