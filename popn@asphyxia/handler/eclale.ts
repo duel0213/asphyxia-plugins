@@ -369,6 +369,18 @@ const getProfile = async (refid: string, name?: string) => {
         player.item.push(item);
     }
 
+    if(U.GetConfig("enable_force_unlock")) {
+        for(let i = 1; i <= GAME_MAX_MUSIC_ID; i++) {
+            player.item.push({
+                type: K.ITEM('u8', 0),
+                id: K.ITEM('u16', i),
+                param: K.ITEM('u16', 15),
+                is_new: K.ITEM('bool', 0),
+                get_time: K.ITEM('u64', BigInt(0)),
+            });
+        }
+    }
+
     // Add version specific datas
     const params = await utils.readParams(refid, version);
     utils.addExtraData(player, params, extraData);
