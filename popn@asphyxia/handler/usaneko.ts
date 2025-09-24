@@ -563,8 +563,8 @@ const getProfile = async (refid: string, version: string, name?: string) => {
         const teams = achievements.team || [];
         const batteries = achievements.battery || [];
 
-        player.event_p27.first_play = K.ITEM('bool', teams.length != 0);
-        player.event_p27.elem_first_play = K.ITEM('bool', batteries.length != 0);
+        player.event_p27.first_play = K.ITEM('bool', teams.length == 0);
+        player.event_p27.elem_first_play = K.ITEM('bool', batteries.length == 0);
 
         player.event_p27.team = [];        
         for (const team of teams) {
