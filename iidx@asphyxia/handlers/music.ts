@@ -1,9 +1,10 @@
-import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid } from "../util";
+import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetWeekId } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { badge } from "../models/badge";
+import { activity_mybest } from "../models/activity";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -689,6 +690,51 @@ export const musicreg: EPR = async (info, data, send) => {
     }
   }
 
+  let date = new Date();
+  if (!_.isNil($(data).element("best_result"))) {
+    await DB.Upsert<activity_mybest>(
+      refid,
+      {
+        collection: "activity_mybest",
+        version: version,
+
+        play_style: Number($(data).attr("best_result").play_style),
+        play_side: Number($(data).attr("best_result").play_side),
+        music_id: Number($(data).attr("best_result").music_id),
+        note_id: Number($(data).attr("best_result").note_id),
+      },
+      {
+        $set: {
+          target_graph: Number($(data).attr("best_result").target_graph),
+          target_score: Number($(data).attr("best_result").target_score),
+          pacemaker: Number($(data).attr("best_result").pacemaker),
+          best_clear: Number($(data).attr("best_result").best_clear),
+          best_score: Number($(data).attr("best_result").best_score),
+          best_misscount: Number($(data).attr("best_result").best_misscount),
+          now_clear: Number($(data).attr("best_result").now_clear),
+          now_score: Number($(data).attr("best_result").now_score),
+          now_misscount: Number($(data).attr("best_result").now_misscount),
+          now_pgreat: Number($(data).attr("best_result").now_pgreat),
+          now_great: Number($(data).attr("best_result").now_great),
+          now_good: Number($(data).attr("best_result").now_good),
+          now_bad: Number($(data).attr("best_result").now_bad),
+          now_poor: Number($(data).attr("best_result").now_poor),
+          now_combo: Number($(data).attr("best_result").now_combo),
+          now_fast: Number($(data).attr("best_result").now_fast),
+          now_slow: Number($(data).attr("best_result").now_slow),
+          option: Number($(data).attr("best_result").option),
+          option_2: Number($(data).attr("best_result").option2),
+          ghost_gauge_data: $(data).element("best_result").buffer("ghost_gauge_data").toString("base64"),
+          gauge_type: Number($(data).attr("best_result").gauge_type),
+          result_type: Number($(data).attr("best_result").result_type),
+          is_special_result: Number($(data).element("best_result").bool("is_special_result")),
+
+          update_date: Math.floor(date.valueOf() / 1000),
+        }
+      }
+    );
+  }
+
   let shop_rank = -1, shop_rank_data = [];
   let scores: any[][];
   scores = (
@@ -769,14 +815,9 @@ export const musicreg: EPR = async (info, data, send) => {
     }
   });
 
-  if (version > 23) {
-    crate = Math.round((cflgs / shop_rank_data.length) * 1000);
-    frate = Math.round((fcflgs / shop_rank_data.length) * 1000);
-  }
-  else {
-    crate = Math.round((cflgs / shop_rank_data.length) * 100);
-    frate = Math.round((fcflgs / shop_rank_data.length) * 100);
-  }
+  let rate = version > 23 ? 1000 : 100;
+  crate = Math.round((cflgs / shop_rank_data.length) * rate);
+  frate = Math.round((fcflgs / shop_rank_data.length) * rate);
 
   let result: any = {
     "@attr": {

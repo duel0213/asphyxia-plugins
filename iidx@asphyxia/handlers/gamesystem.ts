@@ -19,17 +19,14 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   // following datas are made up needs to figure out correct way to do it //
   let music_open = JSON.parse(await IO.ReadFile("data/music_open.json", "utf-8"));
   if (!_.isNil(music_open[version])) {
-    result = {
-      ...result,
-      music_open: [],
-    }
+    result = Object.assign(result, { music_open: [] });
 
     Object.keys(music_open).forEach(v => {
       Object.keys(music_open[v]).forEach(m => {
-        if (parseInt(v) > version) return;
+        if (Number(v) > version) return;
 
         result.music_open.push({
-          music_id: K.ITEM("s32", parseInt(m)),
+          music_id: K.ITEM("s32", Number(m)),
           kind: K.ITEM("s32", music_open[v][m].kind),
         });
       });
@@ -37,16 +34,14 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   }
 
   switch (version) {
-    case 31:
-      result.arena_schedule = {
-        ...result.arena_schedule,
-        rule_type: K.ITEM("u8", 0), // arena rule for online //
-      }
+    case 32:
+      result.arena_schedule.phase = K.ITEM("u8", 3);
+      result.arena_schedult = Object.assign(result.arena_schedule, { season: K.ITEM("u8", 0) }); // arena season for online // 
 
-      result = {
-        ...result,
-        grade_course: [],
-      }
+    case 31:
+      result.arena_schedult = Object.assign(result.arena_schedule, { rule_type: K.ITEM("u8", 0) }); // arena rule for online //
+
+      result = Object.assign(result, { grade_course: [] });
 
       // following datas are made up needs to figure out correct way to do it //
       let grade = JSON.parse(await IO.ReadFile("data/grade.json", "utf-8"));
@@ -54,8 +49,8 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         Object.keys(grade[version]).forEach(s => {
           Object.keys(grade[version][s]).forEach(c => {
             result.grade_course.push({
-              play_style: K.ITEM("s32", parseInt(s)),
-              grade_id: K.ITEM("s32", parseInt(c)),
+              play_style: K.ITEM("s32", Number(s)),
+              grade_id: K.ITEM("s32", Number(c)),
               is_valid: K.ITEM("bool", true),
               music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
               class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
@@ -109,8 +104,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
 
   switch (version) {
     case 29:
-      result = {
-        ...result,
+      result = Object.assign(result, {
         CommonBossPhase: K.ATTR({ val: String(3) }),
         Event1InternalPhase: K.ATTR({ val: String(U.GetConfig("ch_event")) }),
         ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("ch_extraboss")) }),
@@ -119,11 +113,10 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         isEiseiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
-      }
+      });
       break;
     case 30:
-      result = {
-        ...result,
+      result = Object.assign(result, {
         CommonBossPhase: K.ATTR({ val: String(3) }),
         Event1InternalPhase: K.ATTR({ val: String(U.GetConfig("rs_event")) }),
         ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("rs_extraboss")) }),
@@ -132,7 +125,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         isEiseiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
-      }
+      })
       break;
     case 31:
       let totalMetron = 0;
@@ -148,8 +141,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         });
       }
 
-      result = {
-        ...result,
+      Object.assign(result, {
         CommonBossPhase: K.ATTR({ val: String(3) }),
         Event1Value: K.ATTR({ val: String(U.GetConfig("ep_event")) }),
         Event1Phase: K.ATTR({ val: String(U.GetConfig("ep_event1")) }),
@@ -162,7 +154,19 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         UnlockLeggendaria: K.ATTR({ val: String(1) }),
         BPLSerialCodePhase: K.ATTR({ val: String(0) }),
         Event1AllPlayerTotalGetMetron: K.ATTR({ val: String(totalMetron) }), // total amount of all users metron //
-      }
+      });
+      break;
+    case 32:
+      result = Object.assign(result, {
+        Event1Value: K.ATTR({ val: String(U.GetConfig("pc_event")) }), // TEST //
+        Event1Phase: K.ATTR({ val: String(U.GetConfig("pc_event1")) }), // TEST //
+        Event2Phase: K.ATTR({ val: String(U.GetConfig("pc_event2")) }), // TEST //
+        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("pc_extraboss")) }), // TEST //
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
+        WorldTourismOpenList: K.ATTR({ val: String(-1) }),
+        OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
+      });
       break;
 
     default:

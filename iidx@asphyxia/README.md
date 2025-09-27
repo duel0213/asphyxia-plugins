@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.16**
+Plugin Version: **v0.1.17**
 
 ---
 
@@ -23,6 +23,7 @@ Supported Versions
   - beatmaniaIIDX 29 CastHour (2022082400)
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
+  - beatmaniaIIDX 32 Pinky Crush (2025082500)
 
 ---
 
@@ -43,9 +44,8 @@ Known Issues
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
   - SUPER FUTURE 2323 play records doesn't display on other version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
-  - Some of licensed songs are locked behind due to missing license element (needs to be verified)
+  - Some of licensed songs are locked behind (kinda solved with music\_open but needs to be verified)
   - Some of badges aren't saving in RESIDENT ~ (needs to figure out name to id)
-  - QPRO may have wrong item if you equipped item from STEP UP result (this probably caused by qpro\_secret\_flg being -1)
 
 ---
 
@@ -161,6 +161,10 @@ Changelogs
   - Fixed where unable to login (tricoro, CastHour, Rootage)
   - Fixed where unable to specify rival in WebUI
   - Fixed where music.arenaCPU isn't working as intended due to change of type (EPOLIS ~)
+  - Fixed where qpro head equip request handle as hand equip (@anzuwork)
   - Added error message for invalid score database entries
   - Reverted `v0.1.15` dev mode related code changes (now requires proper dev setup, refer parent README.md)
   - WebUI is now display values of corresponding version
+
+**v0.1.17**
+  - Added Initial support for Pinky Crush

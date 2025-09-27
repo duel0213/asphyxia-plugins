@@ -98,7 +98,7 @@ export function GetVersion(info: EamuseInfo) {
     case "JDZ": return 18;
     case "KDZ": return 19;
     case "LDJ":
-      version = parseInt(info.module.slice(4, 6));
+      version = Number(info.module.slice(4, 6));
       if (_.isNaN(version)) version = 20;
       break;
   }
@@ -239,4 +239,8 @@ export async function ReftoQPRO(refid: string, version: number) {
   }
 
   return qpro_data;
+}
+
+export function GetWeekId(date: Date) {
+  return Math.ceil((((date.getTime() - Date.UTC(date.getFullYear(), 0, 1)) / 86400000) + new Date(date.getFullYear(), 0, 1).getDay()) / 7);
 }

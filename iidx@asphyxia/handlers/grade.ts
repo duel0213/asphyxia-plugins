@@ -6,13 +6,13 @@ import { badge } from "../models/badge";
 
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const iidxid = parseInt($(data).attr().iidxid);
+  const iidxid = Number($(data).attr().iidxid);
   const refid = await IDtoRef(iidxid);
-  const gid = parseInt($(data).attr().gid);
-  const gtype = parseInt($(data).attr().gtype);
+  const gid = Number($(data).attr().gid);
+  const gtype = Number($(data).attr().gtype);
 
-  let cflg = parseInt($(data).attr().cflg);
-  let achi = parseInt($(data).attr().achi);
+  let cflg = Number($(data).attr().cflg);
+  let achi = Number($(data).attr().achi);
 
   let pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
   let grade = await DB.FindOne<grade>(refid, {
@@ -22,7 +22,7 @@ export const graderaised: EPR = async (info, data, send) => {
     gradeId: gid,
   });
 
-  if (version >= 23) cflg = parseInt($(data).attr().cstage);
+  if (version >= 23) cflg = Number($(data).attr().cstage);
 
   const isTDJ = !_.isNil($(data).element("lightning_play_data")); // lightning model //
   const hasEiseiData = (!_.isNil($(data).element("eisei_data")) || !_.isNil($(data).element("eisei_grade_data")) || !_.isNil($(data).element("kiwami_data")));
@@ -40,20 +40,20 @@ export const graderaised: EPR = async (info, data, send) => {
 
     switch (version) {
       case 27:
-        eisei_clear_type = parseInt($(data).attr("eisei_data").clear_type);
-        eisei_grade_id = parseInt($(data).attr("eisei_data").grade_id);
-        eisei_grade_type = parseInt($(data).attr("eisei_data").grade_type);
-        eisei_stage_num = parseInt($(data).attr("eisei_data").stage_num);
+        eisei_clear_type = Number($(data).attr("eisei_data").clear_type);
+        eisei_grade_id = Number($(data).attr("eisei_data").grade_id);
+        eisei_grade_type = Number($(data).attr("eisei_data").grade_type);
+        eisei_stage_num = Number($(data).attr("eisei_data").stage_num);
 
         eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
         eisei_max_past_achievement = $(data).element("eisei_data").numbers("max_past_achievement");
         break;
       case 30:
-        eisei_clear_type = parseInt($(data).element("eisei_data").attr().clear_type);
-        eisei_grade_id = parseInt($(data).element("eisei_data").attr().grade_id);
-        eisei_grade_type = parseInt($(data).element("eisei_data").attr().grade_type);
-        eisei_stage_num = parseInt($(data).element("eisei_data").attr().stage_num);
-        eisei_option = parseInt($(data).element("eisei_data").attr().option);
+        eisei_clear_type = Number($(data).element("eisei_data").attr().clear_type);
+        eisei_grade_id = Number($(data).element("eisei_data").attr().grade_id);
+        eisei_grade_type = Number($(data).element("eisei_data").attr().grade_type);
+        eisei_stage_num = Number($(data).element("eisei_data").attr().stage_num);
+        eisei_option = Number($(data).element("eisei_data").attr().option);
 
         eisei_past_achievement = $(data).element("eisei_data").numbers("past_achievement");
         eisei_past_selected_course = $(data).element("eisei_data").numbers("past_selected_course");
@@ -61,11 +61,12 @@ export const graderaised: EPR = async (info, data, send) => {
         eisei_max_past_selected_course = $(data).element("eisei_data").numbers("max_past_selected_course");
         break;
       case 31:
-        eisei_clear_type = parseInt($(data).attr("kiwami_data").clear_type);
-        eisei_grade_id = parseInt($(data).attr("kiwami_data").grade_id);
-        eisei_grade_type = parseInt($(data).attr("kiwami_data").grade_type);
-        eisei_stage_num = parseInt($(data).attr("kiwami_data").stage_num);
-        eisei_option = parseInt($(data).attr("kiwami_data").option);
+      case 32:
+        eisei_clear_type = Number($(data).attr("kiwami_data").clear_type);
+        eisei_grade_id = Number($(data).attr("kiwami_data").grade_id);
+        eisei_grade_type = Number($(data).attr("kiwami_data").grade_type);
+        eisei_stage_num = Number($(data).attr("kiwami_data").stage_num);
+        eisei_option = Number($(data).attr("kiwami_data").option);
 
         eisei_past_achievement = $(data).element("kiwami_data").numbers("past_achievement");
         eisei_past_selected_course = $(data).element("kiwami_data").numbers("past_selected_course");
@@ -74,10 +75,10 @@ export const graderaised: EPR = async (info, data, send) => {
         break;
 
       default:
-        eisei_clear_type = parseInt($(data).attr("eisei_grade_data").clear_type);
-        eisei_grade_id = parseInt($(data).attr("eisei_grade_data").grade_id);
-        eisei_grade_type = parseInt($(data).attr("eisei_grade_data").grade_type);
-        eisei_stage_num = parseInt($(data).attr("eisei_grade_data").stage_num);
+        eisei_clear_type = Number($(data).attr("eisei_grade_data").clear_type);
+        eisei_grade_id = Number($(data).attr("eisei_grade_data").grade_id);
+        eisei_grade_type = Number($(data).attr("eisei_grade_data").grade_type);
+        eisei_stage_num = Number($(data).attr("eisei_grade_data").stage_num);
 
         eisei_past_achievement = $(data).element("eisei_grade_data").numbers("past_achievement");
         eisei_past_selected_course = $(data).element("eisei_grade_data").numbers("past_selected_course");
@@ -181,11 +182,11 @@ export const graderaised: EPR = async (info, data, send) => {
         collection: "badge",
         version: version,
         category_name: "grade",
-        flg_id: parseInt($(data).attr("badge").badge_flg_id),
+        flg_id: Number($(data).attr("badge").badge_flg_id),
       },
       {
         $set: {
-          flg: parseInt($(data).attr("badge").badge_flg),
+          flg: Number($(data).attr("badge").badge_flg),
         }
       }
     );
