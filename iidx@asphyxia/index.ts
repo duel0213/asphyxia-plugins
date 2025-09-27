@@ -484,11 +484,36 @@ export function register() {
     default: 3,
   });
 
+  // Pinky Crush //
+  R.Config("pc_event", {
+    name: "Event Phase (PC)",
+    desc: "ピンキージャンプアップ！ / ピンキーアンダーグラウンド",
+    type: "integer",
+    default: 2,
+  });
+  R.Config("pc_event1", {
+    name: "ピンキージャンプアップ！",
+    desc: "ピンキージャンプアップ！ Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("pc_event2", {
+    name: "ピンキーアンダーグラウンド",
+    desc: "ピンキーアンダーグラウンド Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("pc_extraboss", {
+    name: "Extra Boss Phase (PC)",
+    type: "integer",
+    default: 3,
+  });
+
   // TODO:: Make a list of customize items //
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {
       collection: "pcdata",
-      version: parseInt(data.version),
+      version: Number(data.version),
     });
 
     return send.json({
@@ -498,12 +523,12 @@ export function register() {
   R.WebUIEvent("iidxGetSetting", async (data, send: WebUISend) => {
     const custom = await DB.FindOne(data.refid, {
       collection: "custom",
-      version: parseInt(data.version),
+      version: Number(data.version),
     });
 
     const lm_custom = await DB.FindOne(data.refid, {
       collection: "lightning_custom",
-      version: parseInt(data.version),
+      version: Number(data.version),
     });
 
     return send.json({
@@ -529,6 +554,7 @@ export function register() {
     R.Route(`IIDX29${method}`, handler);
     R.Route(`IIDX30${method}`, handler);
     R.Route(`IIDX31${method}`, handler);
+    R.Route(`IIDX32${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);

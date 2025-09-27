@@ -5,21 +5,21 @@ import { GetVersion, IDtoRef } from "../util";
 export const rankingentry: EPR = async (info, data, send) => {
   // pside //
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
 
-  const coid = parseInt($(data).attr().coid);
-  const clid = parseInt($(data).attr().clid);
+  const coid = Number($(data).attr().coid);
+  const clid = Number($(data).attr().clid);
 
   const opname = $(data).attr().opname;
-  const oppid = parseInt($(data).attr().oppid);
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const opt = parseInt($(data).attr().opt);
-  const opt2 = parseInt($(data).attr().opt2);
-  const clr = parseInt($(data).attr().clr);
+  const oppid = Number($(data).attr().oppid);
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const opt = Number($(data).attr().opt);
+  const opt2 = Number($(data).attr().opt2);
+  const clr = Number($(data).attr().clr);
 
   const exscore = (pgnum * 2 + gnum);
-  const cstage = parseInt($(data).attr().cstage);
+  const cstage = Number($(data).attr().cstage);
 
   const expert_data = await DB.FindOne<expert>(refid, {
     collection: "expert",
@@ -123,16 +123,16 @@ export const rankingentry: EPR = async (info, data, send) => {
 
 export const rankingoentry: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(parseInt($(data).attr().iidxid));
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
 
-  const coid = parseInt($(data).attr().coid);
-  const clid = parseInt($(data).attr().clid);
+  const coid = Number($(data).attr().coid);
+  const clid = Number($(data).attr().clid);
 
-  const pgnum = parseInt($(data).attr().pgnum);
-  const gnum = parseInt($(data).attr().gnum);
-  const opt = parseInt($(data).attr().opt);
-  const opt2 = parseInt($(data).attr().opt2);
-  const clr = parseInt($(data).attr().clr);
+  const pgnum = Number($(data).attr().pgnum);
+  const gnum = Number($(data).attr().gnum);
+  const opt = Number($(data).attr().opt);
+  const opt2 = Number($(data).attr().opt2);
+  const clr = Number($(data).attr().clr);
 
   const exscore = (pgnum * 2 + gnum);
 
@@ -146,8 +146,8 @@ export const rankinggetranker: EPR = async (info, data, send) => {
   const ranking = await DB.Find<ranking>({
     collection: "ranking",
     version: version,
-    coid: parseInt($(data).attr().coid),
-    clid: parseInt($(data).attr().clid),
+    coid: Number($(data).attr().coid),
+    clid: Number($(data).attr().clid),
   });
   let result = {
     ranker: [],

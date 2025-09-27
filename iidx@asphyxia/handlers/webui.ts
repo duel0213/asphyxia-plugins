@@ -207,24 +207,24 @@ export const updateCustomSettings = async (data) => {
   });
 
   let customize = {
-    frame: parseInt(data.frame),
-    turntable: parseInt(data.turntable),
-    note_burst: parseInt(data.note_burst),
-    menu_music: parseInt(data.menu_music),
-    lane_cover: parseInt(data.lane_cover),
-    category_vox: parseInt(data.category_vox),
-    note_skin: parseInt(data.note_skin),
-    full_combo_splash: parseInt(data.full_combo_splash),
+    frame: Number(data.frame),
+    turntable: Number(data.turntable),
+    note_burst: Number(data.note_burst),
+    menu_music: Number(data.menu_music),
+    lane_cover: Number(data.lane_cover),
+    category_vox: Number(data.category_vox),
+    note_skin: Number(data.note_skin),
+    full_combo_splash: Number(data.full_combo_splash),
     disable_musicpreview: StoB(data.disable_musicpreview),
 
-    note_beam: parseInt(data.note_beam),
-    judge_font: parseInt(data.judge_font),
-    pacemaker_cover: parseInt(data.pacemaker_cover),
+    note_beam: Number(data.note_beam),
+    judge_font: Number(data.judge_font),
+    pacemaker_cover: Number(data.pacemaker_cover),
     vefx_lock: StoB(data.vefx_lock),
-    effect: parseInt(data.effect),
-    bomb_size: parseInt(data.bomb_size),
+    effect: Number(data.effect),
+    bomb_size: Number(data.bomb_size),
     disable_hcn_color: StoB(data.disable_hcn_color),
-    first_note_preview: parseInt(data.first_note_preview),
+    first_note_preview: Number(data.first_note_preview),
 
     rank_folder: StoB(data.rank_folder),
     clear_folder: StoB(data.clear_folder),
@@ -240,17 +240,17 @@ export const updateCustomSettings = async (data) => {
     hide_iidxid: StoB(data.hide_iidxid),
     disable_beginner_option: StoB(data.disable_beginner_option),
 
-    qpro_head: parseInt(data.qpro_head),
-    qpro_hair: parseInt(data.qpro_hair),
-    qpro_face: parseInt(data.qpro_face),
-    qpro_hand: parseInt(data.qpro_hand),
-    qpro_body: parseInt(data.qpro_body),
-    qpro_back: parseInt(data.qpro_back),
+    qpro_head: Number(data.qpro_head),
+    qpro_hair: Number(data.qpro_hair),
+    qpro_face: Number(data.qpro_face),
+    qpro_hand: Number(data.qpro_hand),
+    qpro_body: Number(data.qpro_body),
+    qpro_back: Number(data.qpro_back),
   }
 
   await DB.Upsert<custom>(data.refid, {
     collection: "custom",
-    version: parseInt(data.version)
+    version: Number(data.version)
   },
   {
     $set: customize
@@ -270,12 +270,12 @@ export const updateCustomSettings = async (data) => {
   if (data.version > 27) {
     await DB.Upsert<lightning_custom>(data.refid, {
       collection: "lightning_custom",
-      version: parseInt(data.version)
+      version: Number(data.version)
     },
     {
       $set: {
-        premium_skin: parseInt(data.lm_skin),
-        premium_bg: parseInt(data.lm_bg),
+        premium_skin: Number(data.lm_skin),
+        premium_bg: Number(data.lm_bg),
       }
     });
   }
