@@ -19,12 +19,23 @@ function unlockNavigators(items: Partial<Item>[]) {
   console.log("Unlocking Navigators");
   // 10 genesis card for MITSURU's voice
   items.push({ type: 4, id: 599, param: 10 });
+  // items.push({ type: 21, id: 1, param: 1 });
   return items;
 }
 
 function unlockAppealCards(items: Partial<Item>[]) {
   for (let i = 0; i < 6000; ++i) items.push({ type: 1, id: i, param: 1 });
   console.log("Unlocking Appeal Cards");
+
+  return items;
+}
+
+function unlock_all_valkgen(items: Partial<Item>[]) {
+  // for (let i = 0; i < 500; ++i) items.push({ type: 17, id: i, param: 1 }); // stamp
+  // for (let i = 0; i < 600; ++i) items.push({ type: 18, id: i, param: 1 }); // subbg
+  // for (let i = 0; i < 100; ++i) items.push({ type: 19, id: i, param: 1 }); // bgm
+  // for (let i = 0; i < 100; ++i) items.push({ type: 20, id: i, param: 1 }); // nemsys
+  // for (let i = 0; i < 30; ++i) items.push({ type: 21, id: i, param: 1 }); // mainbg
 
   return items;
 }
@@ -364,6 +375,7 @@ export const load: EPR = async (info, data, send) => {
 
   let tempItem = U.GetConfig('unlock_all_navigators') ? unlockNavigators(items) : items;
   tempItem = U.GetConfig('unlock_all_appeal_cards') ? unlockAppealCards(tempItem) : tempItem;
+  tempItem = unlock_all_valkgen(tempItem);
 
   // Make generator power always 100%,
   for (let i = 0; i < 50; i++) {

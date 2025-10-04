@@ -1,5 +1,6 @@
 import { EVENT6, COURSES6, EXTENDS6, VALGENE6 } from '../data/exg';
 import {getVersion, getRandomIntInclusive} from '../utils';
+import fs from 'fs';
 
 export const informationString = 
 `[sz:120]      [olc:555555][ol:4][c:ff3333,3333ff,77ff77]Asphyxia
@@ -32,17 +33,15 @@ export const common: EPR = async (info, data, send) => {
   let courses = [];
   let extend = [];
   console.log("Calling common function");
-  
-  const version = parseInt(info.model.split(":")[4]);
+  let exg_data_json = JSON.parse(fs.readFileSync('./plugins/sdvx@asphyxia/data/exg_data.json', 'utf8'));
 
-  switch (info.method) {
-    case 'sv6_common': {
-      events = EVENT6;
-      courses = COURSES6;
-      EXTENDS6.forEach(val => extend.push(Object.assign({}, val)));
-      break;
-    }
-  }
+  events = EVENT6;
+  courses = COURSES6;
+  // EXTENDS6.forEach(val => extend.push(Object.assign({}, val)));
+  extend = EXTENDS6;
+  extend = extend.concat(exg_data_json.extends_data);
+  // extend = extend.concat(exg_data.extends_data);
+
   let songs = [];
 
   if (U.GetConfig('unlock_all_songs')) {
@@ -258,8 +257,8 @@ export const common: EPR = async (info, data, send) => {
         season: K.ITEM('s32',3),
         rule: K.ITEM('s32',0),
         rank_match_target: K.ARRAY('s32', [
-          1,1,1,1,
-          1,1,1,1,
+          2,2,2,2,
+          2,2,2,2,
           1,1,1,1,
           1,1,1,1,
           0,0,0,0,
@@ -286,6 +285,9 @@ export const common: EPR = async (info, data, send) => {
           item_type: K.ITEM('s32', c.item_type),
           item_id: K.ITEM('s32', c.item_id),
         })),
+      },
+      invest:{
+        limit_date: K.ITEM('u64',BigInt(newTime)),
       }
     },
     { encoding: 'utf8' }

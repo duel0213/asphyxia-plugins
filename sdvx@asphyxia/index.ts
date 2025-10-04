@@ -9,7 +9,11 @@ import {
   importMix,
   deleteMix,
   make_hexa_easier,
-  import_assets
+  import_assets,
+  update_webui_nemsys_data,
+  update_webui_stamp_data,
+  update_webui_subbg_data,
+  update_webui_bgm_data
   // sendImg,
   // sendImgWithID,
   // getScore,
@@ -59,7 +63,7 @@ export function register() {
   R.Config('use_asphyxia_gameover',{ type: 'boolean', default: true, name:'Use Asphyxia Gameover', desc:'Enable the Asphyxia gameover message after ending the game.'})
   R.Config('use_blasterpass',{ type: 'boolean', default: true, name:'Use Blaster Pass', desc:'Enable Blaster Pass for VW and EG'});
   R.Config('new_year_special',{ type: 'boolean', default: true, name:'Use New Year Special', desc:'Enable New Year Special BGM for login'});
-  R.Config('music_count',{ type: 'integer', default: 2200, name:'Music Count', desc:'The total number of music in the game.'});
+  R.Config('music_count',{ type: 'integer', default: 2200, name:'Music Count', desc:'The maximum id of music in the game.'});
     
   R.WebUIEvent('updateProfile', updateProfile);
   R.WebUIEvent('updateMix', updateMix);
@@ -67,6 +71,10 @@ export function register() {
   R.WebUIEvent('deleteMix', deleteMix);
   R.WebUIEvent('easyHexa', make_hexa_easier);
   R.WebUIEvent('import_assets', import_assets);
+  R.WebUIEvent('update_webui_nemsys', update_webui_nemsys_data);
+  R.WebUIEvent('update_webui_chat_stamp', update_webui_stamp_data);
+  R.WebUIEvent('update_webui_subbg', update_webui_subbg_data);
+  R.WebUIEvent('update_webui_bgm', update_webui_bgm_data);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`game.sv6_${method}`, handler);
@@ -127,6 +135,8 @@ export function register() {
     //logerrlevel: K.ITEM('s32', 0),
     //evtidnosendflg: K.ITEM('s32', 0)
   }));
+  
+  
 
 
   R.Unhandled();

@@ -122,4 +122,20 @@ export interface AchievementsUsaneko extends Achievements {
       other_count: number;
     };
   };
+
+  team: Team[];
+  battery: Battery[]
+}
+
+interface Team {
+  team_id: number;
+  ex_no: number;
+  point: number;
+  is_cleared: boolean;
+}
+
+interface Battery {
+  battery_id: number;
+  energy: number;
+  is_cleared: boolean;
 }
