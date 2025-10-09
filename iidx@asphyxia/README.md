@@ -168,3 +168,4 @@ Changelogs
 
 **v0.1.17**
   - Added Initial support for Pinky Crush
+  - Fixed where note\_size, lift\_cover, note\_beam\_size doesn't get saved in WebUI (EPOLIS ~)
