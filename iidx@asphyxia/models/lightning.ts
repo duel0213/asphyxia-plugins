@@ -169,8 +169,8 @@ export const lm_settings_new = {
 
   keyboard_kind: 10, // epolis //
 
-  brightness: 2,
-  brightness_concent: 2, // sparkle shower //
+  brightness: 0,
+  brightness_concent: 0, // sparkle shower //
 
   assistant_disp_type: 0,
   assistant_last_tab: 0,
@@ -180,4 +180,5 @@ export const lm_settings_new = {
 export const lm_customdata = {
   premium_skin: 0, // Icons //
   premium_bg: 0, // Background (epolis) //
+  premium_bg_concent: 0, // Background [Concentration Mode] (sparkle shower) //
 }

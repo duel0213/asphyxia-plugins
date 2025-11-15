@@ -27,7 +27,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
-  let type = version < 33 ? "s16" as const : "s32" as const;
+  let arrayType = version < 33 ? "s16" as const : "s32" as const;
   if (version == 14 || version == 15) {
     let result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
@@ -91,8 +91,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
       if (version == 16) score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
       else score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      m.push(K.ARRAY(arrayType, score_data));
 
-      m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [temp_mid, res.cArray[0]]));
     });
 
@@ -100,7 +100,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       if (_.isNaN(rival_refids[i][0])) continue;
 
       const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
-        { collection: "score", }
+        { collection: "score" }
       );
 
       rival_score.forEach((res: score) => {
@@ -110,8 +110,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
         if (version == 16) score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
         else score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-
-        m.push(K.ARRAY("s16", score_data));
+        m.push(K.ARRAY(arrayType, score_data));
       });
     }
 
@@ -136,7 +135,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       if (mVersion > version) return;
 
       score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-      m.push(K.ARRAY(type, score_data));
+      m.push(K.ARRAY(arrayType, score_data));
 
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [res.mid, res.cArray[0]]));
     });
@@ -153,7 +152,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
         if (mVersion > version) return;
 
         score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-        m.push(K.ARRAY(type, score_data));
+        m.push(K.ARRAY(arrayType, score_data));
       });
     }
 
@@ -176,7 +175,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
               name3: res.names[3],
               name4: res.names[4],
             }),
-            detail: K.ARRAY(type, [res.mid, ...res.clflgs, ...res.scores])
+            detail: K.ARRAY(arrayType, [res.mid, ...res.clflgs, ...res.scores])
           });
         });
       } else {
@@ -190,7 +189,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
               name1: res.names[2],
               name2: res.names[3],
             }),
-            detail: K.ARRAY("s16", [res.mid, ...indices.map(i => res.clflgs[i]), ...indices.map(i => res.scores[i])])
+            detail: K.ARRAY(arrayType, [res.mid, ...indices.map(i => res.clflgs[i]), ...indices.map(i => res.scores[i])])
           });
         });
       }

@@ -337,47 +337,11 @@ export const pccommon: EPR = async (info, data, send) => {
           season: [
             {
               "@attr": {
-                season: String(0),
+                season: String(0), // 0 -> 4 //
                 s_m: String(0),
                 s_f: String(0),
                 e_m: String(0),
                 e_f: String(0),
-              }
-            },
-            {
-              "@attr": {
-                season: String(1),
-                s_m: String(1),
-                s_f: String(0),
-                e_m: String(0),
-                e_f: String(0),
-              }
-            },
-            {
-              "@attr": {
-                season: String(2),
-                s_m: String(1),
-                s_f: String(1),
-                e_m: String(0),
-                e_f: String(0),
-              }
-            },
-            {
-              "@attr": {
-                season: String(3),
-                s_m: String(1),
-                s_f: String(1),
-                e_m: String(1),
-                e_f: String(0),
-              }
-            },
-            {
-              "@attr": {
-                season: String(4),
-                s_m: String(1),
-                s_f: String(1),
-                e_m: String(1),
-                e_f: String(1),
               }
             }
           ]
@@ -388,8 +352,40 @@ export const pccommon: EPR = async (info, data, send) => {
         lane_gacha: {},
         tourism_booster: {},
         disable_same_triger: K.ATTR({ frame: String(0) }),
-        //fps_fix: {},
-        //fix_framerate: {},
+        fix_real: {},
+      });
+      break;
+    case 33:
+      result = Object.assign(result, {
+        movie_agreement: K.ATTR({ version: String(1) }),
+        license: {
+          string: K.ITEM("bin", Buffer.alloc(0)), // TODO:: figure out what this does (alloc size: 600) //
+        },
+        movie_upload: K.ATTR({ url: String(U.GetConfig("MovieUpload")) }),
+        vip_pass_black: {},
+        deller_bonus: K.ATTR({ open: String(1) }),
+        common_evnet: K.ATTR({ flg: String(-1) }),
+        /*system_voice: {
+          season: [
+            {
+              "@attr": {
+                season: String(0), // 0 -> 4 //
+                s_a: String(0),
+                s_b: String(0),
+                s_c: String(0),
+                e_a: String(0),
+                e_b: String(0),
+                e_c: String(0),
+              }
+            }
+          ]
+        },*/
+        play_video: {},
+        music_retry: {},
+        display_asio_logo: {},
+        lane_gacha: {},
+        tourism_booster: {},
+        disable_same_triger: K.ATTR({ frame: String(0) }),
         fix_real: {},
       });
       break;
@@ -637,6 +633,9 @@ export const pcget: EPR = async (info, data, send) => {
 
       lm_custom = lm_customdata;
     }
+    else if (version == 32 && _.isNil(lm_custom.premium_bg_concent)) { // temp //
+      lm_custom.premium_bg_concent = 0;
+    }
 
     // add missing djrank elements //
     if (version == 29 && _.isNil(pcdata.dr_sprank)) {
@@ -646,7 +645,6 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
     }
   }
-  
 
   // temporary solution until figure out why this happening on others //
   if (_.isNil(pcdata.orb)) {
@@ -5264,6 +5262,7 @@ export const pcsave: EPR = async (info, data, send) => {
       let skinData = version < 33 ? $(data).elements("tdjskin_equip") : $(data).elements("vskin_equip");
       let premium_skin;
       let premium_bg;
+      let premium_bg_concent;
 
       skinData.forEach((res) => {
         switch (Number(res.attr().skin_id)) {
@@ -5272,6 +5271,9 @@ export const pcsave: EPR = async (info, data, send) => {
             break;
           case 1:
             premium_bg = Number(res.attr().skin_no);
+            break;
+          case 2:
+            premium_bg_concent = Number(res.attr().skin_no);
             break;
         }
       });
@@ -5286,6 +5288,7 @@ export const pcsave: EPR = async (info, data, send) => {
           $set: {
             premium_skin,
             premium_bg,
+            premium_bg_concent,
           }
         });
     }
