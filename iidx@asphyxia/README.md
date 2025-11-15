@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.17**
+Plugin Version: **STAGING**
 
 ---
 
@@ -24,6 +24,7 @@ Supported Versions
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
+  - beatmaniaIIDX 33 Sparkle Shower (TBD)
 
 ---
 
@@ -169,3 +170,6 @@ Changelogs
 **v0.1.17**
   - Added Initial support for Pinky Crush
   - Fixed where note\_size, lift\_cover, note\_beam\_size doesn't get saved in WebUI (EPOLIS ~)
+
+**STAGING**
+  - Added Initial support for Sparkle Shower

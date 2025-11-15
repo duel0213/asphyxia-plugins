@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId } from "../util";
@@ -482,6 +482,12 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 32:
       pcdata = IIDX32_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 33:
+      pcdata = IIDX33_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
@@ -1711,6 +1717,7 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     switch (version) {
+      case 33:
       case 32:
         result = Object.assign(result, {
           fsArray,
@@ -1866,6 +1873,12 @@ export const pctakeover: EPR = async (info, data, send) => {
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
       break;
+    case 33:
+      pcdata = IIDX33_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
 
     default:
       return send.deny();
@@ -1972,8 +1985,8 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasTDJSettings = !(_.isNil($(data).element("lightning_setting")));
   const hasMusicMemo = !(_.isNil($(data).element("music_memo")));
   const hasTowerData = !(_.isNil($(data).element("tower_data")));
-  const hasSkinData = !(_.isNil($(data).element("skin_equip")));
-  const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip")));
+  const hasSkinData = !(_.isNil($(data).element("skin_equip"))) || !(_.isNil($(data).element("pskin_equip")));
+  const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip"))) || !(_.isNil($(data).element("vskin_equip")));
   const hasMusicFilter = !(_.isNil($(data).element("music_filter")));
   const hasBadgeData = !(_.isNil($(data).element("badge")));
   const hasActivityData = !(_.isNil($(data).element("activity_data")));
@@ -1995,6 +2008,18 @@ export const pcsave: EPR = async (info, data, send) => {
       lm_settings.light = $(data).element("lightning_setting").numbers("light");
       lm_settings.concentration = $(data).element("lightning_setting").number("concentration");
 
+      if (version >= 31) {
+        lm_settings.keyboard_kind = Number($(data).attr("lightning_setting").keyboard_kind);
+        lm_settings.brightness = version < 33 ? Number($(data).attr("lightning_setting").brightness) : Number($(data).attr("lightning_setting").brightness_bg);
+
+        if (version >= 33) {
+          lm_settings.brightness_concent = Number($(data).attr("lightning_setting").brightness_concentration);
+          lm_settings.assistant_disp_type = Number($(data).attr("lightning_setting").assistant_disp_type);
+          lm_settings.assistant_last_tab = Number($(data).attr("lightning_setting").assistant_last_tab);
+          lm_settings.assistant_chara = Number($(data).attr("lightning_setting").assistant_chara);
+        }
+      }
+      
       await DB.Upsert<lightning_settings>(
         refid,
         {
@@ -3786,7 +3811,8 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.present_orb += Number($(data).attr("orb_data").present_orb);
     }
 
-    // skin_customize_flg (attr: skin_frame_flg, skin_bgm_flg, ...) //
+    // skin_customize_flg, pskin_customize_flg (attr: skin_frame_flg, skin_bgm_flg, ...) //
+    // tdjskin_customize_flg, vskin_customize_flg //
 
     // TODO:: fix event saving, these event savings hasn't fully tested //
     if (hasEventData) {
@@ -3981,6 +4007,10 @@ export const pcsave: EPR = async (info, data, send) => {
       pcdata.category = Number($(data).attr().category);
       pcdata.bgnflg = Number($(data).attr().bgnflg);
       pcdata.movie_thumbnail = Number($(data).attr().movie_thumbnail);
+    }
+    if (version >= 32) {
+      pcdata.naviflg = Number($(data).attr().naviflg);
+      pcdata.bgnasst = Number($(data).attr().bgnasst);
     }
 
     if (cltype == 0) {
@@ -5111,13 +5141,13 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (hasActivityData) {
       const activityData = $(data).element("activity_data");
-      const play_style = Number($(data).attr("activity_data").play_style);
-      let music_num = Number($(data).attr("activity_data").music_num);
-      let play_time = Number($(data).attr("activity_data").play_time);
-      let keyboard_num = Number($(data).attr("activity_data").keyboard_num);
-      let scratch_num = Number($(data).attr("activity_data").scratch_num);
-      let clear_update_num = $(data).numbers("activity_data.clear_update_num");
-      let score_update_num = $(data).numbers("activity_data.score_update_num");
+      const play_style = Number(activityData.attr().play_style);
+      let music_num = Number(activityData.attr().music_num);
+      let play_time = Number(activityData.attr().play_time);
+      let keyboard_num = Number(activityData.attr().keyboard_num);
+      let scratch_num = Number(activityData.attr().scratch_num);
+      let clear_update_num = activityData.numbers("clear_update_num");
+      let score_update_num = activityData.numbers("score_update_num");
 
       const date = new Date();
       const monthStr = `${date.getMonth() + 1}`.padStart(2, "0");
@@ -5164,7 +5194,7 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (hasSkinData) {
-      let skinData = $(data).elements("skin_equip");
+      let skinData = version < 33 ? $(data).elements("skin_equip") : $(data).elements("pskin_equip");
       let note_burst, bomb_size, turntable, judge_font,
         note_skin, note_size, lane_cover, pacemaker_cover,
         lift_cover, note_beam, note_beam_size, full_combo_splash, frame;
@@ -5231,7 +5261,7 @@ export const pcsave: EPR = async (info, data, send) => {
     }
 
     if (isTDJ && hasTDJSkinData) {
-      let skinData = $(data).elements("tdjskin_equip");
+      let skinData = version < 33 ? $(data).elements("tdjskin_equip") : $(data).elements("vskin_equip");
       let premium_skin;
       let premium_bg;
 

@@ -14,7 +14,13 @@ export interface lightning_settings {
   concentration: number;
 
   keyboard_kind: number; // epolis //
+
   brightness: number;
+  brightness_concent: number; // sparkle shower ///
+
+  assistant_disp_type: number; // sparkle shower ///
+  assistant_last_tab: number;
+  assistant_chara: number;
 }
 
 export interface lightning_playdata {
@@ -162,7 +168,13 @@ export const lm_settings_new = {
   concentration: 0,
 
   keyboard_kind: 10, // epolis //
+
   brightness: 2,
+  brightness_concent: 2, // sparkle shower //
+
+  assistant_disp_type: 0,
+  assistant_last_tab: 0,
+  assistant_chara: 0,
 }
 
 export const lm_customdata = {

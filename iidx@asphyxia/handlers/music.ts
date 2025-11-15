@@ -27,6 +27,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
+  let type = version < 33 ? "s16" as const : "s32" as const;
   if (version == 14 || version == 15) {
     let result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
@@ -135,8 +136,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
       if (mVersion > version) return;
 
       score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      m.push(K.ARRAY(type, score_data));
 
-      m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [res.mid, res.cArray[0]]));
     });
 
@@ -152,8 +153,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
         if (mVersion > version) return;
 
         score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-
-        m.push(K.ARRAY("s16", score_data));
+        m.push(K.ARRAY(type, score_data));
       });
     }
 
@@ -176,7 +176,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
               name3: res.names[3],
               name4: res.names[4],
             }),
-            detail: K.ARRAY("s16", [res.mid, ...res.clflgs, ...res.scores])
+            detail: K.ARRAY(type, [res.mid, ...res.clflgs, ...res.scores])
           });
         });
       } else {

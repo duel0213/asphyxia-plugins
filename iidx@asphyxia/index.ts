@@ -556,6 +556,7 @@ export function register() {
     R.Route(`IIDX30${method}`, handler);
     R.Route(`IIDX31${method}`, handler);
     R.Route(`IIDX32${method}`, handler);
+    R.Route(`IIDX33${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);

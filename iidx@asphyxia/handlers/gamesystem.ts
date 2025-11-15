@@ -16,23 +16,6 @@ export const gssysteminfo: EPR = async (info, data, send) => {
     arena_cpu_define: [],
   }
 
-  // following datas are made up needs to figure out correct way to do it //
-  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json", "utf-8"));
-  if (!_.isNil(music_open[version])) {
-    result = Object.assign(result, { music_open: [] });
-
-    Object.keys(music_open).forEach(v => {
-      Object.keys(music_open[v]).forEach(m => {
-        if (Number(v) > version) return;
-
-        result.music_open.push({
-          music_id: K.ITEM("s32", Number(m)),
-          kind: K.ITEM("s32", music_open[v][m].kind),
-        });
-      });
-    });
-  }
-
   switch (version) {
     case 32:
       result.arena_schedule.phase = K.ITEM("u8", 3);
@@ -40,33 +23,6 @@ export const gssysteminfo: EPR = async (info, data, send) => {
 
     case 31:
       result.arena_schedult = Object.assign(result.arena_schedule, { rule_type: K.ITEM("u8", 0) }); // arena rule for online //
-
-      result = Object.assign(result, { grade_course: [] });
-
-      // following datas are made up needs to figure out correct way to do it //
-      let grade = JSON.parse(await IO.ReadFile("data/grade.json", "utf-8"));
-      if (!_.isNil(grade[version])) {
-        Object.keys(grade[version]).forEach(s => {
-          Object.keys(grade[version][s]).forEach(c => {
-            result.grade_course.push({
-              play_style: K.ITEM("s32", Number(s)),
-              grade_id: K.ITEM("s32", Number(c)),
-              is_valid: K.ITEM("bool", true),
-              music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
-              class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
-              music_id_1: K.ITEM("s32", grade[version][s][c].music_id[1]),
-              class_id_1: K.ITEM("s32", grade[version][s][c].class_id[1]),
-              music_id_2: K.ITEM("s32", grade[version][s][c].music_id[2]),
-              class_id_2: K.ITEM("s32", grade[version][s][c].class_id[2]),
-              music_id_3: K.ITEM("s32", grade[version][s][c].music_id[3]),
-              class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
-              index: K.ITEM("s32", result.grade_course.length),
-              cube_num: K.ITEM("s32", 0),
-              kind: K.ITEM("s32", grade[version][s][c].kind),
-            });
-          });
-        });
-      }
 
     default:
       break;
@@ -101,6 +57,60 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       });
     }
   }
+
+  // following datas are made up needs to figure out correct way to do it //
+  let music_open = JSON.parse(await IO.ReadFile("data/music_open.json", "utf-8"));
+  if (!_.isNil(music_open[version])) {
+    result = Object.assign(result, { music_open: [] });
+
+    Object.keys(music_open).forEach(v => {
+      Object.keys(music_open[v]).forEach(m => {
+        if (Number(v) > version) return;
+
+        result.music_open.push({
+          music_id: K.ITEM("s32", Number(m)),
+          kind: K.ITEM("s32", music_open[v][m].kind),
+        });
+      });
+    });
+  }
+
+  if (version >= 31) {
+    result = Object.assign(result, { grade_course: [] });
+    let grade = JSON.parse(await IO.ReadFile("data/grade.json", "utf-8")); // following datas are made up needs to figure out correct way to do it //
+    if (!_.isNil(grade[version])) {
+      Object.keys(grade[version]).forEach(s => {
+        Object.keys(grade[version][s]).forEach(c => {
+          result.grade_course.push({
+            play_style: K.ITEM("s32", Number(s)),
+            grade_id: K.ITEM("s32", Number(c)),
+            is_valid: K.ITEM("bool", true),
+            music_id_0: K.ITEM("s32", grade[version][s][c].music_id[0]),
+            class_id_0: K.ITEM("s32", grade[version][s][c].class_id[0]),
+            music_id_1: K.ITEM("s32", grade[version][s][c].music_id[1]),
+            class_id_1: K.ITEM("s32", grade[version][s][c].class_id[1]),
+            music_id_2: K.ITEM("s32", grade[version][s][c].music_id[2]),
+            class_id_2: K.ITEM("s32", grade[version][s][c].class_id[2]),
+            music_id_3: K.ITEM("s32", grade[version][s][c].music_id[3]),
+            class_id_3: K.ITEM("s32", grade[version][s][c].class_id[3]),
+            index: K.ITEM("s32", result.grade_course.length),
+            cube_num: K.ITEM("s32", 0),
+            kind: K.ITEM("s32", grade[version][s][c].kind),
+          });
+        });
+      });
+    }
+  }
+
+  /*
+  if (version >= 33) {
+    result = Object.assign(result, { leggendaria_open: [] });
+    result.leggendaria_open.push({
+      music_id: K.ITEM("s32", 0),
+      kind: K.ITEM("s32", 0),
+    });
+  }
+  */
 
   switch (version) {
     case 29:
@@ -158,14 +168,21 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       break;
     case 32:
       result = Object.assign(result, {
-        Event1Value: K.ATTR({ val: String(U.GetConfig("pc_event")) }), // TEST //
-        Event1Phase: K.ATTR({ val: String(U.GetConfig("pc_event1")) }), // TEST //
-        Event2Phase: K.ATTR({ val: String(U.GetConfig("pc_event2")) }), // TEST //
-        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("pc_extraboss")) }), // TEST //
+        Event1Value: K.ATTR({ val: String(U.GetConfig("pc_event")) }),
+        Event1Phase: K.ATTR({ val: String(U.GetConfig("pc_event1")) }),
+        Event2Phase: K.ATTR({ val: String(U.GetConfig("pc_event2")) }),
+        ExtraBossEventPhase: K.ATTR({ val: String(U.GetConfig("pc_extraboss")) }),
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
         isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
+      });
+      break;
+    case 33:
+      result = Object.assign(result, {
+        isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
+        beat: K.ATTR({ val: String(Number(U.GetConfig("BeatPhase"))) }),
       });
       break;
 
