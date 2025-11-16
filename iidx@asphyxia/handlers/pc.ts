@@ -3984,31 +3984,32 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.s_tsujigiri_disp = Number($(data).attr().s_tsujigiri_disp);
     pcdata.d_tsujigiri_disp = Number($(data).attr().d_tsujigiri_disp);
 
-    if (version >= 28) {
-      pcdata.ngrade = Number($(data).attr().ngrade);
-    }
-    if (version >= 29) {
-      pcdata.s_auto_adjust = Number($(data).attr().s_auto_adjust);
-      pcdata.d_auto_adjust = Number($(data).attr().d_auto_adjust);
-    }
-    if (version >= 30) {
-      pcdata.s_timing_split = Number($(data).attr().s_timing_split);
-      pcdata.d_timing_split = Number($(data).attr().d_timing_split);
-      pcdata.s_visualization = Number($(data).attr().s_visualization);
-      pcdata.d_visualization = Number($(data).attr().d_visualization);
-    }
-    if (version >= 31) {
-      pcdata.s_classic_hispeed = Number($(data).attr().s_classic_hispeed);
-      pcdata.d_classic_hispeed = Number($(data).attr().d_classic_hispeed);
-    }
-    if (version >= 32) {
-      pcdata.category = Number($(data).attr().category);
-      pcdata.bgnflg = Number($(data).attr().bgnflg);
-      pcdata.movie_thumbnail = Number($(data).attr().movie_thumbnail);
-    }
-    if (version >= 32) {
-      pcdata.naviflg = Number($(data).attr().naviflg);
-      pcdata.bgnasst = Number($(data).attr().bgnasst);
+    switch (version) {
+      case 33:
+        pcdata.naviflg = Number($(data).attr().naviflg);
+        pcdata.bgnasst = Number($(data).attr().bgnasst);
+        pcdata.s_laneobj_brignt = Number($(data).attr().s_laneobj_brignt);
+        pcdata.d_laneobj_brignt = Number($(data).attr().d_laneobj_brignt);
+      case 32:
+        pcdata.category = Number($(data).attr().category);
+        pcdata.bgnflg = Number($(data).attr().bgnflg);
+        pcdata.movie_thumbnail = Number($(data).attr().movie_thumbnail);
+      case 31:
+        pcdata.s_classic_hispeed = Number($(data).attr().s_classic_hispeed);
+        pcdata.d_classic_hispeed = Number($(data).attr().d_classic_hispeed);
+      case 30:
+        pcdata.s_timing_split = Number($(data).attr().s_timing_split);
+        pcdata.d_timing_split = Number($(data).attr().d_timing_split);
+        pcdata.s_visualization = Number($(data).attr().s_visualization);
+        pcdata.d_visualization = Number($(data).attr().d_visualization);
+      case 29:
+        pcdata.s_auto_adjust = Number($(data).attr().s_auto_adjust);
+        pcdata.d_auto_adjust = Number($(data).attr().d_auto_adjust);
+      case 28:
+        pcdata.ngrade = Number($(data).attr().ngrade);
+
+      default:
+        break;
     }
 
     if (cltype == 0) {
@@ -4753,333 +4754,128 @@ export const pcsave: EPR = async (info, data, send) => {
       let badge_data = [];
       let badge = $(data).element("badge");
 
-      switch (version) {
-        case 30:
-          if (!(_.isNil(badge.element("today_recommend")))) {
-            let badgeInfo = {
-              category_id: "today_recommend",
-              flg_id: 0,
-              flg: Number(badge.element("today_recommend").attr().flg),
-            };
+      if (!(_.isNil(badge.element("step_up")))) {
+        badge.elements("step_up").forEach((res) => {
+          let badgeInfo = {
+            category_id: "step_up",
+            flg_id: Number(res.attr().flg_id),
+            flg: Number(res.attr().flg),
+          };
 
-            badge_data.push(badgeInfo);
-          }
+          badge_data.push(badgeInfo);
+        });
+      }
 
-          if (!(_.isNil(badge.element("weekly_ranking")))) {
-            let badgeInfo = {
-              category_id: "weekly_ranking",
-              flg_id: 0,
-              flg: Number(badge.element("weekly_ranking").attr().flg),
-            };
+      if (!(_.isNil(badge.element("today_recommend")))) {
+        let badgeInfo = {
+          category_id: "today_recommend",
+          flg_id: 0,
+          flg: Number(badge.element("today_recommend").attr().flg),
+        };
 
-            badge_data.push(badgeInfo);
-          }
+        badge_data.push(badgeInfo);
+      }
 
-          if (!(_.isNil(badge.element("visitor")))) {
-            badge.elements("visitor").forEach((res) => {
-              let badgeInfo = {
-                category_id: "visitor",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
+      if (!(_.isNil(badge.element("weekly_ranking")))) {
+        let badgeInfo = {
+          category_id: "weekly_ranking",
+          flg_id: 0,
+          flg: Number(badge.element("weekly_ranking").attr().flg),
+        };
 
-              badge_data.push(badgeInfo);
-            });
-          }
+        badge_data.push(badgeInfo);
+      }
 
-          if (!(_.isNil(badge.element("notes_radar")))) {
-            badge.elements("notes_radar").forEach((res) => {
-              let badgeInfo = {
-                category_id: "notes_radar",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
+      if (!(_.isNil(badge.element("visitor")))) {
+        badge.elements("visitor").forEach((res) => {
+          let badgeInfo = {
+            category_id: "visitor",
+            flg_id: Number(res.attr().flg_id),
+            flg: Number(res.attr().flg),
+          };
 
-              badge_data.push(badgeInfo);
-            });
-          }
+          badge_data.push(badgeInfo);
+        });
+      }
 
-          if (!(_.isNil(badge.element("world_tourism")))) {
-            let badgeInfo = {
-              category_id: "world_tourism",
-              flg_id: 0,
-              flg: Number(badge.element("world_tourism").attr().flg),
-            };
+      if (!(_.isNil(badge.element("notes_radar")))) {
+        badge.elements("notes_radar").forEach((res) => {
+          let badgeInfo = {
+            category_id: "notes_radar",
+            flg_id: Number(res.attr().flg_id),
+            flg: Number(res.attr().flg),
+          };
 
-            badge_data.push(badgeInfo);
-          }
+          badge_data.push(badgeInfo);
+        });
+      }
 
-          if (!(_.isNil(badge.element("event1")))) {
-            badge.elements("event1").forEach((res) => {
-              let badgeInfo = {
-                category_id: "event1",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
+      if (!(_.isNil(badge.element("tsujigiri")))) {
+        let badgeInfo = {
+          category_id: "tsujigiri",
+          flg_id: 0,
+          flg: Number(badge.element("tsujigiri").attr().flg),
+        };
 
-              badge_data.push(badgeInfo);
-            });
-          }
+        badge_data.push(badgeInfo);
+      }
 
-          if (!(_.isNil(badge.element("arena")))) {
-            badge.elements("arena").forEach((res) => {
-              let badgeInfo = {
-                category_id: "arena",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
+      if (!(_.isNil(badge.element("iidx_exam")))) {
+        let badgeInfo = {
+          category_id: "iidx_exam",
+          flg_id: 0,
+          flg: Number(badge.element("iidx_exam").attr().flg),
+        };
 
-              badge_data.push(badgeInfo);
-            });
-          }
+        badge_data.push(badgeInfo);
+      }
 
-          if (!(_.isNil(badge.element("iidx_exam")))) {
-            let badgeInfo = {
-              category_id: "iidx_exam",
-              flg_id: 0,
-              flg: Number(badge.element("iidx_exam").attr().flg),
-            };
+      if (!(_.isNil(badge.element("world_tourism")))) {
+        let badgeInfo = {
+          category_id: "world_tourism",
+          flg_id: 0,
+          flg: Number(badge.element("world_tourism").attr().flg),
+        };
 
-            badge_data.push(badgeInfo);
-          }
-          break;
-        case 31:
-          if (!(_.isNil(badge.element("step_up")))) {
-            badge.elements("step_up").forEach((res) => {
-              let badgeInfo = {
-                category_id: "step_up",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
+        badge_data.push(badgeInfo);
+      }
 
-              badge_data.push(badgeInfo);
-            });
-          }
+      if (!(_.isNil(badge.element("arena")))) {
+        badge.elements("arena").forEach((res) => {
+          let badgeInfo = {
+            category_id: "arena",
+            flg_id: Number(res.attr().flg_id),
+            flg: Number(res.attr().flg),
+          };
 
-          if (!(_.isNil(badge.element("today_recommend")))) {
-            let badgeInfo = {
-              category_id: "today_recommend",
-              flg_id: 0,
-              flg: Number(badge.element("today_recommend").attr().flg),
-            };
+          badge_data.push(badgeInfo);
+        });
+      }
 
-            badge_data.push(badgeInfo);
-          }
+      if (!(_.isNil(badge.element("event1")))) {
+        badge.elements("event1").forEach((res) => {
+          let flg_id = _.isNil(res.attr().flg_id) ? 0 : Number(res.attr().flg_id);
+          let badgeInfo = {
+            category_id: "event1",
+            flg_id: flg_id,
+            flg: Number(res.attr().flg),
+          };
 
-          if (!(_.isNil(badge.element("weekly_ranking")))) {
-            let badgeInfo = {
-              category_id: "weekly_ranking",
-              flg_id: 0,
-              flg: Number(badge.element("weekly_ranking").attr().flg),
-            };
+          badge_data.push(badgeInfo);
+        });
+      }
 
-            badge_data.push(badgeInfo);
-          }
+      if (!(_.isNil(badge.element("event2")))) {
+        badge.elements("event2").forEach((res) => {
+          let flg_id = _.isNil(res.attr().flg_id) ? 0 : Number(res.attr().flg_id);
+          let badgeInfo = {
+            category_id: "event2",
+            flg_id: flg_id,
+            flg: Number(res.attr().flg),
+          };
 
-          if (!(_.isNil(badge.element("visitor")))) {
-            badge.elements("visitor").forEach((res) => {
-              let badgeInfo = {
-                category_id: "visitor",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("notes_radar")))) {
-            badge.elements("notes_radar").forEach((res) => {
-              let badgeInfo = {
-                category_id: "notes_radar",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("tsujigiri")))) {
-            let badgeInfo = {
-              category_id: "tsujigiri",
-              flg_id: 0,
-              flg: Number(badge.element("tsujigiri").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("iidx_exam")))) {
-            let badgeInfo = {
-              category_id: "iidx_exam",
-              flg_id: 0,
-              flg: Number(badge.element("iidx_exam").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("world_tourism")))) {
-            let badgeInfo = {
-              category_id: "world_tourism",
-              flg_id: 0,
-              flg: Number(badge.element("world_tourism").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("event1")))) {
-            badge.elements("event1").forEach((res) => {
-              let badgeInfo = {
-                category_id: "event1",
-                flg_id: 0,
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("arena")))) {
-            badge.elements("arena").forEach((res) => {
-              let badgeInfo = {
-                category_id: "arena",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("event2")))) {
-            badge.elements("event2").forEach((res) => {
-              let badgeInfo = {
-                category_id: "event2",
-                flg_id: 0,
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-          break;
-        case 32:
-          if (!(_.isNil(badge.element("step_up")))) {
-            badge.elements("step_up").forEach((res) => {
-              let badgeInfo = {
-                category_id: "step_up",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("today_recommend")))) {
-            let badgeInfo = {
-              category_id: "today_recommend",
-              flg_id: 0,
-              flg: Number(badge.element("today_recommend").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("weekly_ranking")))) {
-            let badgeInfo = {
-              category_id: "weekly_ranking",
-              flg_id: 0,
-              flg: Number(badge.element("weekly_ranking").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("visitor")))) {
-            badge.elements("visitor").forEach((res) => {
-              let badgeInfo = {
-                category_id: "visitor",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("notes_radar")))) {
-            badge.elements("notes_radar").forEach((res) => {
-              let badgeInfo = {
-                category_id: "notes_radar",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("tsujigiri")))) {
-            let badgeInfo = {
-              category_id: "tsujigiri",
-              flg_id: 0,
-              flg: Number(badge.element("tsujigiri").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("iidx_exam")))) {
-            let badgeInfo = {
-              category_id: "iidx_exam",
-              flg_id: 0,
-              flg: Number(badge.element("iidx_exam").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("world_tourism")))) {
-            let badgeInfo = {
-              category_id: "world_tourism",
-              flg_id: 0,
-              flg: Number(badge.element("world_tourism").attr().flg),
-            };
-
-            badge_data.push(badgeInfo);
-          }
-
-          if (!(_.isNil(badge.element("event1")))) {
-            badge.elements("event1").forEach((res) => {
-              let badgeInfo = {
-                category_id: "event1",
-                flg_id: 0,
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-
-          if (!(_.isNil(badge.element("arena")))) {
-            badge.elements("arena").forEach((res) => {
-              let badgeInfo = {
-                category_id: "arena",
-                flg_id: Number(res.attr().flg_id),
-                flg: Number(res.attr().flg),
-              };
-
-              badge_data.push(badgeInfo);
-            });
-          }
-          break;
-
-        default:
-          break;
+          badge_data.push(badgeInfo);
+        });
       }
 
       badge_data.forEach((res) => {
@@ -5195,7 +4991,8 @@ export const pcsave: EPR = async (info, data, send) => {
       let skinData = version < 33 ? $(data).elements("skin_equip") : $(data).elements("pskin_equip");
       let note_burst, bomb_size, turntable, judge_font,
         note_skin, note_size, lane_cover, pacemaker_cover,
-        lift_cover, note_beam, note_beam_size, full_combo_splash, frame;
+        lift_cover, note_beam, note_beam_size, full_combo_splash,
+        frame;
 
       skinData.forEach((res) => {
         switch (Number(res.attr().skin_id)) {
@@ -5260,9 +5057,7 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (isTDJ && hasTDJSkinData) {
       let skinData = version < 33 ? $(data).elements("tdjskin_equip") : $(data).elements("vskin_equip");
-      let premium_skin;
-      let premium_bg;
-      let premium_bg_concent;
+      let premium_skin, premium_bg, premium_bg_concent;
 
       skinData.forEach((res) => {
         switch (Number(res.attr().skin_id)) {
