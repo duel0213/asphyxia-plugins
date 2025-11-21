@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING**
+Plugin Version: **STAGING [cac398]**
 
 ---
 
@@ -47,6 +47,8 @@ Known Issues
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
   - Some of licensed songs are locked behind (kinda solved with music\_open but needs to be verified)
   - Some of badges aren't saving in RESIDENT ~ (needs to figure out name to id)
+  - Some of records may have invalid MISS COUNT
+  - DJ TRAINING folder won't appear (this most likely requires mdb parsing)
 
 ---
 

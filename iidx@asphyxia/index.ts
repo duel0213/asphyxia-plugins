@@ -510,7 +510,6 @@ export function register() {
     default: 3,
   });
 
-  // TODO:: Make a list of customize items //
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {
       collection: "pcdata",

@@ -271,14 +271,24 @@ export const updateCustomSettings = async (data) => {
   }
 
   if (data.version > 27) {
+    let saveData = {
+      premium_skin: Number(data.lm_skin),
+      premium_bg: Number(data.lm_bg),
+    }
+
+    if (data.version >= 33) {
+      saveData = Object.assign(saveData, {
+        premium_bg_concent: Number(data.lm_bg_2),
+      });
+    }
+
     await DB.Upsert<lightning_custom>(data.refid, {
       collection: "lightning_custom",
       version: Number(data.version)
     },
     {
       $set: {
-        premium_skin: Number(data.lm_skin),
-        premium_bg: Number(data.lm_bg),
+        ...saveData
       }
     });
   }

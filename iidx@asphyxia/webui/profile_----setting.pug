@@ -231,9 +231,19 @@ div
         if lm_custom != null
           .field
             label.label Premium Area Skin
+            .control
               input.input(type="number" name="lm_skin", id="lm_skin", value=lm_custom.premium_skin)
+          .field
             label.label Premium Area Background
+            .control
               input.input(type="number" name="lm_bg", id="lm_bg", value=lm_custom.premium_bg)
+          .field
+            label.label Premium Area Background (Concentration Mode)
+            .control
+              if lm_custom.premium_bg_concent === undefined
+                input.input(type="number" name="lm_bg_2", id="lm_bg_2", value="0")
+              else
+                input.input(type="number" name="lm_bg_2", id="lm_bg_2", value=lm_custom.premium_bg_concent)
         .field
           button.button.is-primary(type="submit") 
             span.icon

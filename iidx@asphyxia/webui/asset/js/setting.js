@@ -68,9 +68,13 @@ $("#version").on("change", function () {
       if (data["lm_custom"] == null) {
         $("#lm_skin").val(0);
         $("#lm_bg").val(0);
+        $("#lm_bg_2").val(0);
       } else {
         $("#lm_skin").val(data["lm_custom"].premium_skin);
         $("#lm_bg").val(data["lm_custom"].premium_bg);
+
+        if (data["lm_custom"].premium_bg_concent == undefined) $("#lm_bg_2").val(0);
+        else $("#lm_bg_2").val(data["lm_custom"].premium_bg_concent);
       }
     },
     error: function () {

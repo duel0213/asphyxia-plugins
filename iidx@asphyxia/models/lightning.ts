@@ -38,6 +38,7 @@ export interface lightning_custom {
 
   premium_skin: number;
   premium_bg: number;
+  premium_bg_concent: number;
 }
 
 export interface eisei_grade {
