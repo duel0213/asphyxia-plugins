@@ -6,3 +6,42 @@ export interface badge {
   flg_id: number;
   flg: number;
 }
+
+export const badgeBaseMap: Record<string, number> = {
+  djLevel: 0,
+  clear: 1,
+  grade: 2,
+};
+
+export const badgeVersionMap: Record<number | "default", Record<string, number>> = {
+  30: {
+    visitor: 6,
+    notes_radar: 7,
+    world_tourism: 8,
+    event1: 9,
+  },
+  31: {
+    step_up: 3,
+    visitor: 6,
+    notes_radar: 7,
+    event1: 13,
+    event2: 16,
+  },
+  32: {
+    step_up: 3,
+    visitor: 6,
+    notes_radar: 7,
+    event1: 13,
+  },
+  33: {
+    step_up: 3,
+    visitor: 6,
+    notes_radar: 7,
+  },
+  default: {
+    step_up: 3,
+    visitor: 7,
+    notes_radar: 8,
+    world_tourism: 12,
+  },
+};

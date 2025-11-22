@@ -10,7 +10,7 @@ import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { expert } from "../models/ranking";
 import { blueboss } from "../models/event";
-import { badge } from "../models/badge";
+import { badge, badgeBaseMap, badgeVersionMap } from "../models/badge";
 import { extra_favorite } from "../models/favorite";
 import { activity, activity_mybest } from "../models/activity";
 import { extra_boss } from "../models/extraboss";
@@ -1192,162 +1192,21 @@ export const pcget: EPR = async (info, data, send) => {
     ***/
 
     if (version >= 30 && badge.length > 0) {
-      let djLevel, clear, grade, step_up, visitor, notes_radar, world_tourism, event1, event2;
+      const badgeData = {
+        ...badgeBaseMap,
+        ...(badgeVersionMap[version] ?? badgeVersionMap.default),
+      };
 
-      // default //
-      djLevel = badge.filter((res) => res.category_name === "djLevel");
-      djLevel.forEach((res) => {
-        bArray.push({
-          id: 0,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
+      badge.forEach(res => {
+        const id = badgeData[res.category_name];
+        if (id !== undefined) {
+          bArray.push({
+            id,
+            flg_id: res.flg_id,
+            flg: res.flg,
+          });
+        }
       });
-
-      clear = badge.filter((res) => res.category_name === "clear");
-      clear.forEach((res) => {
-        bArray.push({
-          id: 1,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
-
-      grade = badge.filter((res) => res.category_name === "grade");
-      grade.forEach((res) => {
-        bArray.push({
-          id: 2,
-          flg_id: res.flg_id,
-          flg: res.flg,
-        });
-      });
-
-      // visitor, notes_radar, world_tourism, step_up //
-      if (version == 33) { // TODO:: mapping others //
-        notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-        notes_radar.forEach((res) => {
-          bArray.push({
-            id: 7,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-      }
-      else if (version == 30) {
-        // this keep sending back on save //
-        // possibly wrong category_id but at least doesn't show as new badges //
-        visitor = badge.filter((res) => res.category_name === "visitor");
-        visitor.forEach((res) => {
-          bArray.push({
-            id: 6,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-
-        notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-        notes_radar.forEach((res) => {
-          bArray.push({
-            id: 7,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-
-        world_tourism = badge.filter((res) => res.category_name === "world_tourism");
-        world_tourism.forEach((res) => {
-          bArray.push({
-            id: 8,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-      }
-      else {
-        step_up = badge.filter((res) => res.category_name === "step_up");
-        step_up.forEach((res) => {
-          bArray.push({
-            id: 3,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-
-        // this keep sending back on save //
-        // possibly wrong category_id but at least doesn't show as new badges //
-        visitor = badge.filter((res) => res.category_name === "visitor");
-        visitor.forEach((res) => {
-          bArray.push({
-            id: 7,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-
-        notes_radar = badge.filter((res) => res.category_name === "notes_radar");
-        notes_radar.forEach((res) => {
-          bArray.push({
-            id: 8,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-
-        world_tourism = badge.filter((res) => res.category_name === "world_tourism");
-        world_tourism.forEach((res) => {
-          bArray.push({
-            id: 12,
-            flg_id: res.flg_id,
-            flg: res.flg,
-          });
-        });
-      }
-
-      // event //
-      switch (version) {
-        case 30:
-          event1 = badge.filter((res) => res.category_name === "event1");
-          event1.forEach((res) => {
-            bArray.push({
-              id: 9,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-          break;
-        case 31:
-          event1 = badge.filter((res) => res.category_name === "event1");
-          event1.forEach((res) => {
-            bArray.push({
-              id: 13,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-
-          event2 = badge.filter((res) => res.category_name === "event2");
-          event2.forEach((res) => {
-            bArray.push({
-              id: 16,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-          break;
-        case 32:
-          event1 = badge.filter((res) => res.category_name === "event1");
-          event1.forEach((res) => {
-            bArray.push({
-              id: 13,
-              flg_id: res.flg_id,
-              flg: res.flg,
-            });
-          });
-          break;
-
-        default:
-          break;
-      }
 
       bArray.sort((a, b) => a.id - b.id || a.flg_id - b.flg_id);
     }
