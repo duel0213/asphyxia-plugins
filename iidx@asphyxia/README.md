@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [afaf66]**
+Plugin Version: **STAGING [9d04c5]**
 
 ---
 

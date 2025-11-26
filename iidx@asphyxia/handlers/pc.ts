@@ -633,7 +633,7 @@ export const pcget: EPR = async (info, data, send) => {
 
       lm_custom = lm_customdata;
     }
-    else if (version == 32 && _.isNil(lm_custom.premium_bg_concent)) { // temp //
+    else if (version == 33 && _.isNil(lm_custom.premium_bg_concent)) { // temp //
       lm_custom.premium_bg_concent = 0;
     }
 
@@ -643,6 +643,11 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.dr_sppoint = IIDX29_pcdata.dr_sppoint;
       pcdata.dr_dprank = IIDX29_pcdata.dr_dprank;
       pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
+    }
+
+    if (version == 33 && _.isNil(custom.cn_color)) { // temp //
+      custom.cn_color = 0;
+      custom.cn_size = 0;
     }
   }
 
@@ -4862,7 +4867,7 @@ export const pcsave: EPR = async (info, data, send) => {
       let note_burst, bomb_size, turntable, judge_font,
         note_skin, note_size, lane_cover, pacemaker_cover,
         lift_cover, note_beam, note_beam_size, full_combo_splash,
-        frame;
+        frame, cn_color, cn_size;
 
       skinData.forEach((res) => {
         switch (Number(res.attr().skin_id)) {
@@ -4906,6 +4911,12 @@ export const pcsave: EPR = async (info, data, send) => {
           case 19:
             frame = Number(res.attr().skin_no);
             break;
+          case 20:
+            cn_color = Number(res.attr().skin_no);
+            break;
+          case 21:
+            cn_size = Number(res.attr().skin_no);
+            break;
         }
       });
 
@@ -4923,6 +4934,8 @@ export const pcsave: EPR = async (info, data, send) => {
       custom.note_beam_size = note_beam_size;
       custom.full_combo_splash = full_combo_splash;
       custom.frame = frame;
+      custom.cn_color = cn_color;
+      custom.cn_size = cn_size;
     }
 
     if (isTDJ && hasTDJSkinData) {
