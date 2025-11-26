@@ -143,6 +143,20 @@ div
               input.input(type="number" name="note_beam_size", id="note_beam_size", value="0")
             else
               input.input(type="number" name="note_beam_size", id="note_beam_size", value=custom.note_beam_size)
+        .field
+          label.label Charge Note Color
+          .control
+            if custom.cn_color === undefined
+              input.input(type="number" name="cn_color", id="cn_color", value="0")
+            else
+              input.input(type="number" name="cn_color", id="cn_color", value=custom.cn_color)
+        .field
+          label.label Charge Note Size
+          .control
+            if custom.cn_size === undefined
+              input.input(type="number" name="cn_size", id="cn_size", value="0")
+            else
+              input.input(type="number" name="cn_size", id="cn_size", value=custom.cn_size)
         //- APPEND SETTINGS
         .field
           label.label Rank Folder

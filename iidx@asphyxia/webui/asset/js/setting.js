@@ -39,6 +39,10 @@ $("#version").on("change", function () {
       else $("#lift_cover").val(data["custom"].lift_cover);
       if (data["custom"].note_beam_size == undefined) $("#note_beam_size").val(0);
       else $("#note_beam_size").val(data["custom"].note_beam_size);
+      if (data["custom"].cn_color == undefined) $("#cn_color").val(0);
+      else $("#cn_color").val(data["custom"].cn_color);
+      if (data["custom"].cn_size == undefined) $("#cn_size").val(0);
+      else $("#cn_size").val(data["custom"].cn_size);
 
       $("#rank_folder").prop("checked", data["custom"].rank_folder);
       $("#clear_folder").prop("checked", data["custom"].clear_folder);

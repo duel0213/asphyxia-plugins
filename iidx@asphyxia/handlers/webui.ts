@@ -228,6 +228,8 @@ export const updateCustomSettings = async (data) => {
     note_size: Number(data.note_size),
     lift_cover: Number(data.lift_cover),
     note_beam_size: Number(data.note_beam_size),
+    cn_color: Number(data.cn_color),
+    cn_size: Number(data.cn_size),
 
     rank_folder: StoB(data.rank_folder),
     clear_folder: StoB(data.clear_folder),
