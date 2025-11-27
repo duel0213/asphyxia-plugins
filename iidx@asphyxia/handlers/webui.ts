@@ -225,6 +225,9 @@ export const updateCustomSettings = async (data) => {
     bomb_size: Number(data.bomb_size),
     disable_hcn_color: StoB(data.disable_hcn_color),
     first_note_preview: Number(data.first_note_preview),
+    note_size: Number(data.note_size),
+    lift_cover: Number(data.lift_cover),
+    note_beam_size: Number(data.note_beam_size),
 
     rank_folder: StoB(data.rank_folder),
     clear_folder: StoB(data.clear_folder),

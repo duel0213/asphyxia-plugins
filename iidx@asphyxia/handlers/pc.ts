@@ -599,44 +599,48 @@ export const pcget: EPR = async (info, data, send) => {
   if (_.isNil(pcdata)) return send.deny();
 
   // migration //
-  if (_.isNil(custom.disable_beginner_option)) {
-    await DB.Upsert<custom>(refid,
-      {
-        collection: "custom",
-        version: version,
-      },
-      {
-        $set: {
-          disable_beginner_option: false,
+  {
+    // add disable_beginner_option //
+    if (_.isNil(custom.disable_beginner_option)) {
+      await DB.Upsert<custom>(refid,
+        {
+          collection: "custom",
+          version: version,
+        },
+        {
+          $set: {
+            disable_beginner_option: false,
+          }
         }
-      }
-    );
+      );
 
-    custom.disable_beginner_option = false;
+      custom.disable_beginner_option = false;
+    }
+
+    // add default lightning custom data //
+    if (version >= 28 && _.isNil(lm_custom)) {
+      await DB.Upsert<lightning_custom>(refid,
+        {
+          collection: "lightning_custom",
+          version: version,
+        },
+        {
+          $set: lm_customdata,
+        }
+      );
+
+      lm_custom = lm_customdata;
+    }
+
+    // add missing djrank elements //
+    if (version == 29 && _.isNil(pcdata.dr_sprank)) {
+      pcdata.dr_sprank = IIDX29_pcdata.dr_sprank;
+      pcdata.dr_sppoint = IIDX29_pcdata.dr_sppoint;
+      pcdata.dr_dprank = IIDX29_pcdata.dr_dprank;
+      pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
+    }
   }
-
-  // migration //
-  if (version >= 28 && _.isNil(lm_custom)) {
-    await DB.Upsert<lightning_custom>(refid,
-      {
-        collection: "lightning_custom",
-        version: version,
-      },
-      {
-        $set: lm_customdata,
-      }
-    );
-
-    lm_custom = lm_customdata;
-  }
-
-  // migration //
-  if (version == 29 && _.isNil(pcdata.dr_sprank)) {
-    pcdata.dr_sprank = IIDX29_pcdata.dr_sprank;
-    pcdata.dr_sppoint = IIDX29_pcdata.dr_sppoint;
-    pcdata.dr_dprank = IIDX29_pcdata.dr_dprank;
-    pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
-  }
+  
 
   // temporary solution until figure out why this happening on others //
   if (_.isNil(pcdata.orb)) {
