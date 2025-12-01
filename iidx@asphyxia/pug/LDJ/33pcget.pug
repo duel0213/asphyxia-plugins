@@ -39,7 +39,8 @@ IIDX33pc(status="0")
     - for (let d of dArray)
       g(__type="u8" __count="4") #{d[0]} #{d[1]} #{d[2]} #{d[3]}
   pskin(__type="s32" __count="22") #{appendsettings} #{custom.note_burst} #{custom.bomb_size} #{custom.turntable} #{custom.judge_font} #{custom.note_skin} #{custom.note_size} #{Number(custom.disable_musicpreview)} #{Number(custom.vefx_lock)} #{custom.effect} #{custom.menu_music} #{Number(custom.disable_hcn_color)} #{custom.first_note_preview} #{custom.lane_cover} #{custom.pacemaker_cover} #{custom.lift_cover} #{custom.note_beam} #{custom.note_beam_size} #{custom.full_combo_splash} #{custom.frame} #{custom.cn_color} #{custom.cn_size}
-  vskin(__type="s32" __count="4") #{lm_custom.premium_skin} #{lm_custom.premium_bg} #{lm_custom.premium_bg_concent} 0
+  vskin(__type="s32" __count="4") #{lm_custom.premium_skin} #{lm_custom.premium_bg} #{lm_custom.premium_bg_concent} #{lm_custom.entry_bg}
+  vskin_customize_setting(entry_bg_brightness=lm_custom.entry_bg_brightness)
   qprodata(__type="u32" __count="6") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body} #{custom.qpro_back}
   rlist
     - for (let rd of rArray)
@@ -52,13 +53,13 @@ IIDX33pc(status="0")
     radar_score(__type="s32" __count="6") #{pcdata.nr_spradar[0]} #{pcdata.nr_spradar[1]} #{pcdata.nr_spradar[2]} #{pcdata.nr_spradar[3]} #{pcdata.nr_spradar[4]} #{pcdata.nr_spradar[5]}
   notes_radar(style="1")
     radar_score(__type="s32" __count="6") #{pcdata.nr_dpradar[0]} #{pcdata.nr_dpradar[1]} #{pcdata.nr_dpradar[2]} #{pcdata.nr_dpradar[3]} #{pcdata.nr_dpradar[4]} #{pcdata.nr_dpradar[5]}
-  //-dj_training
-    sp(tier="" step="")
-      folder(index="" tier="" part="")
-        music(index="" music_id="" class_id="" cleartype="")
-    dp(tier="" step="")
-      folder(index="" tier="" part="")
-        music(index="" music_id="" class_id="" cleartype="")
+  dj_training
+    sp(tier="0" step="0")
+      //-folder(index="" tier="" part="") [loop]
+        music(index="" music_id="" class_id="" cleartype="") [loop]
+    dp(tier="0" step="0")
+      //-folder(index="" tier="" part="") [loop]
+        music(index="" music_id="" class_id="" cleartype="") [loop]
   visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   step(enemy_damage=pcdata.st_enemy_damage progress=pcdata.st_progress total_point=pcdata.st_total_point enemy_defeat_flg=pcdata.st_enemy_defeat_flg sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_level_h=pcdata.st_sp_level_h dp_level_h=pcdata.st_dp_level_h sp_level_exh=pcdata.st_sp_level_exh dp_level_exh=pcdata.st_dp_level_exh sp_fluctuation=pcdata.st_sp_fluctuation dp_fluctuation=pcdata.st_dp_fluctuation mission_clear_num=pcdata.st_mission_clear_num sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay tips_read_list=pcdata.st_tips_read_list)
     is_track_ticket(__type="bool") #{pcdata.st_is_track_ticket}
@@ -77,8 +78,6 @@ IIDX33pc(status="0")
   movie_agreement(agreement_version="1")
   movie_setting
     hide_name(__type="bool") 0
-  - for (let ebe of ebeArray)
-    extra_boss_event(phase=ebe.phase extra=ebe.extra extra_b=ebe.extra_b onemore=ebe.onemore onemore_b=ebe.onemore_b)
   world_tourism
     - for (let wd of wArray)
       tour_data(tour_id=wd.tour_id progress=wd.progress)

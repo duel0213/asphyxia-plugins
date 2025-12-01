@@ -73,12 +73,18 @@ $("#version").on("change", function () {
         $("#lm_skin").val(0);
         $("#lm_bg").val(0);
         $("#lm_bg_2").val(0);
+        $("#lm_entry_bg").val(0);
+        $("#lm_entry_bg_bright").val(0);
       } else {
         $("#lm_skin").val(data["lm_custom"].premium_skin);
         $("#lm_bg").val(data["lm_custom"].premium_bg);
 
         if (data["lm_custom"].premium_bg_concent == undefined) $("#lm_bg_2").val(0);
         else $("#lm_bg_2").val(data["lm_custom"].premium_bg_concent);
+        if (data["lm_custom"].entry_bg == undefined) $("#lm_entry_bg").val(0);
+        else $("#lm_entry_bg").val(data["lm_custom"].entry_bg);
+        if (data["lm_custom"].entry_bg_brightness == undefined) $("#lm_entry_bg_bright").val(0);
+        else $("#lm_entry_bg_bright").val(data["lm_custom"].entry_bg_brightness);
       }
     },
     error: function () {

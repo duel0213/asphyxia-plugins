@@ -258,6 +258,20 @@ div
                 input.input(type="number" name="lm_bg_2", id="lm_bg_2", value="0")
               else
                 input.input(type="number" name="lm_bg_2", id="lm_bg_2", value=lm_custom.premium_bg_concent)
+          .field
+            label.label Entry BG
+            .control
+              if lm_custom.entry_bg === undefined
+                input.input(type="number" name="lm_entry_bg", id="lm_entry_bg", value="0")
+              else
+                input.input(type="number" name="lm_entry_bg", id="lm_entry_bg", value=lm_custom.entry_bg)
+          .field
+            label.label Entry BG Brightness
+            .control
+              if lm_custom.entry_bg_brightness === undefined
+                input.input(type="number" name="lm_entry_bg_bright", id="lm_entry_bg_bright", value="0")
+              else
+                input.input(type="number" name="lm_entry_bg_bright", id="lm_entry_bg_bright", value=lm_custom.entry_bg_brightness)
         .field
           button.button.is-primary(type="submit") 
             span.icon

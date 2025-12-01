@@ -37,8 +37,12 @@ export interface lightning_custom {
   version: number;
 
   premium_skin: number;
-  premium_bg: number;
-  premium_bg_concent: number;
+
+  premium_bg: number; // epolis //
+
+  premium_bg_concent: number; // sparkle shower //
+  entry_bg: number;
+  entry_bg_brightness: number;
 }
 
 export interface eisei_grade {
@@ -180,6 +184,10 @@ export const lm_settings_new = {
 
 export const lm_customdata = {
   premium_skin: 0, // Icons //
+
   premium_bg: 0, // Background (epolis) //
+
   premium_bg_concent: 0, // Background [Concentration Mode] (sparkle shower) //
+  entry_bg: 0, // Entry BG //
+  entry_bg_brightness: 0, // Entry BG Brightness //
 }

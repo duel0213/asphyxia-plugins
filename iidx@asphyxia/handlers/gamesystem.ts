@@ -102,15 +102,24 @@ export const gssysteminfo: EPR = async (info, data, send) => {
     }
   }
 
-  /*
+  // following datas are made up needs to figure out correct way to do it //
   if (version >= 33) {
-    result = Object.assign(result, { leggendaria_open: [] });
-    result.leggendaria_open.push({
-      music_id: K.ITEM("s32", 0),
-      kind: K.ITEM("s32", 0),
-    });
+    let legg_open = JSON.parse(await IO.ReadFile("data/legg_open.json", "utf-8"));
+    if (!_.isNil(legg_open[version])) {
+      result = Object.assign(result, { leggendaria_open: [] });
+
+      Object.keys(legg_open).forEach(v => {
+        Object.keys(legg_open[v]).forEach(m => {
+          if (Number(v) > version) return;
+
+          result.leggendaria_open.push({
+            music_id: K.ITEM("s32", Number(m)),
+            kind: K.ITEM("s32", legg_open[v][m].kind),
+          });
+        });
+      });
+    }
   }
-  */
 
   switch (version) {
     case 29:
@@ -182,7 +191,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       result = Object.assign(result, {
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
         OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
-        beat: K.ATTR({ val: String(Number(U.GetConfig("BeatPhase"))) }),
+        beat: K.ATTR({ val: String(Number(U.GetConfig("BeatPhase"))) }), // is this same old beat attr at common or something else...? //
       });
       break;
 

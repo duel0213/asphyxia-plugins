@@ -321,6 +321,8 @@ export const pccommon: EPR = async (info, data, send) => {
         display_asio_logo: {},
         lane_gacha: {},
         tourism_booster: {},
+        fix_framerate: {},
+        fix_real: {},
       });
       break;
     case 32:
@@ -351,7 +353,7 @@ export const pccommon: EPR = async (info, data, send) => {
         display_asio_logo: {},
         lane_gacha: {},
         tourism_booster: {},
-        disable_same_triger: K.ATTR({ frame: String(0) }),
+        fix_framerate: {},
         fix_real: {},
       });
       break;
@@ -385,7 +387,7 @@ export const pccommon: EPR = async (info, data, send) => {
         display_asio_logo: {},
         lane_gacha: {},
         tourism_booster: {},
-        disable_same_triger: K.ATTR({ frame: String(0) }),
+        fix_framerate: {},
         fix_real: {},
       });
       break;
@@ -633,9 +635,6 @@ export const pcget: EPR = async (info, data, send) => {
 
       lm_custom = lm_customdata;
     }
-    else if (version == 33 && _.isNil(lm_custom.premium_bg_concent)) { // temp //
-      lm_custom.premium_bg_concent = 0;
-    }
 
     // add missing djrank elements //
     if (version == 29 && _.isNil(pcdata.dr_sprank)) {
@@ -645,9 +644,20 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
     }
 
-    if (version == 33 && _.isNil(custom.cn_color)) { // temp //
-      custom.cn_color = 0;
-      custom.cn_size = 0;
+    if (version == 33) { // temp //
+      if (_.isNil(custom.cn_color)) {
+        custom.cn_color = 0;
+        custom.cn_size = 0;
+      }
+
+      if (_.isNil(lm_custom.premium_bg_concent)) {
+        lm_custom.premium_bg_concent = 0;
+      }
+
+      if (_.isNil(lm_custom.entry_bg)) {
+        lm_custom.entry_bg = 0;
+        lm_custom.entry_bg_brightness = 0;
+      }
     }
   }
 
@@ -1628,7 +1638,9 @@ export const pcget: EPR = async (info, data, send) => {
           evtArray2,
           evtArray3,
         });
-      default: break;
+
+      default:
+        break;
     }
 
     return send.pugFile(`pug/LDJ/${version}pcget.pug`, result);
@@ -1860,6 +1872,7 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasTowerData = !(_.isNil($(data).element("tower_data")));
   const hasSkinData = !(_.isNil($(data).element("skin_equip"))) || !(_.isNil($(data).element("pskin_equip")));
   const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip"))) || !(_.isNil($(data).element("vskin_equip")));
+  const hasVisualSkinData = !(_.isNil($(data).element("vskin_customize_setting")));
   const hasMusicFilter = !(_.isNil($(data).element("music_filter")));
   const hasBadgeData = !(_.isNil($(data).element("badge")));
   const hasActivityData = !(_.isNil($(data).element("activity_data")));
@@ -4940,21 +4953,38 @@ export const pcsave: EPR = async (info, data, send) => {
 
     if (isTDJ && hasTDJSkinData) {
       let skinData = version < 33 ? $(data).elements("tdjskin_equip") : $(data).elements("vskin_equip");
-      let premium_skin, premium_bg, premium_bg_concent;
+      let result = {};
 
       skinData.forEach((res) => {
         switch (Number(res.attr().skin_id)) {
           case 0:
-            premium_skin = Number(res.attr().skin_no);
+            result = Object.assign(result, {
+              premium_skin: Number(res.attr().skin_no),
+            });
             break;
           case 1:
-            premium_bg = Number(res.attr().skin_no);
+            result = Object.assign(result, {
+              premium_bg: Number(res.attr().skin_no),
+            });
             break;
           case 2:
-            premium_bg_concent = Number(res.attr().skin_no);
+            result = Object.assign(result, {
+              premium_bg_concent: Number(res.attr().skin_no),
+            });
+            break;
+          case 3:
+            result = Object.assign(result, {
+              entry_bg: Number(res.attr().skin_no),
+            });
             break;
         }
       });
+
+      if (isTDJ && hasVisualSkinData) {
+        result = Object.assign(result, {
+          entry_bg_brightness: Number($(data).attr("vskin_setting").entry_bg_brightness),
+        });
+      }
 
       await DB.Upsert<lightning_custom>(
         refid,
@@ -4964,9 +4994,7 @@ export const pcsave: EPR = async (info, data, send) => {
         },
         {
           $set: {
-            premium_skin,
-            premium_bg,
-            premium_bg_concent,
+            ...result
           }
         });
     }
