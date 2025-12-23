@@ -99,7 +99,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       if (_.isNaN(rival_refids[i][0])) continue;
 
       const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
-        { collection: "score", }
+        { collection: "score" }
       );
 
       rival_score.forEach((res: score) => {

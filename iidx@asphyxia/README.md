@@ -169,4 +169,10 @@ Changelogs
 **v0.1.17**
   - Added Initial support for Pinky Crush
   - Fixed where note\_size, lift\_cover, note\_beam\_size doesn't get saved in WebUI (EPOLIS ~)
-  - Fixed where unable to use STEP UP ticket
+  - Fixed STEP UP related issues
+    - Unable to use STEP UP ticket
+    - HARD / EX HARD folder display low level charts regardless player skill
+  - Fixed HEROIC VERSE issues
+    - Unable to complete registration 
+    - Crash after Event room choose
+  - Fixed where unable to complete registration or login (tricoro)

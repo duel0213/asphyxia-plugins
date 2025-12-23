@@ -31,7 +31,7 @@ export interface lightning_custom {
   version: number;
 
   premium_skin: number;
-  premium_bg: number;
+  premium_bg: number; // epolis //
 }
 
 export interface eisei_grade {
@@ -162,7 +162,7 @@ export const lm_settings_new = {
   concentration: 0,
 
   keyboard_kind: 10, // epolis //
-  brightness: 2,
+  brightness: 0,
 }
 
 export const lm_customdata = {

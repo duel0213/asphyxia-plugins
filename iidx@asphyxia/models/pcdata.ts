@@ -19,23 +19,23 @@ export interface pcdata {
   mcomb: number;
   ncomb: number;
   mode: number;
-  category: number; // attribute (Pinky Crush) //
+  category: number; // Pinky Crush //
   pmode: number;
   liflen: number;
-  judge: number; // attribute (tricoro) //
+  judge: number; // tricoro //
   opstyle: number;
   hispeed: number;
   judgeAdj: number;
 
-  notes: number; // attribute (Lincle) //
+  notes: number; // Lincle //
   pase: number;
   sdtype: number;
   help: number;
   fcombo: number[]; 
-  ngrade: number; // attribute (BISTROVER) //
-  rtype: number; // attribute (Heroic Verse) //
-  bgnflg: number; // attribute (Pinky Crush) //
-  player_kind: number; // attribute (EPOLIS) //
+  ngrade: number; // BISTROVER //
+  rtype: number; // Heroic Verse //
+  bgnflg: number; // Pinky Crush //
+  player_kind: number; // EPOLIS //
   gpos: number;
 
   s_sorttype: number;
@@ -1107,7 +1107,7 @@ export const IIDX27_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
 
   eb_keyorb: 0,
   eb_bossorb0: 0,
@@ -1680,10 +1680,10 @@ export const IIDX32_pcdata = {
   st_is_track_ticket: false,
   st_sp_level: 0,
   st_dp_level: 0,
-  st_sp_level_h: 0,
-  st_dp_level_h: 0,
-  st_sp_level_exh: 0,
-  st_dp_level_exh: 0,
+  st_sp_level_h: -1,
+  st_dp_level_h: -1,
+  st_sp_level_exh: -1,
+  st_dp_level_exh: -1,
   st_sp_fluctuation: 0,
   st_dp_fluctuation: 0,
   st_mission_clear_num: 0,

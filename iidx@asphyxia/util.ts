@@ -99,7 +99,7 @@ export function GetVersion(info: EamuseInfo) {
     case "KDZ": return 19;
     case "LDJ":
       version = Number(info.module.slice(4, 6));
-      if (_.isNaN(version)) version = 20;
+      if (_.isNaN(version) || version == 0) version = 20;
       break;
   }
 
