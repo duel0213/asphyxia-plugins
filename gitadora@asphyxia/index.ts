@@ -40,8 +40,15 @@ export function register() {
 
   R.Config("shared_favorite_songs", {
     name: "Shared Favorite Songs (Experimental)",
-    desc: "If disabled, players will be able to keep separate lists of favorite songs for each version of Gitadora, as well as between Guitar Freaks and Drummania. " + 
+    desc: "If disabled, players will be able to keep separate lists of favorite songs for each version of Gitadora, as well as between Guitar Freaks and Drummania. " +
     "Enable this option to have a single unified list of favorite songs for both games, and across all versions. Default is false, to match original arcade behaviour.",
+    type: "boolean",
+    default: false,
+  })
+
+  R.Config("shared_song_scores", {
+    name: "Shared Song Scores (Experimental)",
+    desc: "If disabled, players will keep separate scoreboards per version. Enable to merge best scores across all versions and games into a shared store.",
     type: "boolean",
     default: false,
   })
@@ -56,11 +63,17 @@ export function register() {
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     // Helper for register multiple versions.
+    R.Route(`${method}`, handler);
+    R.Route(`re_${method}`, handler);
+    R.Route(`matixx_${method}`, handler);
     R.Route(`exchain_${method}`, handler);
     R.Route(`matixx_${method}`, handler);
     R.Route(`nextage_${method}`, handler)
     R.Route(`highvoltage_${method}`, handler)
-    // TODO: TB, TBRE and more older version?
+    R.Route(`fuzzup_${method}`, handler)    
+    R.Route(`galaxywave_${method}`, handler)
+    R.Route(`galaxywave_delta_${method}`, handler)
+    // TODO: TB, and more older version?
   };
 
   // Info

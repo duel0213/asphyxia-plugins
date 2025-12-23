@@ -6,6 +6,7 @@ export interface CommonMusicDataField {
     is_hot: KITEM<"bool">;
     data_ver: KITEM<"s32">;
     diff: KARRAY<"u16">;
+    seq_release_state: KITEM<"s32">;
   }
   
   export interface CommonMusicData {

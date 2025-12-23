@@ -24,16 +24,16 @@ export interface BattleDataResponse
 
     score: {
         battle_class: KITEM<'s32'>,
-          max_battle_class: KITEM<'s32'>,
-          battle_point:  KITEM<'s32'>,
-          win: KITEM<'s32'>,
-          lose: KITEM<'s32'>,
-          draw: KITEM<'s32'>,
-          consecutive_win:  KITEM<'s32'>,
-          max_consecutive_win:  KITEM<'s32'>,
-          glorious_win:  KITEM<'s32'>,
-          max_defeat_skill: KITEM<'s32'>,
-          latest_result:  KITEM<'s32'>,
+        max_battle_class: KITEM<'s32'>,
+        battle_point:  KITEM<'s32'>,
+        win: KITEM<'s32'>,
+        lose: KITEM<'s32'>,
+        draw: KITEM<'s32'>,
+        consecutive_win:  KITEM<'s32'>,
+        max_consecutive_win:  KITEM<'s32'>,
+        glorious_win:  KITEM<'s32'>,
+        max_defeat_skill: KITEM<'s32'>,
+        latest_result:  KITEM<'s32'>,
 
     }
     history: {}

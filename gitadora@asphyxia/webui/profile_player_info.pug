@@ -6,11 +6,34 @@
 -
   function getFullGameName(shortName) {
     switch (shortName) {
+      case "gf":
+        return "GuitarFreaks"
       case "dm" :
-        return "Drummania"
-        case "gf":
-        return "Guitar Freaks"
-        default: 
+        return "DrumMania"
+      default: 
+        return "Unknown"
+    }
+  }
+  
+  function getFullGameVersion(shortVer) {
+    switch (shortVer) {
+      case "re" :
+        return "Tri-Boost Re:EVOLVE"
+      case "matixx":
+        return "Matixx"
+      case "EXCHAIN":
+        return "exchain"
+      case "nextage":
+        return "NEX+AGE"
+      case "highvoltage":
+        return "HIGH-VOLTAGE"
+      case "fuzzup":
+        return "FUZZ-UP"
+      case "galaxywave":
+        return "GALAXY WAVE"
+      case "galaxywave_delta":
+        return "GALAXY WAVE DELTA"
+      default: 
         return "Unknown"
     }
   }
@@ -23,7 +46,7 @@ div
         p.card-header-title
           span.icon
             i.mdi.mdi-account-edit
-          | User Detail (#{i.version})
+          | User Detail (#{getFullGameVersion(i.version)})
       .card-content
         form(method="post" action="/emit/updatePlayerInfo")
           .field
@@ -55,7 +78,7 @@ div
         p.card-header-title 
           span.icon 
             i.mdi.mdi-account-details
-          | Profile Detail (#{getFullGameName(pr.game)} #{pr.version})
+          | Profile Detail (#{getFullGameName(pr.game)} #{getFullGameVersion(pr.version)})
       .card-content
         form(method="post")
           .field 

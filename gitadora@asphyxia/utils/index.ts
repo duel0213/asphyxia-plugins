@@ -8,7 +8,14 @@ export const isDM = (info: EamuseInfo) => {
 
 export const getVersion = (info: EamuseInfo) => {
   const moduleName: string = info.module;
-  return moduleName.match(/([^_]*)_(.*)/)[1];
+  const moduleMatch = moduleName.match(/([^_]*)_(.*)/);
+
+  if (moduleMatch && moduleMatch[1]) {
+    return moduleMatch[1];
+  }
+
+  console.error(`Unable to parse version from module name "${moduleName}".`);
+  return "unknown";
 };
 
 export function isRequiredCoreVersion(major: number, minor: number) {
@@ -19,10 +26,14 @@ export function isRequiredCoreVersion(major: number, minor: number) {
 };
 
 export function isAsphyxiaDebugMode() : boolean  {
-  const argv = process.argv
-  return argv.includes("--dev") || argv.includes("--console")
+  const argv = (globalThis as { process?: { argv?: string[] } }).process?.argv ?? [];
+  return argv.includes("--dev") || argv.includes("--console");
 }
 
 export function isSharedFavoriteMusicEnabled() : boolean{
   return  Boolean(U.GetConfig("shared_favorite_songs"))
+}
+
+export function isSharedSongScoresEnabled() : boolean{
+  return  Boolean(U.GetConfig("shared_song_scores"))
 }

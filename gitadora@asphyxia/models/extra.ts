@@ -34,8 +34,8 @@ export function getDefaultExtra(game: 'gf' | 'dm', version: string, id: number) 
     reward_status: Array(50).fill(0),
   }
   result.playstyle[1] = 1    // Note scroll speed (should default to 1.0x)
-  result.playstyle[36] = 20  // Unknown
-  result.playstyle[48] = 20  // Unknown
+  result.playstyle[36] = 20  // Target Timing Adjustment
+  result.playstyle[48] = 20  // Note Display Adjustment
   
   return result
 }

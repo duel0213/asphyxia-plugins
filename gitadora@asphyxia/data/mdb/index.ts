@@ -1,12 +1,14 @@
 import Logger from "../../utils/logger";
 import { CommonMusicData } from "../../models/commonmusicdata";
 
-
 export enum DATAVersion {
+  GALAXYWAVE  = "gw",
+  FUZZUP      = "fz",
   HIGHVOLTAGE = "hv",
   NEXTAGE     = "nt",
   EXCHAIN     = "ex",
-  MATTIX      = "mt"
+  MATTIX      = "mt",
+  TBRE        = "re"
 }
 
 const allowedFormats = ['.json', '.xml', '.b64']
@@ -46,7 +48,15 @@ export async function readMDBFile(path: string, processHandler?: processRawDataH
     break;
     case '.b64':
       const buff = await IO.ReadFile(path, 'utf-8');
-      const json = Buffer.from(buff, 'base64').toString('utf-8')
+      const bufferCtor = (globalThis as {
+        Buffer?: {
+          from(input: string, encoding: string): { toString(encoding: string): string }
+        }
+      }).Buffer
+      if (!bufferCtor) {
+        throw new Error('Buffer is not available in the current environment.')
+      }
+      const json = bufferCtor.from(buff, 'base64').toString('utf-8')
       // Uncomment to save the decoded base64 file as JSON.
       // await IO.WriteFile(path.replace(".b64",".json"), json)
       result = JSON.parse(json)
@@ -54,6 +64,13 @@ export async function readMDBFile(path: string, processHandler?: processRawDataH
       default:
         throw `Invalid MDB file type: ${fileType}. Only .json, .xml, .b64 are supported.`
   }
+  
+  // Some MDB sources may not provide seq_release_state. Ensure it is present for every song entry.
+  result.music.forEach((entry) => {
+    if (entry.seq_release_state == null) {
+      entry.seq_release_state = K.ITEM('s32', 1)
+    }
+  })
 
   let gfCount = result.music.filter((e) => e.cont_gf["@content"][0]).length
   let dmCount = result.music.filter((e) => e.cont_dm["@content"][0]).length
@@ -63,6 +80,10 @@ export async function readMDBFile(path: string, processHandler?: processRawDataH
 
 export function gameVerToDataVer(ver: string): DATAVersion {
   switch(ver) {
+    case 'galaxywave':
+      return DATAVersion.GALAXYWAVE
+    case 'fuzzup':
+      return DATAVersion.FUZZUP
     case 'highvoltage':
       return DATAVersion.HIGHVOLTAGE
     case 'nextage':
@@ -70,8 +91,9 @@ export function gameVerToDataVer(ver: string): DATAVersion {
     case 'exchain':
       return DATAVersion.EXCHAIN
     case 'matixx':
-    default:
       return DATAVersion.MATTIX
+    default:
+      return DATAVersion.TBRE
   }
 }
 
@@ -93,9 +115,18 @@ export function findMDBFile(fileNameWithoutExtension: string, path: string = nul
   }
 
   for (const ext of allowedFormats) {
-    const filePath = path + fileNameWithoutExtension + ext
-    if (IO.Exists(filePath)) {
-      return filePath
+    const candidateFileNames = ext === ".xml"
+      ? [
+          `mdb_${fileNameWithoutExtension}${ext}`,
+          `${fileNameWithoutExtension}${ext}`,
+        ]
+      : [`${fileNameWithoutExtension}${ext}`]
+
+    for (const fileName of candidateFileNames) {
+      const filePath = path + fileName
+      if (IO.Exists(filePath)) {
+        return filePath
+      }
     }
   }
 
@@ -108,7 +139,7 @@ export async function loadSongsForGameVersion(gameVer: string, processHandler?: 
   let mdbFile = findMDBFile(ver, mdbFolder)
 
   if (mdbFile == null) {
-    throw `No valid MDB files were found in the data/mdb subfolder. Ensure that this folder contains at least one of the following: ${ver}.json, ${ver}.xml or ${ver}.b64`
+    throw `No valid MDB files were found in the data/mdb subfolder. Ensure that this folder contains at least one of the following: ${ver}.json, mdb_${ver}.xml (${ver}.xml as fallback) or ${ver}.b64`
   }
 
   const music = await readMDBFile(mdbFile, processHandler ?? defaultProcessRawXmlData)
@@ -140,7 +171,8 @@ export async function defaultProcessRawXmlData(path: string): Promise<CommonMusi
       cont_dm: K.ITEM('bool', dm == 0 ? 0 : 1),
       is_secret: K.ITEM('bool', m.number("is_secret", 0)),
       is_hot: K.ITEM('bool', type == 2 ? 0 : 1),
-      data_ver: K.ITEM('s32', m.number("data_ver", 115)),
+      data_ver: K.ITEM('s32', m.number("data_ver", 255)),
+      seq_release_state: K.ITEM('s32', 1),
       diff: K.ARRAY('u16', [
         d[0],
         d[1],

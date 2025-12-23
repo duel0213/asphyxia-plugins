@@ -1,3 +1,5 @@
+/// <reference lib="es2020.bigint" />
+
 import { getDefaultPlayerInfo, PlayerInfo } from "../models/playerinfo";
 import { PlayerRanking } from "../models/playerranking";
 import { getDefaultProfile, Profile } from "../models/profile";
@@ -8,7 +10,7 @@ import { getDefaultScores, Scores } from "../models/scores";
 
 import { PLUGIN_VER } from "../const";
 import Logger from "../utils/logger"
-import { isAsphyxiaDebugMode } from "../utils/index";
+import { isAsphyxiaDebugMode, isSharedSongScoresEnabled } from "../utils/index";
 import { SecretMusicEntry } from "../models/secretmusicentry";
 import { CheckPlayerResponse, getCheckPlayerResponse } from "../models/Responses/checkplayerresponse";
 import { getPlayerStickerResponse, PlayerStickerResponse } from "../models/Responses/playerstickerresponse";
@@ -18,6 +20,7 @@ import { getDefaultBattleDataResponse } from "../models/Responses/battledataresp
 import { applySharedFavoriteMusicToExtra, saveSharedFavoriteMusicFromExtra } from "./FavoriteMusic";
 import { getPlayerRecordResponse } from "../models/Responses/playerrecordresponse";
 import { getPlayerPlayInfoResponse, PlayerPlayInfoResponse } from "../models/Responses/playerplayinforesponse";
+import { getMergedSharedScores, mergeScoresIntoShared } from "./SharedScores";
 
 const logger = new Logger("profiles")
 
@@ -70,6 +73,7 @@ export const getPlayer: EPR = async (info, data, send) => {
   const time = BigInt(31536000);
   const dm = isDM(info);
   const game = dm ? 'dm' : 'gf';
+  const sharedScoresEnabled = isSharedSongScoresEnabled();
 
   logger.debugInfo(`Loading ${game} profile for player ${no} with refid: ${refid}`)
   const name = await DB.FindOne<PlayerInfo>(refid, {
@@ -82,8 +86,8 @@ export const getPlayer: EPR = async (info, data, send) => {
   const gfRecord = await getRecord(refid, version, 'gf')
   const dmExtra = await getExtra(refid, version, 'dm')
   const gfExtra = await getExtra(refid, version, 'gf')
-  const dmScores = (await getScore(refid, version, 'dm')).scores
-  const gfScores = (await getScore(refid, version, 'gf')).scores
+  const dmScores = sharedScoresEnabled ? await getMergedSharedScores(refid, 'dm') : (await getScore(refid, version, 'dm')).scores
+  const gfScores = sharedScoresEnabled ? await getMergedSharedScores(refid, 'gf') : (await getScore(refid, version, 'gf')).scores
 
   const profile = dm ? dmProfile : gfProfile;
   const extra = dm ? dmExtra : gfExtra;
@@ -213,13 +217,33 @@ export const getPlayer: EPR = async (info, data, send) => {
     recommend_musicid_list: K.ARRAY('s32', extra.recommend_musicid_list ?? Array(5).fill(-1)),
     record,
     groove: {
-      extra_gauge: K.ITEM('s32', profile.extra_gauge),
+      extra_gauge: K.ITEM('s32', (profile.extra_gauge+95)),
       encore_gauge: K.ITEM('s32', profile.encore_gauge),
       encore_cnt: K.ITEM('s32', profile.encore_cnt),
       encore_success: K.ITEM('s32', profile.encore_success),
       unlock_point: K.ITEM('s32', profile.unlock_point),
     },
     musiclist: { '@attr': { nr: musicdata.length }, musicdata },
+    deluxe: {
+      deluxe_content: K.ITEM('s32', 0),
+      target_id: K.ITEM('s32', 0),
+      multiply: K.ITEM('s32', 0),
+      point: K.ITEM('s32', 0),
+    },
+    galaxy_parade: {
+      score_list: {},
+      last_corner_id: K.ITEM('s32', 0),
+      chara_list: {},
+      last_sort_category: K.ITEM('s32', 0),
+      last_sort_order: K.ITEM('s32', 0),
+      team_member: {
+        chara_id_guitar: K.ITEM('s32', 0),
+        chara_id_bass: K.ITEM('s32', 0),
+        chara_id_drum: K.ITEM('s32', 0),
+        chara_id_free1: K.ITEM('s32', 0),
+        chara_id_free2: K.ITEM('s32', 0),
+      },
+    },
   };
 
   const playerRanking = await getPlayerRanking(refid, version, game)
@@ -227,15 +251,55 @@ export const getPlayer: EPR = async (info, data, send) => {
   const addition: any = {
     monstar_subjugation: {},
     bear_fes: {},
+    galaxy_parade: {
+      corner_list: {
+        corner: {
+          is_open: K.ITEM('bool', 0),
+          data_ver: K.ITEM('s32', 0),
+          genre: K.ITEM('s32', 0),
+          corner_id: K.ITEM('s32', 0),
+          corner_name: K.ITEM('str', ''),
+          start_date_ms: K.ITEM('u64', BigInt(0)),
+          end_date_ms: K.ITEM('u64', BigInt(0)),
+          requirements_musicid: K.ITEM('s32', 0),
+          reward_list: {
+            reward: {
+              reward_id: K.ITEM('s32', 0),
+              reward_kind: K.ITEM('s32', 0),
+              reward_itemid: K.ITEM('s32', 0),
+              unlock_border: K.ITEM('s32', 0),
+              }
+          },
+        }
+      },
+      gacha_table: {
+        chara_odds: {
+          chara_id: K.ITEM('s32', 0),
+          odds: K.ITEM('s32', 0),
+        }
+      },
+      bonus: {
+        term: K.ITEM('s32', 0),
+        stage_bonus: K.ITEM('s32', 0),
+        charm_bonus: K.ITEM('s32', 0),
+        start_date_ms: K.ITEM('u64', BigInt(0)),
+        end_date_ms: K.ITEM('u64', BigInt(0)),
+      }
+    },
   };
   for (let i = 1; i <= 20; ++i) {
     const obj = { point: K.ITEM('s32', 0) };
     if (i == 1) {
       addition['long_otobear_fes_1'] = obj;
+      addition['long_otobear_fes_2'] = obj;
       addition['phrase_combo_challenge'] = obj;
+      addition['sdvx_stamprally'] = obj;
+      addition['sdvx_stamprally2'] = obj;
       addition['sdvx_stamprally3'] = obj;
       addition['chronicle_1'] = obj;
-    } else {
+      addition['gitadora_oracle_1'] = obj;
+      addition['gitadora_oracle_2'] = obj;
+      } else {
       addition[`phrase_combo_challenge_${i}`] = obj;
     }
 
@@ -254,6 +318,15 @@ export const getPlayer: EPR = async (info, data, send) => {
         point_3: K.ITEM('s32', 0),
       };
       addition[`kouyou_challenge_${i}`] = { point: K.ITEM('s32', 0) };
+      addition[`dokidoki_valentine2_${i}`] = { point: K.ITEM('s32', 0) };
+      addition[`ohanami_challenge_${i}`] = { point: K.ITEM('s32', 0) };
+      addition[`otobear_in_the_tsubo_${i}`] = { point: K.ITEM('s32', 0) };
+      addition[`summer_craft_${i}`] = { point: K.ITEM('s32', 0) };
+      addition[`wakuteka_whiteday2_${i}`] = {
+        point_1: K.ITEM('s32', 0),
+        point_2: K.ITEM('s32', 0),
+        point_3: K.ITEM('s32', 0),
+      };
     }
   }
 
@@ -307,6 +380,21 @@ export const getPlayer: EPR = async (info, data, send) => {
       },
       event_score: { eventlist: {} },
       rockwave: { score_list: {} },
+      livehouse: { 
+        score_list: { 
+          score: {
+            term: K.ITEM('u8', -1),  
+            reward_id: K.ITEM('s32', -1), 
+            unlock_point: K.ITEM('s32', -1), 
+            chara_id_guitar: K.ITEM('s32', -1), 
+            chara_id_bass: K.ITEM('s32', -1), 
+            chara_id_drum: K.ITEM('s32', -1), 
+            chara_id_other: K.ITEM('s32', -1), 
+            leader: K.ITEM('s32', -1), 
+          },
+          last_livehouse: K.ITEM('s32', -1), 
+        } 
+      },
       jubeat_omiyage_challenge: {},
       light_mode_reward_item: { itemid: K.ITEM('s32', -1), rarity: K.ITEM('s32', 0) },
       standard_mode_reward_item: { itemid: K.ITEM('s32', -1), rarity: K.ITEM('s32', 0) },
@@ -325,6 +413,20 @@ export const getPlayer: EPR = async (info, data, send) => {
       kac2017: {
         entry_status: K.ITEM('s32', 0),
       },
+      KAC2016: {
+        is_entry: K.ITEM('bool', 0),
+      },
+      KAC2016_skill_ranking: {
+        skill: {
+          skill: K.ITEM('s32', -1),
+          rank: K.ITEM('s32', -1),
+          total_nr: K.ITEM('s32', -1),
+        }
+      },
+     
+      
+      
+      
       nostalgia_concert: {},
       bemani_summer_2018: {
         linkage_id: K.ITEM('s32', -1),
@@ -424,6 +526,7 @@ export const savePlayers: EPR = async (info, data, send) => {
   const version = getVersion(info);
   const dm = isDM(info);
   const game = dm ? 'dm' : 'gf';
+  const sharedScoresEnabled = isSharedSongScoresEnabled();
 
   let players = $(data).elements("player")
 
@@ -449,7 +552,7 @@ export const savePlayers: EPR = async (info, data, send) => {
         throw "Request data is missing required parameter: player.refid"
       }
 
-      await saveSinglePlayer(player, refid, no, version, game);
+      await saveSinglePlayer(player, refid, no, version, game, sharedScoresEnabled);
 
       let ranking = await getPlayerRanking(refid, version, game)
       let responsePart = getSaveProfileResponse(no, ranking)
@@ -469,7 +572,7 @@ export const savePlayers: EPR = async (info, data, send) => {
   }
 };
 
-async function saveSinglePlayer(dataplayer: KDataReader, refid: string, no: number, version: string, game: 'gf' | 'dm')
+async function saveSinglePlayer(dataplayer: KDataReader, refid: string, no: number, version: string, game: 'gf' | 'dm', sharedScoresEnabled: boolean)
 {
   logger.debugInfo(`Saving ${game} profile for player ${no} with refid: ${refid}`)
   const profile = await getProfile(refid, version, game) as any;
@@ -612,7 +715,11 @@ async function saveSinglePlayer(dataplayer: KDataReader, refid: string, no: numb
   logStagesPlayed(playedStages)
   
   const scores = await updatePlayerScoreCollection(refid, playedStages, version, game)
-  await saveScore(refid, version, game, scores); 
+  await saveScore(refid, version, game, scores);
+
+  if (sharedScoresEnabled) {
+    await mergeScoresIntoShared(refid, game, scores);
+  }
   await saveSharedFavoriteMusicFromExtra(refid, extra)
 }
 

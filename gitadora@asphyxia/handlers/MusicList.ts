@@ -3,6 +3,7 @@ import { findMDBFile, readMDBFile, loadSongsForGameVersion } from "../data/mdb";
 import { CommonMusicDataField } from "../models/commonmusicdata";
 import Logger from "../utils/logger"
 import { getPlayableMusicResponse, PlayableMusicResponse } from "../models/Responses/playablemusicresponse";
+import { isAsphyxiaDebugMode } from "../utils/index";
 
 const logger = new Logger("MusicList")
 
@@ -31,5 +32,10 @@ export const playableMusic: EPR = async (info, data, send) => {
 
   let response : PlayableMusicResponse = getPlayableMusicResponse(music)
   await send.object(response)
+  
+  if (isAsphyxiaDebugMode())  {
+    await IO.WriteFile(`apisamples/playableMusicList.json`, JSON.stringify(music, null, 4))
+  }
+  
 };
 
