@@ -556,16 +556,18 @@ export const pcreg: EPR = async (info, data, send) => {
       }
     );
 
-    await DB.Upsert<lightning_custom>(
-      refid,
-      {
-        collection: "lightning_custom",
-        version: version,
-      },
-      {
-        $set: lightning_custom,
-      }
-    );
+    if (version > 27) {
+      await DB.Upsert<lightning_custom>(
+        refid,
+        {
+          collection: "lightning_custom",
+          version: version,
+        },
+        {
+          $set: lightning_custom,
+        }
+      );
+    }
   }
 
   return send.object(
@@ -644,6 +646,19 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.dr_dppoint = IIDX29_pcdata.dr_dppoint;
     }
 
+    // fix HARD / EXHARD step up folder //
+    if (version >= 32) {
+      if (pcdata.st_sp_level > 0 && pcdata.st_sp_level_h == 0) pcdata.st_sp_level_h = -1;
+      if (pcdata.st_sp_level > 0 && pcdata.st_sp_level_exh == 0) pcdata.st_sp_level_exh = -1;
+      if (pcdata.st_dp_level > 0 && pcdata.st_dp_level_h == 0) pcdata.st_dp_level_h = -1;
+      if (pcdata.st_dp_level > 0 && pcdata.st_dp_level_exh == 0) pcdata.st_dp_level_exh = -1;
+    }
+
+    // fix heroic verse event crash //
+    if (version == 27 && pcdata.event_last_select_id == -1) {
+      pcdata.event_last_select_id = 0;
+    }
+
     if (version == 33) { // temp //
       if (_.isNil(custom.cn_color)) {
         custom.cn_color = 0;
@@ -659,12 +674,12 @@ export const pcget: EPR = async (info, data, send) => {
         lm_custom.entry_bg_brightness = 0;
       }
     }
-  }
 
-  // temporary solution until figure out why this happening on others //
-  if (_.isNil(pcdata.orb)) {
-    pcdata.orb = 0;
-    pcdata.present_orb = 0;
+    // temporary solution until figure out why this happening on others //
+    if (_.isNil(pcdata.orb)) {
+      pcdata.orb = 0;
+      pcdata.present_orb = 0;
+    }
   }
 
   const appendsettings = appendSettingConverter(
@@ -1814,16 +1829,18 @@ export const pctakeover: EPR = async (info, data, send) => {
       }
     );
 
-    await DB.Upsert<lightning_custom>(
-      refid,
-      {
-        collection: "lightning_custom",
-        version: version,
-      },
-      {
-        $set: lightning_custom,
-      }
-    );
+    if (version > 27) {
+      await DB.Upsert<lightning_custom>(
+        refid,
+        {
+          collection: "lightning_custom",
+          version: version,
+        },
+        {
+          $set: lightning_custom,
+        }
+      );
+    }
   }
 
   return send.object(
@@ -1839,9 +1856,9 @@ export const pcvisit: EPR = async (info, data, send) => {
       anum: "10",
       snum: "10",
       pnum: "10",
-      aflg: "0",
-      sflg: "0",
-      pflg: "0",
+      aflg: "1",
+      sflg: "1",
+      pflg: "1",
     })
   );
 };
@@ -4997,8 +5014,8 @@ export const pcsave: EPR = async (info, data, send) => {
             ...result
           }
         });
+      }
     }
-  }
 
   await DB.Upsert<profile>(
     refid,

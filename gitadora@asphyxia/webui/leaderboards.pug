@@ -14,21 +14,31 @@
         return "Unknown"
     }
   }
-
-  function getFullVersionName(shortName) {
-    switch (shortName) {
-      case "exchain" :
-        return "GITADORA EXCHAIN"
+  
+  function getFullGameVersion(shortVer) {
+    switch (shortVer) {
+      case "re" :
+        return "Tri-Boost Re:EVOLVE"
+      case "matixx":
+        return "Matixx"
+      case "EXCHAIN":
+        return "exchain"
       case "nextage":
-        return "GITADORA NEX+AGE"
+        return "NEX+AGE"
       case "highvoltage":
-        return "GITADORA HIGH-VOLTAGE"
-      default:
+        return "HIGH-VOLTAGE"
+      case "fuzzup":
+        return "FUZZ-UP"
+      case "galaxywave":
+        return "GALAXY WAVE"
+      case "galaxywave_delta":
+        return "GALAXY WAVE DELTA"
+      default: 
         return "Unknown"
     }
   }
 
-  const versions = ["exchain", "nextage", "highvoltage"]
+  const versions = ["re", "matixx", "exchain", "nextage", "highvoltage", "fuzzup", "galaxywave", "galaxywave_delta"]
   const games = ["gf", "dm"]
 
   function generateLeaderboards(infos, profiles) {
@@ -77,7 +87,7 @@
 -
 
 each board in generateLeaderboards(infos, profiles) 
-  h3 #{getFullVersionName(board.version)} #{getFullGameName(board.game)}
+  h3 #{getFullGameName(board.game)} #{getFullGameVersion(board.version)}
   table
     tr 
       th Rank 

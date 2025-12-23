@@ -11,6 +11,37 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
     const level: number = U.GetConfig("encore_version")
     const ntDummyEncore = U.GetConfig("nextage_dummy_encore")
     switch (getVersion(info)) {
+        case 'galaxywave':
+            return {
+                level,
+                musics: [ 
+                    2866, // Calm days
+                    2893, // 愛はToxic! feat.Lilymone
+                    2885, // Astrum
+                    2897, // DESPERATE ERROR
+                    2884, // Multiverse
+                    2919, // DOGMA
+                    2922, // Stay By My Side
+                    2937, // Prog for your Soul
+                    2963, // Zero Visibility
+                    2939, // Hopeful Daybreak!!!
+                    2956, // Over Time Groove
+                ]
+            }
+        case 'fuzzup':
+            return {
+                level,
+                musics: [ 
+                    2812, // THE LAST OF FIREFACE
+                    2814, // ENCOUNT
+                    2783, // Q転直下
+                    2848, // Bloody Iron Maiden
+                    2860, // Serious Joke
+                    2844, // HyperNebula
+                    2877, // AVEL
+                    2892, // Elliptic Orbits
+                ]
+            }
         case 'highvoltage':
             return {
                 level,
@@ -58,7 +89,7 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
                     5060, // EXCELSIOR DIVE (CLASSIC)
                     2530, // The ULTIMATES -CHRONICLE-
                     2581, // 幸せの代償
-                    5046  // Rock to Infinity (CLASSIC)    
+                    5046, // Rock to Infinity (CLASSIC)    
                 ]
             }
         case 'matixx':
@@ -77,7 +108,22 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
                     2496, // CAPTURING XANADU
                     2497, // Physical Decay
                     2499, // Cinnamon 
-                    2498 // けもののおうじゃ★めうめう
+                    2498, // けもののおうじゃ★めうめう
+                ]
+            }
+        case 're':
+            return {
+                level,
+                musics: [
+                    2341, // Anathema
+                    2384, // White Forest
+                    2393, // REFLEXES MANIPULATION
+                    2392, // 主亡き機械人形のまなざし
+                    2406, // Exclamation
+                    2414, // MEDUSA
+                    2422, // BLACK ROSES
+                    2411, // ギタドラシカ
+                    2432, // Durian
                 ]
             }
         default:

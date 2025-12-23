@@ -60,7 +60,6 @@ export async function applySharedFavoriteMusicToExtra(refid : string, extra : Ex
         let favoriteMusic = await loadFavoriteMusic(refid)
 
         if (favoriteMusic == null) {
-            logger.debugInfo(`No shared favourite music available for profile ${refid}. Using game specific favorites. Favorites will be saved as shared favorites at the end of the game session.`);
             return
         }
 
@@ -84,10 +83,17 @@ export async function saveFavoriteMusic(refid: string, data : FavoriteMusic) : P
       }, data)
 }
 
-export async function loadFavoriteMusic(refid : string) : Promise<FavoriteMusic>
+export async function loadFavoriteMusic(refid : string) : Promise<FavoriteMusic | null>
 {
-    return await DB.FindOne<FavoriteMusic>(refid, {
+    const favoriteMusic = await DB.FindOne<FavoriteMusic>(refid, {
         collection: 'favoritemusic'
     })
+
+    if (!favoriteMusic) {
+        logger.debugInfo(`No shared favourite music available for profile ${refid}. Using game specific favorites. Favorites will be saved as shared favorites at the end of the game session.`);
+        return null
+    }
+
+    return favoriteMusic
 }
 

@@ -1111,7 +1111,7 @@ export const IIDX27_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
 
   eb_keyorb: 0,
   eb_bossorb0: 0,
