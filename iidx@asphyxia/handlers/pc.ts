@@ -14,6 +14,7 @@ import { badge, badgeBaseMap, badgeVersionMap } from "../models/badge";
 import { extra_favorite } from "../models/favorite";
 import { activity, activity_mybest } from "../models/activity";
 import { extra_boss } from "../models/extraboss";
+import { djtraining } from "../models/djtraining";
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -1537,6 +1538,26 @@ export const pcget: EPR = async (info, data, send) => {
       });
     });
 
+    // TODO:: figure out display step/tier on profile //
+    let djtraining_data = JSON.parse(await IO.ReadFile("data/djtraining.json", "utf-8"));
+    const djtraining_save = await DB.Find<djtraining>(refid, {
+      collection: "djtraining",
+      version: version,
+    });
+    let djtraining_sp = null;
+    let djtraining_dp = null;
+
+    if (!_.isNil(djtraining_data[version])) {
+      djtraining_sp = djtraining_data[version][0];
+      djtraining_dp = djtraining_data[version][1];
+
+      if (!_.isNil(djtraining_save)) {
+        djtraining_save.forEach((res) => {
+          djtraining_data[version][res.play_style][res.tier][res.part].cflg[res.midx] = res.cflg;
+        });
+      }
+    }
+
     let result: any = {
       profile,
       pcdata,
@@ -1616,6 +1637,10 @@ export const pcget: EPR = async (info, data, send) => {
 
     switch (version) {
       case 33:
+        result = Object.assign(result, {
+          djtraining_sp,
+          djtraining_dp,
+        });
       case 32:
         result = Object.assign(result, {
           fsArray,

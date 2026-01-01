@@ -5,6 +5,7 @@ import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { badge } from "../models/badge";
 import { activity_mybest } from "../models/activity";
+import { djtraining } from "../models/djtraining";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -729,6 +730,41 @@ export const musicreg: EPR = async (info, data, send) => {
           is_special_result: Number($(data).element("best_result").bool("is_special_result")),
 
           update_date: Math.floor(date.valueOf() / 1000),
+        }
+      }
+    );
+  }
+
+  if (!_.isNil($(data).attr().djt_tier)) {
+    let tier = Number($(data).attr().djt_tier);
+    let part = Number($(data).attr().djt_part);
+    let midx = Number($(data).attr().djt_midx);
+
+    const djt_data: djtraining | null = await DB.FindOne<djtraining>(refid, {
+      collection: "djtraining",
+      version: version,
+      play_style: ClidToPlaySide(clid),
+
+      tier: tier,
+      part: part,
+      midx: midx,
+    });
+    let cflag = _.isNil(djt_data) ? cflg : Math.max(cflg, djt_data.cflg);
+
+    await DB.Upsert<djtraining>(
+      refid,
+      {
+        collection: "djtraining",
+        version: version,
+        play_style: ClidToPlaySide(clid),
+
+        tier: tier,
+        part: part,
+        midx: midx,
+      },
+      {
+        $set: {
+          cflg: cflag,
         }
       }
     );

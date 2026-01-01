@@ -55,11 +55,19 @@ IIDX33pc(status="0")
     radar_score(__type="s32" __count="6") #{pcdata.nr_dpradar[0]} #{pcdata.nr_dpradar[1]} #{pcdata.nr_dpradar[2]} #{pcdata.nr_dpradar[3]} #{pcdata.nr_dpradar[4]} #{pcdata.nr_dpradar[5]}
   dj_training
     sp(tier="0" step="0")
-      //-folder(index="" tier="" part="") [loop]
-        music(index="" music_id="" class_id="" cleartype="") [loop]
+      if djtraining_sp != null
+        each tiers, tierId in djtraining_sp
+          each content, partId in tiers
+            folder(index=partId-1 tier=tierId part=partId)
+              each mid, musicIdx in content.mid
+                music(index=musicIdx music_id=mid class_id=content.diff[musicIdx] clear_type=content.cflg[musicIdx])
     dp(tier="0" step="0")
-      //-folder(index="" tier="" part="") [loop]
-        music(index="" music_id="" class_id="" cleartype="") [loop]
+      if djtraining_dp != null
+        each tiers, tierId in djtraining_dp
+          each content, partId in tiers
+            folder(index=partId-1 tier=tierId part=partId)
+              each mid, musicIdx in content.mid
+                music(index=musicIdx music_id=mid class_id=content.diff[musicIdx] clear_type=content.cflg[musicIdx])
   visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   step(enemy_damage=pcdata.st_enemy_damage progress=pcdata.st_progress total_point=pcdata.st_total_point enemy_defeat_flg=pcdata.st_enemy_defeat_flg sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_level_h=pcdata.st_sp_level_h dp_level_h=pcdata.st_dp_level_h sp_level_exh=pcdata.st_sp_level_exh dp_level_exh=pcdata.st_dp_level_exh sp_fluctuation=pcdata.st_sp_fluctuation dp_fluctuation=pcdata.st_dp_fluctuation mission_clear_num=pcdata.st_mission_clear_num sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay tips_read_list=pcdata.st_tips_read_list)
     is_track_ticket(__type="bool") #{Number(pcdata.st_is_track_ticket)}
