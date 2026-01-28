@@ -6,6 +6,7 @@ import { tutorial } from "../models/tutorial";
 import { badge } from "../models/badge";
 import { activity_mybest } from "../models/activity";
 import { djtraining } from "../models/djtraining";
+import { rival } from "../models/rival";
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -351,10 +352,11 @@ export const musicappoint: EPR = async (info, data, send) => {
    ***/
 
   // OTHERS //
-  let other_refid, other_musicdata: score | null, other_pcdata, other_profile, sdata = null;
-  if (!_.isNaN(subtype)) {
-    switch (ctype) {
-      case 1:
+  let other_refid, other_musicdata, other_pcdata, other_profile, sdata = null;
+  let other_musicdatas = [];
+  switch (ctype) {
+    case 1:
+      if (!_.isNaN(subtype)) {
         other_refid = await IDtoRef(subtype);
         other_profile = await ReftoProfile(other_refid);
         other_pcdata = await ReftoPcdata(other_refid, version);
@@ -363,29 +365,63 @@ export const musicappoint: EPR = async (info, data, send) => {
           mid: mid,
           [clid]: { $exists: true },
         });
-        if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
+      }
+      break;
 
-        if (version < 16) {
-          sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
-            score: String(other_musicdata.esArray[clid]),
-            pid: String(other_profile[1]),
-            name: String(other_profile[0]),
-            riidxid: String(other_profile[2])
+    case 2: // ALL, STORE TOP //
+    case 10:
+      other_musicdatas = await DB.Find<score>(null, {
+        collection: "score",
+        mid: mid,
+        [clid]: { $exists: true },
+      });
+      break;
+
+    case 8: // RIVAL TOP - refer rival table rather than subtype parsing //
+      let rivals = await DB.Find<rival>(refid, {
+        collection: "rival",
+        play_style: ClidToPlaySide(clid) + 1,
+      });
+      if (rivals.length > 0) {
+        for (const rival of rivals) {
+          let rival_musicdata = await DB.FindOne<score>(rival.rival_refid, {
+            collection: "score",
+            mid: mid,
+            [clid]: { $exists: true },
           });
-        }
-        else {
-          sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
-            score: String(other_musicdata.esArray[clid]),
-            pid: String(other_profile[1]),
-            name: String(other_profile[0]),
-            riidxid: String(other_profile[2])
-          });
-        }
 
-        break;
+          if (!_.isNil(rival_musicdata)) other_musicdatas.push(rival_musicdata);
+        }
+      }
+      break;
 
-      default:
-        break;
+    default:
+      break;
+  }
+
+  if (other_musicdatas.length > 0) {
+    other_musicdatas.sort((a: score, b: score) => b.esArray[clid] - a.esArray[clid]);
+    other_musicdata = other_musicdatas[0];
+    other_profile = await ReftoProfile(other_musicdata.__refid);
+    other_pcdata = await ReftoPcdata(other_musicdata.__refid, version);
+  }
+
+  if (!_.isNil(other_musicdata) && !_.isNil(other_profile)) {
+    if (version < 16) {
+      sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
+        score: String(other_musicdata.esArray[clid]),
+        pid: String(other_profile[1]),
+        name: String(other_profile[0]),
+        riidxid: String(other_profile[2])
+      });
+    }
+    else {
+      sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
+        score: String(other_musicdata.esArray[clid]),
+        pid: String(other_profile[1]),
+        name: String(other_profile[0]),
+        riidxid: String(other_profile[2])
+      });
     }
   }
 

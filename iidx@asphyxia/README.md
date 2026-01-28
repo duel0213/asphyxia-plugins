@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [94a1b4]**
+Plugin Version: **STAGING [5b7288]**
 
 ---
 
@@ -182,3 +182,4 @@ Changelogs
 
 **STAGING**
   - Added Initial support for Sparkle Shower
+  - Added ALL/STORE/RIVAL TOP pacemaker support
