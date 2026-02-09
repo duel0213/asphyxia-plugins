@@ -510,6 +510,14 @@ export function register() {
     default: 3,
   });
 
+  // Sparkle Shower //
+  R.Config("ss_event1", {
+    name: "Sparkle Fruit Lab.",
+    desc: "Sparkle Fruit Lab. Phase",
+    type: "integer",
+    default: 1,
+  });
+
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {
       collection: "pcdata",

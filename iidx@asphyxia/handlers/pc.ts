@@ -675,12 +675,12 @@ export const pcget: EPR = async (info, data, send) => {
         lm_custom.entry_bg_brightness = 0;
       }
     }
+  }
 
-    // temporary solution until figure out why this happening on others //
-    if (_.isNil(pcdata.orb)) {
-      pcdata.orb = 0;
-      pcdata.present_orb = 0;
-    }
+  // temporary solution until figure out why this happening on others //
+  if (_.isNil(pcdata.orb)) {
+    pcdata.orb = 0;
+    pcdata.present_orb = 0;
   }
 
   const appendsettings = appendSettingConverter(
@@ -950,6 +950,8 @@ export const pcget: EPR = async (info, data, send) => {
       pinky_ug = null,
       pinky_ug_hall = [],
       pinky_ug_qpro = [],
+      sparkle_fl_room = [],
+      sparkle_fl_crop = [],
       event_1 = null,
       event_1s = null,
       evtArray = [], evtArray2 = [], evtArray3 = [],
@@ -1080,6 +1082,10 @@ export const pcget: EPR = async (info, data, send) => {
         pinky_ug = await DB.FindOne(refid, { collection: "event_1", version: version, event_data: "pinkyunderground" });
         pinky_ug_hall = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "pinkyunderground_hall" });
         pinky_ug_qpro = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "pinkyunderground_hall_qpro" });
+        break;
+      case 33:
+        sparkle_fl_room = await DB.Find(refid, { collection: "event_1", version: version, event_data: "sparkle_fruit_lab" });
+        sparkle_fl_crop = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "sparkle_fruit_lab_crop" });
         break;
 
       default:
@@ -1628,6 +1634,12 @@ export const pcget: EPR = async (info, data, send) => {
           pinky_ug,
           pinky_ug_hall,
           pinky_ug_qpro,
+        });
+        break;
+      case 33:
+        result = Object.assign(result, {
+          sparkle_fl_room,
+          sparkle_fl_crop,
         });
         break;
 
@@ -4488,6 +4500,63 @@ export const pcsave: EPR = async (info, data, send) => {
                 collection: "event_1",
                 version: version,
                 booth_id: event_data.booth_id
+              },
+              {
+                $set: event_data,
+              });
+          });
+          break;
+
+        case 33:
+          pcdata.event_play_num += 1;
+          pcdata.event_last_select_id = Number($(data).attr("event_1").last_select_room_id);
+          pcdata.event_skip = false;
+
+          if (!_.isNil($(data).element("event_1").element("is_skip"))) {
+            pcdata.event_skip = true;
+          }
+
+          $(data).element("event_1").elements("room_data").forEach((res) => {
+            event_data = {
+              room_id: res.attr().room_id,
+              play_num: res.attr().play_num,
+              play_num_uc: res.attr().play_num_uc,
+              play_num_ub: res.attr().play_num_ub,
+              clear_num: res.attr().clear_num,
+              last_select_crop_index: res.attr().last_select_crop_index,
+              room_prog: res.attr().room_prog,
+              soul: Number(res.bool("soul")),
+              clear: Number(res.bool("clear")),
+            }
+
+            res.elements("room_crop_data").forEach((res) => {
+              DB.Upsert(
+                refid,
+                {
+                  collection: "event_1_sub",
+                  version: version,
+                  event_data: "sparkle_fruit_lab_crop",
+                  room_id: event_data.room_id,
+                  index: res.attr().index,
+                },
+                {
+                  $set: {
+                    act_normal: res.attr().act_normal,
+                    act_shin: res.attr().act_shin,
+                    act_gi: res.attr().act_gi,
+                    act_tai: res.attr().act_tai,
+                    first_type: res.attr().first_type,
+                  },
+                });
+            });
+
+            DB.Upsert(
+              refid,
+              {
+                collection: "event_1",
+                version: version,
+                event_data: "sparkle_fruit_lab",
+                room_id: event_data.room_id
               },
               {
                 $set: event_data,

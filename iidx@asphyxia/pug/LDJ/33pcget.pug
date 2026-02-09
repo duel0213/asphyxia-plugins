@@ -68,6 +68,15 @@ IIDX33pc(status="0")
             folder(index=partId-1 tier=tierId part=partId)
               each mid, musicIdx in content.mid
                 music(index=musicIdx music_id=mid class_id=content.diff[musicIdx] clear_type=content.cflg[musicIdx])
+  krank(season_id="0" end_time="4102326000" element_get="0" element_use="0")
+    enable_element_get(__type="bool") 1
+    reset(__type="bool") 0
+    sp(prev_season_skill="0" now_season_skill="0")
+      //-music(index="" klevel="" music_id="" class_id="" clear_type="" play_num_best="" play_num_now="" play_num_total="") [loop]
+        reset(__type="bool")
+    dp(prev_season_skill="0" now_season_skill="0")
+      //-music(index="" klevel="" music_id="" class_id="" clear_type="" play_num_best="" play_num_now="" play_num_total="") [loop]
+        reset(__type="bool")
   visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   step(enemy_damage=pcdata.st_enemy_damage progress=pcdata.st_progress total_point=pcdata.st_total_point enemy_defeat_flg=pcdata.st_enemy_defeat_flg sp_level=pcdata.st_sp_level dp_level=pcdata.st_dp_level sp_level_h=pcdata.st_sp_level_h dp_level_h=pcdata.st_dp_level_h sp_level_exh=pcdata.st_sp_level_exh dp_level_exh=pcdata.st_dp_level_exh sp_fluctuation=pcdata.st_sp_fluctuation dp_fluctuation=pcdata.st_dp_fluctuation mission_clear_num=pcdata.st_mission_clear_num sp_mplay=pcdata.st_sp_mplay dp_mplay=pcdata.st_dp_mplay tips_read_list=pcdata.st_tips_read_list)
     is_track_ticket(__type="bool") #{Number(pcdata.st_is_track_ticket)}
@@ -76,9 +85,20 @@ IIDX33pc(status="0")
   deller(deller=pcdata.deller)
   orb_data(rest_orb=pcdata.orb present_orb=pcdata.present_orb)
   old_linkage_secret_flg(triple_tribe_2="-1" triple_tribe_3="-1" triple_tribe_4="-1")
+  arena_data(play_num="2" play_num_dp="1" play_num_sp="1" prev_best_class_sp="19" prev_best_class_dp="19")
+    achieve_data(play_style="0" arena_class="19" rating_value="20" now_top_class_continuing="0" best_top_class_continuing="0" win_count="0" now_winning_streak_count="0" best_winning_streak_count="0" perfect_win_count="0" counterattack_num="0" mission_clear_num="0")
+    achieve_data(play_style="1" arena_class="19" rating_value="20" now_top_class_continuing="0" best_top_class_continuing="0" win_count="0" now_winning_streak_count="0" best_winning_streak_count="0" perfect_win_count="0" counterattack_num="0" mission_clear_num="0")
     default_chat
   pskin_customize_flg(skin_frame_flg="-1" skin_turntable_flg="-1" skin_bomb_flg="-1" skin_bgm_flg="-1" skin_lane_flg0="-1" skin_lane_flg1="-1" skin_lane_flg2="-1" skin_lane_flg3="-1" skin_lane_flg4="-1" skin_lane_flg5="-1" skin_lane_flg6="-1" skin_notes_flg="-1" skin_fullcombo_flg="-1" skin_keybeam_flg="-1" skin_judgestring_flg="-1")
   vskin_customize_flg(skin_subicon_flg="-1" skin_subbg_flg0="-1" skin_subbg_flg1="-1" skin_entry_flg0="-1" skin_entry_flg1="-1")
+  event_1(event_play_num=pcdata.event_play_num last_select_room_id=pcdata.event_last_select_id)
+    if pcdata.event_skip == true
+      is_skip
+    - for (let evt of sparkle_fl_room)
+      room_data(room_id=evt.room_id play_num=evt.play_num play_num_uc=evt.play_num_uc play_num_ub=evt.play_num_ub clear_num=evt.clear_num last_select_crop_index=evt.last_select_crop_index room_prog=evt.room_prog)
+        soul(__type="bool") #{evt.soul}
+    - for (let evt2 of sparkle_fl_crop)
+      room_crop_data(room_id=evt2.room_id index=evt2.index act_normal=evt2.act_normal act_shin=evt2.act_shin act_gi=evt2.act_gi act_tai=evt2.act_tai first_type=evt2.first_type)
   ultimate_mobile_link(music_list="-1")
     link_flag
   valkyrie_linkage(music_list_1="-1" music_list_2="-1" music_list_3="-1")

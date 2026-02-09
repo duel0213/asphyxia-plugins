@@ -17,20 +17,21 @@ export const gssysteminfo: EPR = async (info, data, send) => {
   }
 
   switch (version) {
+    case 33:
     case 32:
       result.arena_schedule.phase = K.ITEM("u8", 3);
-      result.arena_schedult = Object.assign(result.arena_schedule, { season: K.ITEM("u8", 0) }); // arena season for online // 
+      result.arena_schedule = Object.assign(result.arena_schedule, { season: K.ITEM("u8", 0) }); // arena season for online // 
 
     case 31:
-      result.arena_schedult = Object.assign(result.arena_schedule, { rule_type: K.ITEM("u8", 0) }); // arena rule for online //
+      result.arena_schedule = Object.assign(result.arena_schedule, { rule_type: K.ITEM("u8", 0) }); // arena rule for online //
 
     default:
       break;
   }
 
-  // arena_music_difficult //
   for (let s = 0; s < 2; ++s) {
     for (let c = 0; c < 20; ++c) {
+      // arena_music_difficult //
       result.arena_music_difficult.push({
         play_style: K.ITEM("s32", s),
         arena_class: K.ITEM("s32", c),
@@ -40,13 +41,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         force_music_list_id: K.ITEM("s32", 0),
       });
 
-      result.maching_class_range.push({
-        play_style: K.ITEM("s32", s),
-        matching_class: K.ITEM("s32", c),
-        low_arena_class: K.ITEM("s32", 1),
-        high_arena_class: K.ITEM("s32", 20),
-      });
-
+      // arena_cpu_define //
       result.arena_cpu_define.push({
         play_style: K.ITEM("s32", s),
         arena_class: K.ITEM("s32", c),
@@ -54,6 +49,14 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         low_music_difficult: K.ITEM("s32", IIDX_CPUS[s][c][1]),
         high_music_difficult: K.ITEM("s32", IIDX_CPUS[s][c][2]),
         is_leggendaria: K.ITEM("bool", IIDX_CPUS[s][c][3]),
+      });
+
+      // maching_class_range //
+      result.maching_class_range.push({
+        play_style: K.ITEM("s32", s),
+        matching_class: K.ITEM("s32", c),
+        low_arena_class: K.ITEM("s32", 1),
+        high_arena_class: K.ITEM("s32", 20),
       });
     }
   }
@@ -184,13 +187,15 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
         isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
-        OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
+        BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
       });
       break;
     case 33:
       result = Object.assign(result, {
+        Event1Phase: K.ATTR({ val: String(U.GetConfig("ss_event1")) }),
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
-        OldBPLBattleOpenPhase: K.ATTR({ val: String(3) }),
+        WorldTourismOpenList: K.ATTR({ val: String(-1) }),
+        BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
         beat: K.ATTR({ val: String(Number(U.GetConfig("BeatPhase"))) }), // is this same old beat attr at common or something else...? //
       });
       break;
