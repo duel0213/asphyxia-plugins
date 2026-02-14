@@ -655,8 +655,8 @@ export const pcget: EPR = async (info, data, send) => {
       if (pcdata.st_dp_level > 0 && pcdata.st_dp_level_exh == 0) pcdata.st_dp_level_exh = -1;
     }
 
-    // fix heroic verse event crash //
-    if (version == 27 && pcdata.event_last_select_id == -1) {
+    // fix event crash //
+    if (pcdata.event_last_select_id == -1) {
       pcdata.event_last_select_id = 0;
     }
 

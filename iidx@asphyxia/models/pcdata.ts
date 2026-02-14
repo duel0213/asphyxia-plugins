@@ -774,9 +774,9 @@ export const IIDX24_pcdata = {
   dr_dppoint: Array<number>(15).fill(0),
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
   event2_play_num: 0,
-  event2_last_select_id: -1,
+  event2_last_select_id: 0,
 
   st_enemy_damage: 0,
   st_progress: 0,
@@ -999,9 +999,9 @@ export const IIDX26_pcdata = {
   eb_bossorb8: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
   event2_play_num: 0,
-  event2_last_select_id: -1,
+  event2_last_select_id: 0,
 }
 
 export const IIDX27_pcdata = {
@@ -1234,7 +1234,7 @@ export const IIDX28_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
   event_story_prog: 0,
   event_failed_num: 0,
 
@@ -1354,8 +1354,8 @@ export const IIDX29_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
-  event_last_select_type: -1,
+  event_last_select_id: 0,
+  event_last_select_type: 0,
 }
 
 export const IIDX30_pcdata = {
@@ -1472,7 +1472,7 @@ export const IIDX30_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
 }
 
 export const IIDX31_pcdata = {
@@ -1586,7 +1586,7 @@ export const IIDX31_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
   event_skip: false,
 }
 
@@ -1710,7 +1710,7 @@ export const IIDX32_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
 }
 
 export const IIDX33_pcdata = {
@@ -1836,5 +1836,5 @@ export const IIDX33_pcdata = {
   present_orb: 0,
 
   event_play_num: 0,
-  event_last_select_id: -1,
+  event_last_select_id: 0,
 }
