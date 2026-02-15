@@ -429,8 +429,12 @@ export const musicappoint: EPR = async (info, data, send) => {
 
   if (version >= 27) {
     let my_gauge_data = Buffer.alloc(0), other_gauge_data = Buffer.alloc(0);
-    if (!_.isNil(music_data[clid + 10])) my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
-
+    if (!_.isNil(music_data)) {
+      if (!_.isNil(music_data[clid + 10])) {
+        my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
+      }
+    }
+    
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // migration //
         other_musicdata.optArray = Array<number>(10).fill(0);
