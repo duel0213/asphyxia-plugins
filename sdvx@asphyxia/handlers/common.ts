@@ -1,6 +1,7 @@
-import { EVENT6, COURSES6, EXTENDS6, VALGENE6 } from '../data/exg';
-import {getVersion, getRandomIntInclusive} from '../utils';
-import fs from 'fs';
+import { get } from 'http';
+import { EXG } from '../data/exg';
+import {getVersion, getRandomIntInclusive, getCurrentWeekOfYear, SeededRandom, getWeekStartAndEnd} from '../utils';
+import * as fs from 'fs';
 
 export const informationString = 
 `[sz:120]      [olc:555555][ol:4][c:ff3333,3333ff,77ff77]Asphyxia
@@ -8,7 +9,7 @@ export const informationString =
 [sz:30][sz:30][c:ffffff,888888] 
  
 [c:00d5ff,888888]ASPHYXIA CORE ${CORE_VERSION}
-[c:e5f3ff,a3d5ff]SDVX Plugin ver 6.1.0
+[c:e5f3ff,a3d5ff]SDVX Plugin ver 6.2.0
  
  
 [f:0][c:ff3333,ffffff]FREE SOFTWARE. BEWARE OF SCAMMERS.
@@ -33,16 +34,31 @@ export const common: EPR = async (info, data, send) => {
   let courses = [];
   let extend = [];
   console.log("Calling common function");
-  let exg_data_json = JSON.parse(fs.readFileSync('./plugins/sdvx@asphyxia/data/exg_data.json', 'utf8'));
 
-  events = EVENT6;
-  courses = COURSES6;
-  // EXTENDS6.forEach(val => extend.push(Object.assign({}, val)));
-  extend = EXTENDS6;
-  extend = extend.concat(exg_data_json.extends_data);
-  // extend = extend.concat(exg_data.extends_data);
+  let versionCommonObject: any = {
+    EVENT: [],
+    COURSE: [],
+    EXTEND: [],
+    VALGENE: {},
+  };
+
+  switch(info.method){
+    case 'sv6_common': {
+      versionCommonObject = EXG;
+      break;
+    }
+  }
+
+  events = events.concat(versionCommonObject.EVENT);
+  courses = courses.concat(versionCommonObject.COURSE);
+  extend = extend.concat(versionCommonObject.EXTEND);
 
   let songs = [];
+
+  if (U.GetConfig('enblae_VSync')) {
+    console.log("Enabling VSync");
+    events.push('SUBMONITOR_VSYNC_ENABLE');
+  }
 
   if (U.GetConfig('unlock_all_songs')) {
     console.log("Unlocking songs");
@@ -55,6 +71,14 @@ export const common: EPR = async (info, data, send) => {
           limited: K.ITEM('u8', 3),
         });
 
+      }
+
+      if(i == 636){ // Everlasting Message ULT
+        songs.push({
+          music_id: K.ITEM('s32', i),
+          music_type: K.ITEM('u8', 5),
+          limited: K.ITEM('u8', 3),
+        });
       }
     }
   }
@@ -144,7 +168,7 @@ export const common: EPR = async (info, data, send) => {
       }
     }
 
-    if(Math.abs(getVersion(info)) == 6){
+    if(getVersion(info) == 6){
       extend.push({
       id: 3,
       type: 1,
@@ -181,6 +205,17 @@ export const common: EPR = async (info, data, send) => {
   tempDate += 30;
   time.setDate(tempDate);
   const newTime = time.getTime();
+
+  console.log(getCurrentWeekOfYear());
+
+  const seed = parseInt(`${new Date().getFullYear()}${getCurrentWeekOfYear()}`);
+
+  const rng = new SeededRandom(seed);
+  // const weekly_music_id = rng.next() % U.GetConfig('music_count'); 
+  const weekly_music_id = 636
+
+  console.log(getWeekStartAndEnd().endOfWeek);
+  console.log(getWeekStartAndEnd().startOfWeek);
 
   console.log("Sending common objects");
   send.object(
@@ -257,10 +292,10 @@ export const common: EPR = async (info, data, send) => {
         season: K.ITEM('s32',3),
         rule: K.ITEM('s32',0),
         rank_match_target: K.ARRAY('s32', [
-          2,2,2,2,
-          2,2,2,2,
-          1,1,1,1,
-          1,1,1,1,
+          0,1,2,0,
+          0,0,0,0,
+          0,0,0,0,
+          0,0,0,0,
           0,0,0,0,
           0,0,0,0,
           0,0,0,0,
@@ -274,17 +309,23 @@ export const common: EPR = async (info, data, send) => {
         is_shop: K.ITEM('bool',true)
       },
       valgene: {
-        info: unlock_codes.map(v => ({
-          valgene_name: K.ITEM('str', 'VALKYRIE GENERATOR VOL.' + v),
-          valgene_name_english: K.ITEM('str', 'VALKYRIE GENERATOR VOL.' + v),
-          valgene_id: K.ITEM('s32', v),
+        info: versionCommonObject.VALGENE.info.map(v => ({
+          valgene_name: K.ITEM('str', v.valgene_name),
+          valgene_name_english: K.ITEM('str', v.valgene_name_english),
+          valgene_id: K.ITEM('s32', v.valgene_id),
         })),
-        catalog: VALGENE6.catalog.map(c => ({
+        catalog: versionCommonObject.VALGENE.catalog.map(c => ({
           valgene_id: K.ITEM('s32', c.valgene_id),
           rarity: K.ITEM('s32', c.rarity),
           item_type: K.ITEM('s32', c.item_type),
           item_id: K.ITEM('s32', c.item_id),
         })),
+      },
+      weekly_music: {
+        week_id: K.ITEM('s32',0),
+        music_id: K.ITEM('s32', weekly_music_id),
+        time_start: K.ITEM('u64',BigInt(getWeekStartAndEnd().startOfWeek)),
+        time_end: K.ITEM('u64',BigInt(getWeekStartAndEnd().endOfWeek-999)),
       },
       invest:{
         limit_date: K.ITEM('u64',BigInt(newTime)),

@@ -13,7 +13,20 @@ game
   headphone(__type="u8") #{headphone}
   blaster_energy(__type="u32") #{blasterEnergy}
   blaster_count(__type="u32") 0
-  extrack_energy(__type="u16") #{extrackEnergy}
+  //- extrack_energy(__type="u16") #{extrackEnergy}
+  variant_gate
+    power(__type="s32") #{vGatePower}
+    element
+      notes(__type="s32") #{vGateNotes}
+      peak(__type="s32") #{vGatePeak}
+      tsumami(__type="s32") #{vGateTsumami}
+      tricky(__type="s32") #{vGateTricky}
+      onehand(__type="s32") #{vGateOnehand}
+      handtrip(__type="s32") #{vGateHandtrip}
+    if vGateOverRadar.length > 0
+      over_radar(__type="s32" __count=vGateOverRadar.length) #{vGateOverRadar.join(" ")}
+    else
+      over_radar(__type="s32" __count="0")/
 
   hispeed(__type="s32") #{hiSpeed}
   lanespeed(__type="u32") #{laneSpeed}
@@ -112,10 +125,12 @@ game
     ultimate_rate(__type="s32") 0
     rank_play_cnt(__type="s32") 1
     ultimate_play_cnt(__type="s32") 1
-  
-  //- additional_info
-
-  support_team_id(__type="s32") #{support_team}
+   
+  if use_pro_team 
+    additional_info
+      pro_team_id(val= support_team)
+  else
+    support_team_id(__type="s32") #{support_team}
 
   if mixes
     each mix in mixes
@@ -130,4 +145,9 @@ game
         jacket_id(__type="s32") #{mix.jacket}
         tag_bit(__type="s32") #{mix.tag}
         like_flg(__type="u8") 0
-  
+  //- weekly_music 
+  //-   week_id(__type="s32") 0
+    //- music_id(__type="s32") 1660
+    //- music_type(__type="s32") 5
+    //- exscore(__type="u32") 3000
+    //- rank(__type="s32") 5

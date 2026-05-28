@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-export function unpackS3P(directory, filePath, names) {
+export function unpackS3P(directory: string, filePath: string, names: { [x: string]: string | number; }) {
     const stream = fs.readFileSync(filePath);
     if (stream.slice(0, 4).toString() !== 'S3P0') {
         throw new Error('Invalid S3P file');
@@ -33,7 +33,6 @@ export function unpackS3P(directory, filePath, names) {
         offset += 4;
         const headerExtra = stream.slice(offset, offset + hlen - 8);
         offset += hlen - 8;
-        // const [wmaFileLength, , , , , , ,] = new Uint32Array(headerExtra.buffer);
 
         const data = stream.slice(offset, offset + length - hlen);
         offset += length - hlen;
@@ -44,17 +43,17 @@ export function unpackS3P(directory, filePath, names) {
     }
 }
 
-export function packS3P(directory, output, names) {
+export function packS3P(directory: string, output: string, names: { [x: string]: string | number; }) {
     let paths = fs.readdirSync(directory);
     if (names) {
         const namesBack = {};
         for (const key in names) {
             namesBack[names[key]] = key;
         }
-        paths = paths.filter((i) => namesBack[i.split('.')[0]]);
-        paths.sort((a, b) => namesBack[a.split('.')[0]] - namesBack[b.split('.')[0]]);
+        paths = paths.filter((i: string) => namesBack[i.split('.')[0]]);
+        paths.sort((a: string, b: string) => namesBack[a.split('.')[0]] - namesBack[b.split('.')[0]]);
     } else {
-        paths.sort((a, b) => parseInt(a.split('.')[0]) - parseInt(b.split('.')[0]));
+        paths.sort((a: string, b: string) => parseInt(a.split('.')[0]) - parseInt(b.split('.')[0]));
     }
 
     let offset = 0;
@@ -119,7 +118,7 @@ function usage() {
     process.exit(1);
 }
 
-function loadNames(filePath) {
+function loadNames(filePath: string) {
     const base = path.join(path.dirname(filePath), path.basename(filePath, path.extname(filePath)));
     const filenames = {};
 
@@ -149,63 +148,63 @@ function loadNames(filePath) {
     return filenames;
 }
 
-// function main() {
-//     if (process.argv.length !== 5 && process.argv.length !== 6) {
-//         usage();
-//     }
-//     if (process.argv[2] !== 'pack' && process.argv[2] !== 'unpack') {
-//         usage();
-//     }
+function main() {
+    if (process.argv.length !== 5 && process.argv.length !== 6) {
+        usage();
+    }
+    if (process.argv[2] !== 'pack' && process.argv[2] !== 'unpack') {
+        usage();
+    }
 
-//     const s3p = process.argv[3];
-//     const directory = process.argv[4];
+    const s3p = process.argv[3];
+    const directory = process.argv[4];
 
-//     let names = {};
-//     if (process.argv.length === 6) {
-//         names = loadNames(process.argv[5]);
-//     } else {
-//         names = loadNames(s3p);
-//     }
+    let names = {};
+    if (process.argv.length === 6) {
+        names = loadNames(process.argv[5]);
+    } else {
+        names = loadNames(s3p);
+    }
 
-//     if (!names) {
-//         console.log('W: Filenames not loaded');
-//     }
+    if (!names) {
+        console.log('W: Filenames not loaded');
+    }
 
-//     if (process.argv[2] === 'pack') {
-//         if (!fs.existsSync(directory)) {
-//             console.error(`F: No such file or directory ${directory}`);
-//             process.exit(1);
-//         }
+    if (process.argv[2] === 'pack') {
+        if (!fs.existsSync(directory)) {
+            console.error(`F: No such file or directory ${directory}`);
+            process.exit(1);
+        }
 
-//         const files = fs.readdirSync(directory);
-//         if (!files.every((i) => /^\d+\.wma$/.test(i) || Object.values(names).includes(i.split('.')[0]))) {
-//             console.error('F: Files must all be [number].wma');
-//             process.exit(1);
-//         }
+        const files = fs.readdirSync(directory);
+        if (!files.every((i: string) => /^\d+\.wma$/.test(i) || Object.values(names).includes(i.split('.')[0]))) {
+            console.error('F: Files must all be [number].wma');
+            process.exit(1);
+        }
 
-//         const dirname = path.dirname(s3p);
-//         if (dirname) {
-//             fs.mkdirSync(dirname, { recursive: true });
-//         }
+        const dirname = path.dirname(s3p);
+        if (dirname) {
+            fs.mkdirSync(dirname, { recursive: true });
+        }
 
-//         packS3P(directory, s3p, names);
-//         console.log(`I: ${s3p}`);
-//     } else {
-//         if (!fs.existsSync(s3p)) {
-//             console.error(`F: No such file or directory ${s3p}`);
-//             process.exit(1);
-//         }
+        packS3P(directory, s3p, names);
+        console.log(`I: ${s3p}`);
+    } else {
+        if (!fs.existsSync(s3p)) {
+            console.error(`F: No such file or directory ${s3p}`);
+            process.exit(1);
+        }
 
-//         if (fs.existsSync(directory) && !fs.lstatSync(directory).isDirectory()) {
-//             console.error('F: Output is not a directory');
-//             process.exit(1);
-//         }
+        if (fs.existsSync(directory) && !fs.lstatSync(directory).isDirectory()) {
+            console.error('F: Output is not a directory');
+            process.exit(1);
+        }
 
-//         fs.mkdirSync(directory, { recursive: true });
-//         unpackS3P(directory, s3p, names);
-//     }
-// }
+        fs.mkdirSync(directory, { recursive: true });
+        unpackS3P(directory, s3p, names);
+    }
+}
 
-// if (require.main === module) {
-//     main();
-// }
+if (require.main === module) {
+    main();
+}

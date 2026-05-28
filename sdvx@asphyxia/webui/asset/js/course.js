@@ -12,7 +12,7 @@ let special_name = {
     "5":{
         "13": "U.S.O",
         "14": "",
-        "15": "",
+        "15": "蘭 華",
         "16": "",
     },
     "6":{
@@ -422,7 +422,7 @@ $('#version_select').change(function() {
 
 
 
-$(document).ready(function() {
+$(function() {
     let profile_data = JSON.parse(document.getElementById("data-pass").innerText);
     profile_data = profile_data.sort(function(a, b) {
         if (a.version > b.version) return 1;
@@ -465,7 +465,7 @@ $(document).ready(function() {
         $.getJSON("static/asset/json/course_data.json", function(json) {
             course_db = json;
         })
-    ).then(function() {
+    ).then(() => {
         let arr = [];
         for (let i in music_db["mdb"]["music"]) {
             arr.push(music_db["mdb"]["music"][i]["info"]["title_name"]);

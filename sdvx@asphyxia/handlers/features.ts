@@ -7,19 +7,26 @@ import { MatchingRoom } from '../models/matching';
 let Tracker:MatchingRoom[] = [];
 
 export const hiscore: EPR = async (info, data, send) => {
+  
   const records = await DB.Find<MusicRecord>(null, { collection: 'music' });
 
   const version = getVersion(info);
+
+  let limit = $(data).number('limit');
+  let offset = $(data).number('offset');
 
   const profiles = _.groupBy(
     await DB.Find<Profile>(null, { collection: 'profile' }),
     '__refid'
   );
+  console.log(`Sending hiscore limit:${limit} offset:${offset}`);
+  
+  let filtered_records = records.filter(r => r.mid > 0+offset && r.mid <= 0+offset+limit);
 
   return send.object({
     sc: {
       d: _.map(
-        _.groupBy(records, r => {
+        _.groupBy(filtered_records, r => {
           return `${r.mid}:${r.type}`;
         }),
         r => _.maxBy(r, 'score')
@@ -39,7 +46,10 @@ export const hiscore: EPR = async (info, data, send) => {
         lx_nm: K.ITEM('str', profiles[r.__refid][0].name),
         lx_sc: K.ITEM('u32', r.exscore ?? 0),
         avg_sc: K.ITEM('u32', r.score),
-        cr: K.ITEM('s32', 8763)
+        avg_ex: K.ITEM('u32', r.exscore ?? 0),
+        cr: K.ITEM('s32', 8763),
+        avg_sc_lv: K.ARRAY('u32', Array.from({length:13}).map(x => r.score)), //Array.from({length:12}).map(x=> r.score)
+        avg_ex_lv: K.ARRAY('u32', Array.from({length:13}).map(x => r.exscore))
       })),
     },
   });

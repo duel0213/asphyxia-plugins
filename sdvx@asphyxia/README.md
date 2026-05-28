@@ -1,10 +1,12 @@
 # SOUND VOLTEX
 
-Plugin Version: **v6.1.2**
+Plugin Version: **v6.2.1**
 
 ## Provide out of box usable exprience, everything is unlocked and good to go.  
 
-Prerequisite CORE version: v1.50c or above
+# Make sure to set SDVX installation path in CORE settings first. The Webui will load assets directly from the game installation folder.
+
+Prerequisite CORE version: v1.50d or above
 
 Supported Versions:
 
@@ -28,10 +30,16 @@ If you want to help with the plugin, you can open pull request.
 
 This version save data is not compatible with some forks plugin, please use it with caution if you already uses an unsupported version.
 
-Remember to import asset from the game files first time when using webui.
-
 Change Log
 ===========
+
+## 6.2.1
+
+1. Fix asset loading error when plugin is initializing without node type installed.
+
+## 6.2.0
+
+1. Support EG Final 2025120900.
 
 ## 6.1.2
 

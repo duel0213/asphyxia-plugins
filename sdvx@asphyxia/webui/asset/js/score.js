@@ -6,22 +6,19 @@ function zeroPad(num, places) {
 }
 
 function getSongName(musicid) {
-    //console.log(music_db["mdb"]["music"])
-    //console.log(musicid+" "+type);
-    let result = music_db["mdb"]["music"].filter(object => object["@id"] == musicid);
+    let result = music_db["mdb"]["music"].filter(object => object["@attr"]["id"] == musicid);
     if (result.length == 0) {
         return "Custom Song";
     }
-    return result[0]["info"]["title_name"]
-        //console.log(result);
+    return result[0]["info"]["title_name"]["@content"];
 }
 
 function getDifficulty(musicid, type) {
-    let result = music_db["mdb"]["music"].filter(object => object["@id"] == musicid);
+    let result = music_db["mdb"]["music"].filter(object => object["@attr"]["id"] == musicid);
     if (result.length == 0) {
         return "NOV";
     }
-    let inf_ver = result[0]["info"]["inf_ver"]["#text"] ? result[0]["info"]["inf_ver"]["#text"] : 5;
+    let inf_ver = String(result[0]?.info?.inf_ver?.["@content"] ?? "6");
     switch (type) {
         case 0:
             return "NOV";
@@ -30,27 +27,23 @@ function getDifficulty(musicid, type) {
         case 2:
             return "EXH";
         case 3:
-            {
-                switch (inf_ver) {
-                    case "2":
-                        return "INF";
-                    case "3":
-                        return "GRV";
-                    case "4":
-                        return "HVN";
-                    case "5":
-                        return "VVD";
-                    case "6":
-                        return "XCD";
-                }
+            switch (inf_ver) {
+                case "2": return "INF";
+                case "3": return "GRV";
+                case "4": return "HVN";
+                case "5": return "VVD";
+                case "6": return "XCD";
+                default:  return "INF";
             }
         case 4:
             return "MXM";
+        case 5:
+            return "ULT";
     }
 }
 
 function getLevel(musicid, type){
-    let result = music_db["mdb"]["music"].filter(object => object["@id"] == musicid);
+    let result = music_db["mdb"]["music"].filter(object => object["@attr"]["id"] == musicid);
     if (result.length == 0) {
         return 0;
     }
@@ -58,15 +51,17 @@ function getLevel(musicid, type){
 
     switch (type) {
         case 0:
-            return parseInt(info["novice"]["difnum"]["#text"]);
+            return parseFloat(info["novice"]["difnum"]["@content"] / 10);
         case 1:
-            return parseInt(info["advanced"]["difnum"]["#text"]);
+            return parseFloat(info["advanced"]["difnum"]["@content"] / 10);
         case 2:
-            return parseInt(info["exhaust"]["difnum"]["#text"]);
+            return parseFloat(info["exhaust"]["difnum"]["@content"] / 10);
         case 3:
-            return parseInt(info["infinite"]["difnum"]["#text"]);
+            return parseFloat(info["infinite"]["difnum"]["@content"] / 10);
         case 4:
-            return parseInt(info["maximum"]["difnum"]["#text"]);
+            return parseFloat(info["maximum"]["difnum"]["@content"] / 10);
+        case 5:
+            return parseFloat(info["ultimate"]["difnum"]["@content"] / 10);
     }
 }
 
@@ -111,6 +106,8 @@ function getMedal(clear) {
             return "UC";
         case 5:
             return "PUC";
+        case 6:
+            return "Maxxive Clear";
     }
 }
 
@@ -185,7 +182,7 @@ function gradeSort(d) {
     return 0;
 };
 
-$(document).ready(function() {
+$(function() {
     jQuery.fn.dataTableExt.oSort['diff-asc'] = function(a, b) {
         let x = difficultySort(a);
         let y = difficultySort(b);
@@ -227,6 +224,7 @@ $(document).ready(function() {
 
         return ((x < y) ? 1 : ((x > y) ? -1 : 0));
     };
+
     let profile_data = JSON.parse(document.getElementById("data-pass").innerText);
     profile_data = profile_data.sort(function(a, b) {
         if (a.mid > b.mid) return 1;
@@ -234,16 +232,14 @@ $(document).ready(function() {
         return a.type > b.type ? 1 : -1;
     });
 
-    //console.log(profile_data);
-    //$('#music_score').DataTable();
-
-    $.getJSON("static/asset/json/music_db.json", function(json) {
-        music_db = json;
+    axios.post('/emit/getMusicDB').then(function (response) {
+        music_db = response.data;
         let music_data = [];
 
-        
-
         for (let i in profile_data) {
+            console.log(profile_data[i]);
+
+
             let temp_data = {};
             temp_data.mid = profile_data[i].mid;
             temp_data.songname = getSongName(profile_data[i].mid);
@@ -254,18 +250,7 @@ $(document).ready(function() {
             temp_data.grade = getGrade(profile_data[i].grade);
             temp_data.clear = getMedal(profile_data[i].clear);
             music_data.push(temp_data);
-
-            // $("#music_score>tbody").append($('<tr>')
-            // .append($('<td>').append(getSongName(profile_data[i].mid)))
-            // .append($('<td>').append(getDifficulty(profile_data[i].mid,profile_data[i].type)))
-            // .append($('<td>').append(profile_data[i].score))
-            // .append($('<td>').append((profile_data[i].exscore)? profile_data[i].exscore:0))
-            // .append($('<td>').append(getGrade(profile_data[i].grade)))
-            // .append($('<td>').append(getMedal(profile_data[i].clear)))
-            // );
-            // getSongName(1);
         }
-
 
         $('#music_score').DataTable({
             data: music_data,
@@ -289,14 +274,13 @@ $(document).ready(function() {
                             let data = row.data();
                             return 'Details for ' + data.songname;
                         }
-                    })
+                    }),
+                    type: 'column',
+                    target: 1
                 }
             },
             scrollY: "400px",
         });
 
-
-    });
-
-
+    })
 })

@@ -224,3 +224,43 @@ html.has-aside-left.has-aside-mobile-transition.has-navbar-fixed-top.has-aside-e
     font-size: 1.5rem;
     font-weight: 600;
   }
+
+  #mainbg_video_pre{
+    width: 100vw;
+    height: 100vh;
+    object-fit: scale-down;
+    position: fixed;
+    /* left: 0; */
+    right: 0;
+    top: 0;
+    /* bottom: 0; */
+    z-index: -1;
+  }
+  
+  #mainbg_img_pre{
+    width: 100vw;
+    height: 100vh;
+    object-fit: scale-down;
+    position: fixed;
+    /* left: 0; */
+    right: 0;
+    top: 0;
+    /* bottom: 0; */
+    z-index: -1;
+  }
+
+  @keyframes scrolling {
+    from {
+      padding: 0%;
+    }
+  
+    to {
+      padding: 100%;
+    }
+  }
+
+  img.scroll{
+    object-fit: cover;
+    
+  }
+  

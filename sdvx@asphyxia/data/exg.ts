@@ -1,9 +1,11 @@
-export let EVENT6 = [
+import { VALGENE6 } from "./exg_gene";
+
+let EVENT6 = [
   'SERIALCODE_JP',
   'DEMOGAME_PLAY',
   'MATCHING_MODE',
   'MATCHING_MODE_FREE_IP',
-  'LEVEL_LIMIT_EASING', 
+  'LEVEL_LIMIT_EASING',
   'ACHIEVEMENT_ENABLE',
   'VOLFORCE_ENABLE',
   'AKANAME_ENABLE',
@@ -16,14 +18,14 @@ export let EVENT6 = [
   'SKILL_ANALYZER_ABLE',
   'BLASTER_ABLE',
   'STANDARD_UNLOCK_ENABLE',
-  'PLAYERJUDGEADJ_ENABLE', 
+  'PLAYERJUDGEADJ_ENABLE',
   'EVENTDATE_ONIGO',
   'EVENTDATE_GOTT',
   'GENERATOR_ABLE',
   'CREW_SELECT_ABLE',
   'PREMIUM_TIME_ENABLE',
   'OMEGA_ENABLE\t1,2,3,4,5,6,7,8,9',
-  'HEXA_ENABLE\t1,2,3,4,5,6,7,8,9,10',
+  'HEXA_ENABLE\t1,2,3,4,5,6,7,8,9,10,11,12,13,14',
   'MEGAMIX_ENABLE',
   'VALGENE_ENABLE',
   'ARENA_ENABLE',
@@ -47,18 +49,23 @@ export let EVENT6 = [
   'SINGLE_BATTLE_ENABLE',
   // 'SUBMONITOR_VSYNC_ENABLE',
   'USE_CUDA_VIDEO_PRESENTER',
-  'CHARACTER_IGNORE_DISABLE\t122,123,131,139,140,143,149,160,162,163',
-  'SUBBG_IGNORE_DISABLE\t166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311',
-  'SUBBG_IGNORE_DISABLE\t312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,369,370,371,372,373,374,375,376,377,378,379,380,381,419,420,421',
-  'SUBBG_IGNORE_DISABLE\t422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,464,465,466,467,468,469,470,471,472,473,474,475,476,477,478,479,480,481,482',
-  'STAMP_IGNORE_DISABLE\t273~312,773~820,993~1032,1245~1284,1469~1508',
-  'HEXA_OVERDRIVE_ENABLE\t1,2,3,4,5,6,7,8,9,10,11,12',
+  'CHARACTER_IGNORE_DISABLE\t122,123,131,139,140,143,149,160,162,163,164,167,170,174',
+  'SUBBG_IGNORE_DISABLE\t166~185,281~346,369~381,419~438,464~482,515~552,595~616,660~673,714~727',
+  'STAMP_IGNORE_DISABLE\t273~312,773~820,993~1032,1245~1284,1469~1508,1585~1632,1633~1672,1737~1776,1777~1816,1897~1936',
+  'HEXA_OVERDRIVE_ENABLE\t1,2,3,4,5,6,7,8,9,10,11,12,13,14',
   'TAMAADV_ENABLE',
   'CAMERA_CALIBRATION_TEST_MENU_ENABLE',
-  'APRIL_RAINBOW_LINE_ACTIVE'
+  'APRIL_RAINBOW_LINE_ACTIVE',
+  'FAVORITE_CREW_ENABLE',
+  'FAVORITE_CREW_MAX\t300',
+  'SKILLLEVEL_AVERAGE_SCORE_DISP_ENABLE',
+  'TAMAADV_VALGENE_BONUS_ENABLE',
+  'YUKKURI_RASIS_CREW_ENABLE',
+  'YUKKURI_RASIS_TITLE_ENABLE',
+  'OVER_POWER_ENABLE'
 ];
 
-export let COURSES6 = [
+let COURSES6 = [
   {
     id: 1,
     name: 'SKILL ANALYZER 第1回 Aコース',
@@ -2831,7 +2838,7 @@ export let COURSES6 = [
   }
 ];
 
-export let SDVX_AUTOMATION_SONGS = [
+let SDVX_AUTOMATION_SONGS = [
   1,
   2,
   3,
@@ -3066,7 +3073,7 @@ export let SDVX_AUTOMATION_SONGS = [
   787,
 ];
 
-export let SDVX_AUTOMATION_SONGS_2 = [
+let SDVX_AUTOMATION_SONGS_2 = [
   788,
   789,
   790,
@@ -3299,7 +3306,7 @@ export let SDVX_AUTOMATION_SONGS_2 = [
   1280,
 ]
 
-export let SDVX_AUTOMATION_SONGS_3 = [
+let SDVX_AUTOMATION_SONGS_3 = [
   1281,
   1282,
   1300,
@@ -3519,9 +3526,165 @@ export let SDVX_AUTOMATION_SONGS_3 = [
   99004,
 ]
 
-export let EXTENDS6 = [
+let SDVX_AUTOMATION_SONGS_4 = [
+  2039,
+  2127,
+  2131,
+  2145,
+  68,
+  497,
+  513,
+  500,
+  2044,
+  2142,
+  2151,
+  2125,
+  69,
+  518,
+  2041,
+  502,
+  62,
+  1124,
+  2160,
+  2156,
+  2040,
+  2148,
+  2047,
+  505,
+  514,
+  2046,
+  503,
+  2139,
+  2134,
+  2146,
+  2045,
+  2158,
+  2152,
+  2140,
+  2049,
+  2138,
+  64,
+  2121,
+  2129,
+  2128,
+  976,
+  511,
+  1125,
+  2132,
+  2133,
+  2149,
+  2161,
+  2126,
+  2153,
+  2130,
+  2043,
+  498,
+  2155,
+  59,
+  2141,
+  515,
+  2143,
+  2037,
+  509,
+  504,
+  2137,
+  975,
+  2159,
+  496,
+  2135,
+  2124,
+  516,
+  517,
+  512,
+  61,
+  501,
+  2122,
+  2050,
+  2147,
+  2154,
+  70,
+  2038,
+  1123,
+  2157,
+  2144,
+  1127,
+  1128,
+  2042,
+  2048,
+  519,
+  1126,
+  2150,
+  2123,
+  2136
+]
+
+let EXTENDS6 = [
   {
-  id: 91,
+    "id": 4,
+    "type": 4,
+    "params": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      "",
+      "13,-1, 天 晴,[sz:40][sx:120][pos:0,2],[sz:40][sx:120][pos:0,2]",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": 5,
+    "type": 4,
+    "params": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      "",
+      "14,-1,詠鰤琉,[sz:40][sx:120][pos:10,2],[sz:40][sx:120][pos:10,2]",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": 6,
+    "type": 4,
+    "params": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      "",
+      "15,-1,Red Bull,[sz:40][sx:90][pos:10,2],[sz:40][sx:90][pos:10,2]",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": 7,
+    "type": 4,
+    "params": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      "",
+      "16,-1, 完 喰,[sz:40][sx:90][pos:10,2],[sz:40][sx:90][pos:10,2]",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    id: 91,
     type: 17,
     params: [
       0,
@@ -3536,24 +3699,24 @@ export let EXTENDS6 = [
       '',
     ],
   },
-	{
+  {
     id: 92,
-     type: 17,
-     params: [
-       0,
-       0,
-       0,
-       0,
-       0,
-       SDVX_AUTOMATION_SONGS_2.join(','),
-       '',
-       '',
-       '',
-       '',
-     ],
+    type: 17,
+    params: [
+      0,
+      0,
+      0,
+      0,
+      0,
+      SDVX_AUTOMATION_SONGS_2.join(','),
+      '',
+      '',
+      '',
+      '',
+    ],
   },
   {
-  id: 93,
+    id: 93,
     type: 17,
     params: [
       0,
@@ -3569,7 +3732,7 @@ export let EXTENDS6 = [
     ],
   },
   {
-  id: 94,
+    id: 94,
     type: 20,
     params: [
       0,
@@ -3577,1867 +3740,179 @@ export let EXTENDS6 = [
       0,
       0,
       0,
-      '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19',
+      '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40',
       '',
       '',
       '',
       '',
     ],
-  }
+  },
+  {
+    id: 95,
+    type: 17,
+    params: [
+      0,
+      0,
+      0,
+      0,
+      0,
+      SDVX_AUTOMATION_SONGS_4.join(','),
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 96,
+    type: 22,
+    params: [
+      0,
+      1,
+      1,
+      1,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 97,
+    type: 22,
+    params: [
+      0,
+      2,
+      1,
+      2,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 98,
+    type: 22,
+    params: [
+      0,
+      3,
+      1,
+      3,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 99,
+    type: 22,
+    params: [
+      0,
+      4,
+      1,
+      4,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 100,
+    type: 22,
+    params: [
+      0,
+      5,
+      1,
+      5,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 101,
+    type: 22,
+    params: [
+      0,
+      6,
+      1,
+      6,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 102,
+    type: 22,
+    params: [
+      0,
+      7,
+      1,
+      7,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 103,
+    type: 22,
+    params: [
+      0,
+      8,
+      1,
+      8,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    id: 104,
+    type: 22,
+    params: [
+      0,
+      9,
+      1,
+      9,
+      0,
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
 ];
 
-
-var ITEM_TYPE_CREW = 11
-var ITEM_TYPE_APPEAL = 15
-var ITEM_TYPE_STAMP = 17
-var ITEM_TYPE_BG = 18
-var ITEM_TYPE_BGM = 19
-var ITEM_TYPE_NEMSYS = 20
-
-export const VALGENE6 = {
-  "catalog": [
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 117
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 1
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 2
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 3
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 4
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 5
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 1
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 2
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 3
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 4
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 5
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 6
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 7
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 8
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 9
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 10
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 11
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 12
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 13
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 14
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 15
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 1
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 2
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 3
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 4
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 5
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 6
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 7
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 8
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 1
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 2
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 3
-      },
-      {
-          "valgene_id": 1,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 4
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 119
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 6
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 7
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 8
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 9
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 10
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 16
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 17
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 18
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 19
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 20
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 21
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 22
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 23
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 24
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 25
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 26
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 27
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 28
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 29
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 30
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 31
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 32
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 33
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 9
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 10
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 11
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 12
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 13
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 14
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 5
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 6
-      },
-      {
-          "valgene_id": 2,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 7
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 120
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 11
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 12
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 13
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 14
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 15
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 16
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 34
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 35
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 36
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 37
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 38
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 39
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 40
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 41
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 42
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 43
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 44
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 45
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 46
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 47
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 48
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 49
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 50
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 51
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 52
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 53
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 54
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 55
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 56
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 15
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 16
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 17
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 12
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 13
-      },
-      {
-          "valgene_id": 3,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 14
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 121
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 17
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 18
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 19
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 20
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 21
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 57
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 58
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 59
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 60
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 61
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 62
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 63
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 64
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 65
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 66
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 67
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 68
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 69
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 70
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 71
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 72
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 73
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 74
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 75
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 76
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 77
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 78
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 79
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 18
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 19
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 20
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 21
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 15
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 16
-      },
-      {
-          "valgene_id": 4,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 17
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 122
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 22
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 23
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 24
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 25
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 26
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 27
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 80
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 81
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 82
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 83
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 84
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 85
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 86
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 87
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 88
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 89
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 90
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 91
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 92
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 93
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 94
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 95
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 96
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 97
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 98
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 99
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 100
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 101
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 102
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 22
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 23
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 24
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 25
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 18
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 19
-      },
-      {
-          "valgene_id": 5,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 20
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 129
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 28
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 29
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 30
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 31
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 32
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 103
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 104
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 105
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 106
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 107
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 108
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 109
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 110
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 111
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 112
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 113
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 114
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 115
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 116
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 117
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 118
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 119
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 120
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 121
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 122
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 123
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 124
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 125
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 126
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 127
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 26
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 27
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 28
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 29
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 21
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 22
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 23
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 24
-      },
-      {
-          "valgene_id": 6,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 25
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 129
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 130
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 131
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 132
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 133
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 134
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 135
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 136
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 137
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 138
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 139
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 140
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 141
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 142
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 143
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 144
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 145
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 146
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 147
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 148
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 149
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 150
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 151
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 30
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 31
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 32
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 33
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 34
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 35
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 36
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 37
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 26
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 27
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 28
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 29
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 30
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 34
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 35
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 36
-      },
-      {
-          "valgene_id": 7,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 37
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 11,
-          "item_id": 130
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 152
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 153
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 154
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 155
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 156
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 157
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 158
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 159
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 160
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 161
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 162
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 163
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 164
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 18,
-          "item_id": 165
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 38
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 39
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 40
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 41
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 19,
-          "item_id": 42
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 20,
-          "item_id": 31
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 38
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 39
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 40
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 41
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 42
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 43
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 44
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 45
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 46
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 47
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 48
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 49
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 50
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 51
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 52
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 53
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 54
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 55
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 56
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 57
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 58
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 59
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 60
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 61
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 62
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 63
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 64
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 65
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 66
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 67
-      },
-      {
-          "valgene_id": 8,
-          "rarity": 3,
-          "item_type": 17,
-          "item_id": 68
-      }
-  ]
-}
+export let EXG = {
+  EVENT: EVENT6,
+  COURSE: COURSES6,
+  EXTEND: EXTENDS6,
+  VALGENE: VALGENE6,
+};
 

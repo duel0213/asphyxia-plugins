@@ -42,7 +42,7 @@ function unlock_all_valkgen(items: Partial<Item>[]) {
 
 export const loadScore: EPR = async (info, data, send) => {
   console.log("Now loading score");
-  const version = Math.abs(getVersion(info));
+  const version = getVersion(info);
   console.log("Got version:" + version);
   let refid = $(data).str('refid', $(data).attr().dataid);
   if (version === 2) refid = $(data).str('dataid', '0');
@@ -52,11 +52,10 @@ export const loadScore: EPR = async (info, data, send) => {
   console.log('Finding record');
   const records = await DB.Find<MusicRecord>(refid, { collection: 'music' });
 
-
   return send.object({
     music: {
-      info: records.map(r => ({
-        param: K.ARRAY('u32', [
+      info: records.map(r => {
+        let tempArr = [
           r.mid,
           r.type,
           r.score,
@@ -68,7 +67,7 @@ export const loadScore: EPR = async (info, data, send) => {
           r.buttonRate,
           r.longRate,
           r.volRate,
-          0,
+          r.volforce ? r.volforce : 0,
           0,
           0,
           0,
@@ -79,8 +78,12 @@ export const loadScore: EPR = async (info, data, send) => {
           0,
           0,
           0,
-        ]),
-      })),
+        ];
+
+        return {
+          param: K.ARRAY('u32', tempArr),
+        }
+      }),
     },
   });
   
@@ -111,7 +114,17 @@ export const saveScore: EPR = async (info, data, send) => {
       buttonRate: 0,
       longRate: 0,
       volRate: 0,
+      volforce: 0,
+      judge: [],
     };
+
+    if (record.judge.length == 0) {
+      console.log("No judge data found, save them for the first time so use current data as baseline.");
+      record.judge = i.numbers('judge', []);
+      if (record.judge.length == 7) {
+        console.log("Judge data length is valid with s-crit.");
+      }
+    }
 
     const score = i.number('score', 0);
     const exscore = i.number('exscore', 0);
@@ -121,11 +134,42 @@ export const saveScore: EPR = async (info, data, send) => {
       record.longRate = i.number('long_rate', 0);
       record.volRate = i.number('vol_rate', 0);
     }
+
     if (exscore > record.exscore) {
       record.exscore = exscore;
     }
 
-    record.clear = Math.max(i.number('clear_type', 0), record.clear);
+    if (score >= record.score || exscore >= record.exscore) {
+      const newJudge = i.numbers('judge', []);
+      if (newJudge.length == record.judge.length) {
+        for (let j = 0; j < record.judge.length; j++) {
+          if (newJudge[j] > record.judge[j]) {
+            record.judge[j] = newJudge[j];
+          }
+        }
+      }
+    }
+
+
+    const volforce = i.number('volforce', 0);
+
+    if (isNaN(record.volforce) || record.volforce === null) {
+      console.log("Old Volforce is NaN or null, setting to 0");
+      record.volforce = 0;
+    }
+
+    if (volforce > record.volforce) {
+      record.volforce = volforce;
+    }
+
+    
+
+    if(i.number('clear_type', 0) == 6 && record.clear >= 4){
+      console.log("Detected Maxxive Clear, but originally UC or PUC, no override.")
+    }else{
+      record.clear = Math.max(i.number('clear_type', 0), record.clear);
+    }
+
     record.grade = Math.max(i.number('score_grade', 0), record.grade);
 
 
@@ -201,12 +245,20 @@ export const save: EPR = async (info, data, send) => {
         effCLeft: $(data).number('eff_c_left'),
         effCRight: $(data).number('eff_c_right'),
         narrowDown: $(data).number('narrow_down'),
+
+        vGateOverRadar: $(data).element('variant_gate').numbers("over_radar")
       },
       $inc: {
         packets: $(data).number('earned_gamecoin_packet'),
         blocks: $(data).number('earned_gamecoin_block'),
         blasterEnergy: $(data).number('earned_blaster_energy'),
-        extrackEnergy: $(data).number('earned_extrack_energy'),
+        vGatePower: $(data).element('variant_gate').number('earned_power'),
+        vGateNotes: $(data).element('variant_gate').element('earned_element').number('notes'),
+        vGatePeak: $(data).element('variant_gate').element('earned_element').number('peak'),
+        vGateTsumami: $(data).element('variant_gate').element('earned_element').number('tsumami'),
+        vGateTricky: $(data).element('variant_gate').element('earned_element').number('tricky'),
+        vGateOnehand: $(data).element('variant_gate').element('earned_element').number('onehand'),
+        vGateHandtrip: $(data).element('variant_gate').element('earned_element').number('handtrip'),
       },
     }
   );
@@ -385,6 +437,35 @@ export const load: EPR = async (info, data, send) => {
   profile.appeal_frame = profile.appeal_frame ? profile.appeal_frame : 0;
   profile.support_team = profile.support_team ? profile.support_team : 0;
 
+  profile.use_pro_team = profile.use_pro_team ? profile.use_pro_team : false;
+
+  profile.vGatePower = profile.vGatePower ? profile.vGatePower : 0;
+  profile.vGateNotes = profile.vGateNotes ? profile.vGateNotes : 0;
+  profile.vGatePeak = profile.vGatePeak ? profile.vGatePeak : 0;
+  profile.vGateTsumami = profile.vGateTsumami ? profile.vGateTsumami : 0;
+  profile.vGateTricky = profile.vGateTricky ? profile.vGateTricky : 0;
+  profile.vGateOnehand = profile.vGateOnehand ? profile.vGateOnehand : 0;
+  profile.vGateHandtrip = profile.vGateHandtrip ? profile.vGateHandtrip : 0;
+  profile.vGateOverRadar = profile.vGateOverRadar ? profile.vGateOverRadar : [];
+
+  if(!profile.vGatePower){ // Data migration
+      await DB.Update<Profile>(
+        refid,
+        { collection: 'profile' },
+        {
+          $set: {
+            vGatePower: 0,
+            vGateNotes: 0,
+            vGatePeak: 0,
+            vGateTsumami: 0,
+            vGateTricky: 0,
+            vGateOnehand: 0,
+            vGateHandtrip: 0,
+            vGateOverRadar: [],
+          }
+        }
+      )
+  }
 
   return send.pugFile('templates/load.pug', {
     courses,
@@ -435,6 +516,16 @@ export const create: EPR = async (info, data, send) => {
     blasterCount: 0,
     blasterEnergy: 0,
     extrackEnergy: 0,
+
+    vGatePower: 0,
+    vGateNotes: 0,
+    vGatePeak: 0,
+    vGateTsumami: 0,
+    vGateTricky: 0,
+    vGateOnehand: 0,
+    vGateHandtrip: 0,
+    vGateOverRadar: [],
+
     bgm: 0,
     subbg: 0,
     nemsys: 0,
@@ -449,6 +540,7 @@ export const create: EPR = async (info, data, send) => {
     mainbg: 0,
     appeal_frame: 0,
     support_team: 0,
+    use_pro_team: false,
 
     headphone: 0,
     musicID: 0,
@@ -456,6 +548,7 @@ export const create: EPR = async (info, data, send) => {
     sortType: 0,
     expPoint: 0,
     mUserCnt: 0,
+
     boothFrame: [0, 0, 0, 0, 0]
   };
 

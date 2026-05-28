@@ -1,8 +1,5 @@
 import {common,log} from './handlers/common';
 import {hiscore, rival, saveMix, loadMix, globalMatch} from './handlers/features';
-// import {} from './handlers/sv4/';
-// import {} from './handlers/sv5/';
-// import {} from './handlers/sv6/';
 import {
   updateProfile,
   updateMix,
@@ -13,7 +10,10 @@ import {
   update_webui_nemsys_data,
   update_webui_stamp_data,
   update_webui_subbg_data,
-  update_webui_bgm_data
+  update_webui_bgm_data,
+  update_music_db,
+  sendMdb,
+  sendAssetData,
   // sendImg,
   // sendImgWithID,
   // getScore,
@@ -31,24 +31,45 @@ import {
   print,
 } from './handlers/profiles';
 
-import { MusicRecord } from './models/music_record';
+import { TRANSLATION_TABLE } from './utils';
 
-enum Version{
-  Booth = 'game.',
-  II = 'game_2.',
-  GW = 'game_3.',
-  HH = 'game.sv4_',
-  VW = 'game.sv5_',
-  EG = 'game.sv6_',
-}
+import { MusicRecord } from './models/music_record';
 
 export let music_db;
 
 function load_music_db(){
-  IO.ReadFile('./webui/asset/json/music_db.json',{encoding:'utf8'}).then(data => {
-    music_db = JSON.parse(data);
+
+  const fs = require('fs');
+  const path = require('path');
+
+  if (U.GetConfig('sdvx_path') == '') {
+    console.log('sdvx_path is not set, skipping music_db load');
+    return;
+  }
+
+  let sdvx_path = U.GetConfig('sdvx_path');
+
+  const mdb_path = path.join(sdvx_path, 'data', 'others', 'music_db.xml');
+
+
+  fs.promises.readFile(mdb_path).then(data => {
+    let mdb_buffer = U.DecodeString(data, 'shift_jis');
+    music_db = U.parseXML(mdb_buffer, false);
     console.log('music_db loaded, total: '+music_db.mdb.music.length);
+
+    music_db.mdb.music.forEach((m: any) => {
+      let title_name = m.info.title_name["@content"];
+
+      for(let [key, value] of Object.entries(TRANSLATION_TABLE)){
+        title_name = title_name.replaceAll(key, value);
+      }
+
+      m.info.title_name["@content"] = title_name;
+    })
   })
+  .catch((err: any) => {
+    console.error('Error reading music_db.xml:', err);
+  });
 }
 
 export function register() {
@@ -56,6 +77,7 @@ export function register() {
   R.Contributor("LatoWolf");
   R.GameCode('KFC');
 
+  R.Config('enable_VSync', { type: 'boolean', default: false, name:'Enable VSync'} );
   R.Config('unlock_all_songs', { type: 'boolean', default: false, name:'Unlock All Songs'});
   R.Config('unlock_all_navigators', { type: 'boolean', default: false, name:'Unlock All Navigators'} );
   R.Config('unlock_all_appeal_cards', { type: 'boolean', default: false, name:'Unlock All Appeal Cards'});
@@ -63,7 +85,9 @@ export function register() {
   R.Config('use_asphyxia_gameover',{ type: 'boolean', default: true, name:'Use Asphyxia Gameover', desc:'Enable the Asphyxia gameover message after ending the game.'})
   R.Config('use_blasterpass',{ type: 'boolean', default: true, name:'Use Blaster Pass', desc:'Enable Blaster Pass for VW and EG'});
   R.Config('new_year_special',{ type: 'boolean', default: true, name:'Use New Year Special', desc:'Enable New Year Special BGM for login'});
-  R.Config('music_count',{ type: 'integer', default: 2200, name:'Music Count', desc:'The maximum id of music in the game.'});
+  R.Config('music_count',{ type: 'integer', default: 2500, name:'Music Count', desc:'The maximum id of music in the game.'});
+
+  R.Config('sdvx_path', { type: 'string', default: '', name:'SDVX Path', desc:'Path to your SDVX installation folder.'});
     
   R.WebUIEvent('updateProfile', updateProfile);
   R.WebUIEvent('updateMix', updateMix);
@@ -75,6 +99,9 @@ export function register() {
   R.WebUIEvent('update_webui_chat_stamp', update_webui_stamp_data);
   R.WebUIEvent('update_webui_subbg', update_webui_subbg_data);
   R.WebUIEvent('update_webui_bgm', update_webui_bgm_data);
+  R.WebUIEvent('update_music_db', update_music_db);
+  R.WebUIEvent('getMusicDB', sendMdb);
+  R.WebUIEvent('getAssetData', sendAssetData);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`game.sv6_${method}`, handler);
@@ -119,7 +146,7 @@ export function register() {
   MultiRoute('log',log);
  
   R.Route('eventlog.write', (_, __, send) => send.object({
-    gamesession: K.ITEM('s64', BigInt(1)),
+    gamesession: K.ITEM('s64', 1n),
     logsendflg: K.ITEM('s32', 0),
     logerrlevel: K.ITEM('s32', 0),
     evtidnosendflg: K.ITEM('s32', 0)
@@ -140,4 +167,8 @@ export function register() {
 
 
   R.Unhandled();
+
+ 
+  load_music_db();
+  
 }

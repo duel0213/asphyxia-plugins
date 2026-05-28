@@ -1,0 +1,80 @@
+//DATA//
+  
+
+-
+
+link(rel="stylesheet" href="static/asset/css/import.css")
+.card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-comment-question-outline
+        | Import Assets
+    .card-content
+        .ui-import-blocker 
+          .ui-import-blocker-content 
+            
+            p 
+              progress.progress.is-primary(value="0" max="100" id="import_progress") 0%
+              | Loading...
+        .field
+          label.label SDVX Base Path(The folder that contains data folder)
+          .control
+            input.input(type="text" id="path", placeholder="C:/GamePath")
+        .field
+          button.button.is-primary(id="import_assets")
+            span.icon
+              i.mdi.mdi-check
+            span Submit
+        div This function is still in testing phase, be careful when using it. If the import is not successful, please check the console for error messages and manually copy the assets.
+        div Remember to update the asset first, then update the webui entries.
+
+.card
+    .card-header
+      p.card-header-title
+        span.icon
+          i.mdi.mdi-comment-question-outline
+        | Update Webui Entry
+    .card-content
+        .field
+          label.file-label Nemsys XML
+          .file.has-name
+            label.file-label
+              input.file-input(type="file" id="nemsys", placeholder="custom_nemsys.xml")
+              span.file-cta
+                span.file-icon
+                  i.mdi.mdi-upload
+                span.file-label
+                  | Choose a file…
+              span.file-name
+                  | Select custom_nemsys.xml
+          button.button.is-primary(id="update_nemsys")
+            span.icon
+              i.mdi.mdi-check
+            span Submit          
+
+        .field
+          label.file-label Chat Stamp XML
+          .file.has-name
+            label.file-label
+              input.file-input(type="file" id="chat_stamp", placeholder="custom_nemsys.xml")
+              span.file-cta
+                span.file-icon
+                  i.mdi.mdi-upload
+                span.file-label
+                  | Choose a file…
+              span.file-name
+                  | Select chat_stamp.xml
+          button.button.is-primary(id="update_chat_stamp")
+            span.icon
+              i.mdi.mdi-check
+            span Submit     
+        
+        
+        
+script(src="static/asset/js/zip.min.js")
+//- script(src="static/asset/js/WasmerSDKBundled.js")
+script(src="static/asset/js/ffmpeg/ffmpeg/package/dist/umd/ffmpeg.js")
+script(src="static/asset/js/ffmpeg/util/package/dist/umd/index.js")
+script(src="static/asset/js/import_assets.js")
+

@@ -1,5 +1,6 @@
 import {Counter} from './models/counter';
-import { music_db } from '.';
+
+// import { music_db } from '.';
 
 export function IDToCode(id: number) {
   const padded = _.padStart(id.toString(), 8);
@@ -23,6 +24,7 @@ export function getVersion(info: EamuseInfo) {
   if (info.method.startsWith('sv4')) return 4;
   if (info.method.startsWith('sv5')) return 5;
   if (info.method.startsWith('sv6')) return 6;
+  if (info.method.startsWith('sv7')) return 7;
   return 0;
 }
 
@@ -159,4 +161,109 @@ export function send_webhook(data: any) {
     });
     req.write(contents);
   }
+}
+
+export function getCurrentWeekOfYear(date = new Date()) {
+  // Clone the date to avoid modifying the original
+  const current = date.getTime();
+
+  // Set the first day of the year
+  const startOfYear = new Date(date.getFullYear(), 0, 1).getTime();
+
+  // Calculate the day of the year
+  const dayOfYear = ((current - startOfYear + 1) / 86400000);
+
+  // ISO 8601 weeks start on Monday and the first week of the year must contain Jan 4th.
+  // Adjust the date to the nearest Thursday (ISO 8601 rule).
+  const adjustedDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() + (4 - (date.getDay() || 7))
+  );
+
+  const startOfISOYear = new Date(adjustedDate.getFullYear(), 0, 1);
+  const firstWeekDay = startOfISOYear.getDay() || 7;
+
+  // Calculate ISO week number
+  return Math.ceil((adjustedDate.getTime() - startOfISOYear.getTime() + (firstWeekDay - 1) * 86400000) / (7 * 86400000));
+}
+
+export function getWeekStartAndEnd(date = new Date()) {
+  // Clone the input date to avoid modifying the original
+  const current = new Date(date.getTime());
+
+  // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const dayOfWeek = current.getDay();
+
+  // Adjust to the start of the week (Monday)
+  const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek; // Monday = 1, Sunday = 0
+  const startOfWeek = new Date(current.setDate(current.getDate() + diffToMonday));
+  startOfWeek.setHours(0, 0, 0, 0); // Set time to midnight
+
+  // Clone the startOfWeek and add 6 days to get the end of the week
+  const endOfWeek = new Date(startOfWeek.getTime());
+  endOfWeek.setDate(endOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999); // Set time to end of day
+
+  return {
+      startOfWeek: startOfWeek.getTime(), // Timestamp for the start of the week
+      endOfWeek: endOfWeek.getTime(),     // Timestamp for the end of the week
+  };
+}
+
+export class SeededRandom {
+
+  seed: number;
+
+  constructor(seed) {
+    this.seed = seed % 2147483647; // A prime number
+    if (this.seed <= 0) this.seed += 2147483646; // Avoid zero seed
+  }
+
+  next() {
+    this.seed = (this.seed * 16807) % 2147483647; // LCG formula
+    return this.seed;
+  }
+
+  nextFloat() {
+    return (this.next() - 1) / 2147483646; // Convert to [0, 1)
+  }
+}
+
+export const TRANSLATION_TABLE = {
+  "龕": "€",
+  "釁": "🍄",
+  "驩": "Ø",
+  "曦": "à",
+  "齷": "é",
+  "骭": "ü",
+  "齶": "♡",
+  "彜": "ū",
+  "罇": "ê",
+  "雋": "Ǜ",
+  "鬻": "♃",
+  "鬥": "Ã",
+  "鬆": "Ý",
+  "曩": "è",
+  "驫": "ā",
+  "齲": "♥",
+  "騫": "á",
+  "趁": "Ǣ",
+  "鬮": "¡",
+  "盥": "⚙︎",
+  "隍": "︎Ü",
+  "頽": "ä",
+  "餮": "Ƶ",
+  "黻": "*",
+  "蔕": "ũ",
+  "闃": "Ā",
+  "饌": "²",
+  "煢": "ø",
+  "鑷": "ゔ",
+  "=墸Σ": "=͟͟͞ Σ",
+  "鹹": "Ĥ",
+  "瀑i": "Ài",
+  "疉": "Ö",
+  "鑒": "₩",
+  "Ryu??": "Ryu☆",
 }
