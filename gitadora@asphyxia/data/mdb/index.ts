@@ -2,6 +2,7 @@ import Logger from "../../utils/logger";
 import { CommonMusicData } from "../../models/commonmusicdata";
 
 export enum DATAVersion {
+  GALAXYWAVEDELTA = "gwd",
   GALAXYWAVE  = "gw",
   FUZZUP      = "fz",
   HIGHVOLTAGE = "hv",
@@ -78,8 +79,10 @@ export async function readMDBFile(path: string, processHandler?: processRawDataH
   return result
 }
 
-export function gameVerToDataVer(ver: string): DATAVersion {
+export function gameVerToDataVer(ver: string, model?: string): DATAVersion {
   switch(ver) {
+    case 'galaxywave_delta':
+      return DATAVersion.GALAXYWAVEDELTA
     case 'galaxywave':
       return DATAVersion.GALAXYWAVE
     case 'fuzzup':
@@ -93,6 +96,14 @@ export function gameVerToDataVer(ver: string): DATAVersion {
     case 'matixx':
       return DATAVersion.MATTIX
     default:
+      // Fallback: detect version from model string
+      // GALAXY WAVE DELTA models: M32:J:C:A:... or M32:J:D:A:...
+      // GALAXY WAVE models: M32:J:A:A:... or M32:J:B:A:...
+      if (model) {
+        const t = model.split(':')[2];
+        if (t == 'C' || t == 'D') return DATAVersion.GALAXYWAVEDELTA;
+        if (t == 'A' || t == 'B') return DATAVersion.GALAXYWAVE;
+      }
       return DATAVersion.TBRE
   }
 }
@@ -133,8 +144,18 @@ export function findMDBFile(fileNameWithoutExtension: string, path: string = nul
   return null
 }
 
-export async function loadSongsForGameVersion(gameVer: string, processHandler?: processRawDataHandler) {
-  const ver = gameVerToDataVer(gameVer)
+export function modelToDataVer(model: string): DATAVersion {
+  // Detects GALAXY WAVE vs GALAXY WAVE DELTA from model string.
+  // Model format: M32:J:X:Y:ZZZZZZZZZZ
+  //   X = A (GW GF), B (GW DM), C (GWD GF), D (GWD DM)
+  const t = model.split(':')[2];
+  if (t == 'C' || t == 'D') return DATAVersion.GALAXYWAVEDELTA;
+  if (t == 'A' || t == 'B') return DATAVersion.GALAXYWAVE;
+  return DATAVersion.TBRE;
+}
+
+export async function loadSongsForGameVersion(gameVer: string, processHandler?: processRawDataHandler, model?: string) {
+  const ver = gameVerToDataVer(gameVer, model)
 
   let mdbFile = findMDBFile(ver, mdbFolder)
 

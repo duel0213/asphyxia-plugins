@@ -13,6 +13,7 @@ Supported Versions
  - HIGH-VOLTAGE
  - FUZZ-UP
  - GALAXY WAVE
+ - GALAXY WAVE DEL
 
 When Plugin Doesn't work correctly / Startup Error on Plugin
 ------------------------------------------------------------
@@ -60,6 +61,10 @@ Scores are stored under `version: "shared"` but are automatically applied to the
 Release Notes
 =============
 
+v1.5.0
+----------------
+ * Added(more like bugfix lol) support for GALAXY WAVE DELTA
+ 
 v1.4.0
 ----------------
  * Added support for Tri-Boost Re:EVOLVE, HIGH-VOLTAGE, FUZZ-UP, GALAXY WAVE

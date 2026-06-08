@@ -1,20 +1,14 @@
 import { getVersion } from "../utils";
-import { isGalaxyWaveDeltaModel } from "../utils";
-import { findMDBFile, readMDBFile, loadSongsForGameVersion } from "../data/mdb";
+import { findMDBFile, readMDBFile, loadSongsForGameVersion, modelToDataVer } from "../data/mdb";
 import { CommonMusicDataField } from "../models/commonmusicdata";
 import Logger from "../utils/logger"
 import { getPlayableMusicResponse, PlayableMusicResponse } from "../models/Responses/playablemusicresponse";
 import { isAsphyxiaDebugMode } from "../utils/index";
-import { playableMusic as playableMusicDelta } from "./MusicList_delta";
 
-const logger = new Logger("MusicList")
+const logger = new Logger("MusicList_delta")
 
 export const playableMusic: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return playableMusicDelta(info, data, send);
-  }
-
-  const version = getVersion(info);
+  const version = modelToDataVer(info.model);
   const start = Date.now()
   let music: CommonMusicDataField[] = [];
   try {
@@ -29,7 +23,7 @@ export const playableMusic: EPR = async (info, data, send) => {
   }
 
   if (music.length == 0) {
-      music = (await loadSongsForGameVersion(version)).music
+      music = (await loadSongsForGameVersion(version, undefined, info.model)).music
   }
 
   const end = Date.now()
@@ -38,10 +32,9 @@ export const playableMusic: EPR = async (info, data, send) => {
 
   let response : PlayableMusicResponse = getPlayableMusicResponse(music)
   await send.object(response)
-  
+
   if (isAsphyxiaDebugMode())  {
     await IO.WriteFile(`apisamples/playableMusicList.json`, JSON.stringify(music, null, 4))
   }
-  
-};
 
+};

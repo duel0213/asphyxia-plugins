@@ -1,9 +1,16 @@
 export const isGF = (info: EamuseInfo) => {
-  return info.model.split(':')[2] == 'A';
+  const t = info.model.split(':')[2];
+  return t == 'A' || t == 'C';
 };
 
 export const isDM = (info: EamuseInfo) => {
-  return info.model.split(':')[2] == 'B';
+  const t = info.model.split(':')[2];
+  return t == 'B' || t == 'D';
+};
+
+export const isGalaxyWaveDeltaModel = (model: string) => {
+  const t = model.split(':')[2];
+  return t == 'C' || t == 'D';
 };
 
 export const getVersion = (info: EamuseInfo) => {

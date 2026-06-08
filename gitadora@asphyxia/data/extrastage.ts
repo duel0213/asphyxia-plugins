@@ -1,4 +1,5 @@
 import { getVersion } from "../utils";
+import { isGalaxyWaveDeltaModel } from "../utils";
 
 interface EncoreStageData {
     level: number
@@ -8,13 +9,34 @@ interface EncoreStageData {
 
 export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
     const fallback = { level: 10, musics: [0] }
-    const level: number = U.GetConfig("encore_version")
+    const customLevel: number = U.GetConfig("encore_version")
+    const useCustomLevel: boolean = U.GetConfig("use_custom_encore_level")
     const ntDummyEncore = U.GetConfig("nextage_dummy_encore")
+
+    const level = (ver: string) => useCustomLevel ? customLevel : getPredefinedLevel(ver);
+
+    // GALAXY WAVE DELTA uses same route prefix, detect by model instead
+    if (isGalaxyWaveDeltaModel(info.model)) {
+        return {
+            level: level('galaxywave_delta'),
+            musics: [
+                2939, // Hopeful Daybreak!!!
+                2956, // Over Time Groove
+                2942, // Bellatrix
+                3008, // Questions That Should Not Be Answered
+                3009, // LIQUID NOTES
+                3011, // D光石火
+                3017, // Peyotl
+                3018, // Neoverse
+            ]
+        }
+    }
+
     switch (getVersion(info)) {
         case 'galaxywave':
             return {
-                level,
-                musics: [ 
+                level: level('galaxywave'),
+                musics: [
                     2866, // Calm days
                     2893, // 愛はToxic! feat.Lilymone
                     2885, // Astrum
@@ -30,8 +52,8 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
             }
         case 'fuzzup':
             return {
-                level,
-                musics: [ 
+                level: level('fuzzup'),
+                musics: [
                     2812, // THE LAST OF FIREFACE
                     2814, // ENCOUNT
                     2783, // Q転直下
@@ -44,7 +66,7 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
             }
         case 'highvoltage':
             return {
-                level,
+                level: level('highvoltage'),
                 musics: [
                     2686, // CYCLONICxSTORM
                     2687, // Heptagram
@@ -58,8 +80,8 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
             }
         case 'nextage':
             return {
-                level,
-                musics: !ntDummyEncore ? [ 
+                level: level('nextage'),
+                musics: !ntDummyEncore ? [
                     2587, // 悪魔のハニープリン
                     2531, // The ULTIMATES -reminiscence-
                     2612, // ECLIPSE 2
@@ -75,26 +97,26 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
             }
         case 'exchain':
             return {
-                level,
+                level: level('exchain'),
                 musics: [
                     2246, // 箱庭の世界
                     2498, // Cinnamon
                     2500, // キヤロラ衛星の軌跡
                     2529, // グリーンリーフ症候群
-                    2548, // Let's Dance                   
-                    2587, // 悪魔のハニープリン  
-                    5020, // Timepiece phase II (CLASSIC)                                        
-                    5033, // MODEL FT2 Miracle Version (CLASSIC)                                       
-                    2586, // 美麗的夏日風                    
+                    2548, // Let's Dance
+                    2587, // 悪魔のハニープリン
+                    5020, // Timepiece phase II (CLASSIC)
+                    5033, // MODEL FT2 Miracle Version (CLASSIC)
+                    2586, // 美麗的夏日風
                     5060, // EXCELSIOR DIVE (CLASSIC)
                     2530, // The ULTIMATES -CHRONICLE-
                     2581, // 幸せの代償
-                    5046, // Rock to Infinity (CLASSIC)    
+                    5046, // Rock to Infinity (CLASSIC)
                 ]
             }
         case 'matixx':
             return {
-                level,
+                level: level('matixx'),
                 musics: [
                     2432, // Durian
                     2445, // ヤオヨロズランズ
@@ -103,17 +125,17 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
                     2444, // Aion
                     2381, // Duella Lyrica
                     2471, // triangulum
-                    2476, // MODEL FT4 
+                    2476, // MODEL FT4
                     2486, // 煉獄事変
                     2496, // CAPTURING XANADU
                     2497, // Physical Decay
-                    2499, // Cinnamon 
+                    2499, // Cinnamon
                     2498, // けもののおうじゃ★めうめう
                 ]
             }
         case 're':
             return {
-                level,
+                level: level('re'),
                 musics: [
                     2341, // Anathema
                     2384, // White Forest
@@ -128,5 +150,20 @@ export function getEncoreStageData(info: EamuseInfo): EncoreStageData {
             }
         default:
             return fallback
+    }
+}
+
+function getPredefinedLevel(ver: string): number {
+    // Placeholder values, to be replaced with real data
+    switch (ver) {
+        case 'galaxywave_delta': return 5;
+        case 'galaxywave':       return 5;
+        case 'fuzzup':           return 5;
+        case 'highvoltage':      return 5;
+        case 'nextage':          return 5;
+        case 'exchain':          return 5;
+        case 'matixx':           return 5;
+        case 're':               return 5;
+        default:                 return 5;
     }
 }

@@ -5,7 +5,9 @@ import { PlayerRanking } from "../models/playerranking";
 import { getDefaultProfile, Profile } from "../models/profile";
 import { getDefaultRecord, Record } from "../models/record";
 import { Extra, getDefaultExtra } from "../models/extra";
-import { getVersion, isDM, isGalaxyWaveDeltaModel } from "../utils";
+import { isDM } from "../utils";
+
+const DELTA_VERSION = "galaxywave_delta";
 import { getDefaultScores, Scores } from "../models/scores";
 
 import { PLUGIN_VER } from "../const";
@@ -21,14 +23,10 @@ import { applySharedFavoriteMusicToExtra, saveSharedFavoriteMusicFromExtra } fro
 import { getPlayerRecordResponse } from "../models/Responses/playerrecordresponse";
 import { getPlayerPlayInfoResponse, PlayerPlayInfoResponse } from "../models/Responses/playerplayinforesponse";
 import { getMergedSharedScores, mergeScoresIntoShared } from "./SharedScores";
-import { regist as registDelta, check as checkDelta, getPlayer as getPlayerDelta, savePlayers as savePlayersDelta } from "./profiles_delta";
 
-const logger = new Logger("profiles")
+const logger = new Logger("profiles_delta")
 
 export const regist: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return registDelta(info, data, send);
-  }
 
   const refid = $(data).str('player.refid');
   if (!refid) {
@@ -37,12 +35,12 @@ export const regist: EPR = async (info, data, send) => {
   }
 
   const no = getPlayerNo(data);
-  const version = getVersion(info);
+  const version = DELTA_VERSION;
   const playerInfo = await getOrRegisterPlayerInfo(refid, version, no);
 
   await send.object({
     player: K.ATTR({ no: `${no}` }, {
-      is_succession: K.ITEM("bool", 0), //FIX THIS with upsert result.
+      is_succession: K.ITEM("bool", 0),
       did: K.ITEM("s32", playerInfo.id)
     })
   })
@@ -50,9 +48,6 @@ export const regist: EPR = async (info, data, send) => {
 }
 
 export const check: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return checkDelta(info, data, send);
-  }
 
   const refid = $(data).str('player.refid');
     if (!refid) {
@@ -61,18 +56,14 @@ export const check: EPR = async (info, data, send) => {
     }
 
   const no = getPlayerNo(data);
-  const version = getVersion(info)
+  const version = DELTA_VERSION;
   const playerInfo = await getOrRegisterPlayerInfo(refid, version, no)
 
   const result : CheckPlayerResponse = getCheckPlayerResponse(no, playerInfo.name, playerInfo.id)
-  await send.object(result)  
+  await send.object(result)
 }
 
 export const getPlayer: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return getPlayerDelta(info, data, send);
-  }
-
   const refid = $(data).str('player.refid');
     if (!refid) {
         logger.error("Request data is missing required parameter: player.refid")
@@ -80,7 +71,7 @@ export const getPlayer: EPR = async (info, data, send) => {
     }
 
   const no = getPlayerNo(data);
-  const version = getVersion(info);
+  const version = DELTA_VERSION;
   const time = BigInt(31536000);
   const dm = isDM(info);
   const game = dm ? 'dm' : 'gf';
@@ -102,6 +93,7 @@ export const getPlayer: EPR = async (info, data, send) => {
 
   const profile = dm ? dmProfile : gfProfile;
   const extra = dm ? dmExtra : gfExtra;
+  applyPlayHudPreset(extra.playstyle);
 
   await applySharedFavoriteMusicToExtra(refid, extra)
 
@@ -258,7 +250,7 @@ export const getPlayer: EPR = async (info, data, send) => {
   };
 
   const playerRanking = await getPlayerRanking(refid, version, game)
-  
+
   const addition: any = {
     monstar_subjugation: {},
     bear_fes: {},
@@ -344,7 +336,7 @@ export const getPlayer: EPR = async (info, data, send) => {
   const innerSecretMusic = getSecretMusicResponse(profile)
   const innerFriendData = getFriendDataResponse(profile)
   const innerBattleData = getDefaultBattleDataResponse()
-  
+
   const response = {
     player: K.ATTR({ 'no': `${no}` }, {
       now_date: K.ITEM('u64', time),
@@ -358,12 +350,12 @@ export const getPlayer: EPR = async (info, data, send) => {
       },
       reward: {
         status: K.ARRAY('u32', extra.reward_status ??  Array(50).fill(0)),
-      },          
+      },
       rivaldata: {},
       frienddata:  {
         friend: innerFriendData
       },
-      
+
       thanks_medal: {
         medal: K.ITEM('s32', 0),
         grant_medal: K.ITEM('s32', 0),
@@ -391,20 +383,20 @@ export const getPlayer: EPR = async (info, data, send) => {
       },
       event_score: { eventlist: {} },
       rockwave: { score_list: {} },
-      livehouse: { 
-        score_list: { 
+      livehouse: {
+        score_list: {
           score: {
-            term: K.ITEM('u8', -1),  
-            reward_id: K.ITEM('s32', -1), 
-            unlock_point: K.ITEM('s32', -1), 
-            chara_id_guitar: K.ITEM('s32', -1), 
-            chara_id_bass: K.ITEM('s32', -1), 
-            chara_id_drum: K.ITEM('s32', -1), 
-            chara_id_other: K.ITEM('s32', -1), 
-            leader: K.ITEM('s32', -1), 
+            term: K.ITEM('u8', -1),
+            reward_id: K.ITEM('s32', -1),
+            unlock_point: K.ITEM('s32', -1),
+            chara_id_guitar: K.ITEM('s32', -1),
+            chara_id_bass: K.ITEM('s32', -1),
+            chara_id_drum: K.ITEM('s32', -1),
+            chara_id_other: K.ITEM('s32', -1),
+            leader: K.ITEM('s32', -1),
           },
-          last_livehouse: K.ITEM('s32', -1), 
-        } 
+          last_livehouse: K.ITEM('s32', -1),
+        }
       },
       jubeat_omiyage_challenge: {},
       light_mode_reward_item: { itemid: K.ITEM('s32', -1), rarity: K.ITEM('s32', 0) },
@@ -434,10 +426,10 @@ export const getPlayer: EPR = async (info, data, send) => {
           total_nr: K.ITEM('s32', -1),
         }
       },
-     
-      
-      
-      
+
+
+
+
       nostalgia_concert: {},
       bemani_summer_2018: {
         linkage_id: K.ITEM('s32', -1),
@@ -533,18 +525,15 @@ async function registerUser(refid: string, version: string, id = _.random(0, 999
 }
 
 export const savePlayers: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return savePlayersDelta(info, data, send);
-  }
 
-  const version = getVersion(info);
+  const version = DELTA_VERSION;
   const dm = isDM(info);
   const game = dm ? 'dm' : 'gf';
   const sharedScoresEnabled = isSharedSongScoresEnabled();
 
   let players = $(data).elements("player")
 
-  let response = { 
+  let response = {
     player: [],
     gamemode: _.get(data, 'gamemode'),
   };
@@ -561,7 +550,7 @@ export const savePlayers: EPR = async (info, data, send) => {
         continue
       }
 
-      const refid = player.str('refid')   
+      const refid = player.str('refid')
       if (!refid)  {
         throw "Request data is missing required parameter: player.refid"
       }
@@ -604,7 +593,7 @@ async function saveSinglePlayer(dataplayer: KDataReader, refid: string, no: numb
   const autoExtra = (field: keyof Extra, path: string, array = false): void => {
     if (array) {
       extra[field] = dataplayer.numbers(path, extra[field])
-    } else {     
+    } else {
       extra[field] = dataplayer.number(path, extra[field])
     }
   };
@@ -727,7 +716,7 @@ async function saveSinglePlayer(dataplayer: KDataReader, refid: string, no: numb
 
   const playedStages = dataplayer.elements('stage');
   logStagesPlayed(playedStages)
-  
+
   const scores = await updatePlayerScoreCollection(refid, playedStages, version, game)
   await saveScore(refid, version, game, scores);
 
@@ -783,6 +772,19 @@ async function updatePlayerScoreCollection(refid, playedStages, version, game) {
   return scores
 }
 
+function applyPlayHudPreset(playstyle: number[]): void {
+  if (!Array.isArray(playstyle)) return;
+
+  // Only pad array to required length for version upgrades (50→70).
+  // Do NOT overwrite any existing values — let the user's saved settings persist.
+  if (playstyle.length < 70) {
+    for (let i = playstyle.length; i < 70; i++) {
+      playstyle[i] = 0;
+    }
+  }
+}
+
+
 async function getPlayerRanking(refid: string, version: string, game: 'gf' | 'dm') : Promise<PlayerRanking> {
   let profiles = await getAllProfiles(version, game)
   let playerCount = profiles.length
@@ -798,7 +800,7 @@ async function getPlayerRanking(refid: string, version: string, game: 'gf' | 'dm
     refid,
     skill: idxA,
     all_skill: idxB,
-    totalPlayers: playerCount  
+    totalPlayers: playerCount
   }
 }
 
@@ -868,8 +870,8 @@ function parseSecretMusic(playerData: KDataReader) : SecretMusicEntry[]
   let elements = playerData.element('secretmusic')?.elements('music')
   if (!elements) {
     return response
-  }  
-  
+  }
+
   for (let el of elements) {
     let item : SecretMusicEntry = {
       musicid: el.number('musicid'),
@@ -877,7 +879,7 @@ function parseSecretMusic(playerData: KDataReader) : SecretMusicEntry[]
       kind: el.number('kind')
     }
 
-    response.push(item)    
+    response.push(item)
   }
   return response
 }

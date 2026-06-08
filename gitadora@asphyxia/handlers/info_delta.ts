@@ -2,14 +2,10 @@
 
 import { getEncoreStageData } from "../data/extrastage";
 import Logger from "../utils/logger";
-import { getVersion, isGalaxyWaveDeltaModel } from "../utils";
-import { gameInfoGet as gameInfoGetDelta, shopInfoRegist as shopInfoRegistDelta } from "./info_delta";
+import { getVersion } from "../utils";
 
-const logger = new Logger('info');
+const logger = new Logger('info_delta');
 export const shopInfoRegist: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return shopInfoRegistDelta(info, data, send);
-  }
   send.object({
     data: {
       cabid: K.ITEM('u32', 1),
@@ -25,9 +21,6 @@ export const shopInfoRegist: EPR = async (info, data, send) => {
 }
 
 export const gameInfoGet: EPR = async (info, data, send) => {
-  if (isGalaxyWaveDeltaModel(info.model)) {
-    return gameInfoGetDelta(info, data, send);
-  }
 
   const eventData = getEventDataResponse()
   const extraData = getEncoreStageData(info)
@@ -41,12 +34,10 @@ export const gameInfoGet: EPR = async (info, data, send) => {
           music: extraData.musics.map(mid => {
             return {
               musicid: K.ITEM('s32', mid),
-              get_border: K.ITEM('u8', 0),
             }
           })
         }
       },
-      infect_music: { term: K.ITEM('u8', 0) },
       unlock_challenge: { term: K.ITEM('s32', 0) },
       battle: { term: K.ITEM('s32', 0) },
       battle_chara: { term: K.ITEM('s32', 0) },
@@ -99,13 +90,15 @@ export const gameInfoGet: EPR = async (info, data, send) => {
             end_date_ms: K.ITEM('u64', BigInt(0)),
         }
       },
-      jubeat_omiyage_challenge: {},
-      kac2017: {},
-      nostalgia_concert: {},
+      galaxy_parade: {
+        corner_list: {},
+        gacha_table: {},
+      },
+      gitadoradon: {},
+      entry_information :{},
       trbitemdata: {},
       ctrl_movie: {},
       ng_jacket: {},
-      ng_recommend_music: {},
       ranking: {
         skill_0_999: {},
         skill_1000_1499: {},
@@ -234,7 +227,7 @@ export const gameInfoGet: EPR = async (info, data, send) => {
           },
         },
       },
-      livehouse: { 
+      livehouse: {
         event_list: {
           event: {
             is_open: K.ITEM('bool', 0),
@@ -367,7 +360,7 @@ export const gameInfoGet: EPR = async (info, data, send) => {
       ...eventData,
     });
   }
-  
+
 };
 
 function getEventDataResponse() {
@@ -450,7 +443,6 @@ function getEventDataResponse() {
         }
       };
     } else {
-
       addition[`phrase_combo_challenge_${i}`] = obj;
     }
 
@@ -458,7 +450,7 @@ function getEventDataResponse() {
       addition['monstar_subjugation'][`monstar_subjugation_${i}`] = obj;
       addition['bear_fes'][`bear_fes_${i}`] = obj;
     }
-    
+
     if (i <= 2) {
       addition[`gitadora_oracle_${i}`] = {
         term: K.ITEM('u8', 0),
@@ -494,6 +486,6 @@ function getEventDataResponse() {
       };
     }
   }
-  
+
   return addition
 }

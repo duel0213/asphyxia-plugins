@@ -21,6 +21,14 @@ export function register() {
     default: 13,
   })
 
+  R.Config("use_custom_encore_level", {
+    name: "Use Custom Encore Level",
+    desc: "If enabled, the encore level is controlled by the 'Encore Version' setting above. " +
+        "If disabled, predefined encore levels per version are used instead.",
+    type: "boolean",
+    default: true,
+  })
+
   R.Config("nextage_dummy_encore", {
     name: "Dummy Encore for SPE (Nextage Only)",
     desc: "Since Nextage's Special Premium Encore system is bit complicated, \n"
@@ -70,9 +78,8 @@ export function register() {
     R.Route(`matixx_${method}`, handler);
     R.Route(`nextage_${method}`, handler)
     R.Route(`highvoltage_${method}`, handler)
-    R.Route(`fuzzup_${method}`, handler)    
+    R.Route(`fuzzup_${method}`, handler)
     R.Route(`galaxywave_${method}`, handler)
-    R.Route(`galaxywave_delta_${method}`, handler)
     // TODO: TB, and more older version?
   };
 
