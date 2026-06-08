@@ -390,6 +390,7 @@ export const pccommon: EPR = async (info, data, send) => {
         tourism_booster: {},
         fix_framerate: {},
         fix_real: {},
+        disable_cardless: {},
       });
       break;
 
