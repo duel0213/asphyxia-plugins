@@ -62,6 +62,7 @@ export const graderaised: EPR = async (info, data, send) => {
         break;
       case 31:
       case 32:
+      case 33:
         eisei_clear_type = Number($(data).attr("kiwami_data").clear_type);
         eisei_grade_id = Number($(data).attr("kiwami_data").grade_id);
         eisei_grade_type = Number($(data).attr("kiwami_data").grade_type);

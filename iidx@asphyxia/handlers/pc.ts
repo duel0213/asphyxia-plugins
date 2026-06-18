@@ -953,6 +953,7 @@ export const pcget: EPR = async (info, data, send) => {
       pinky_ug_qpro = [],
       sparkle_fl_room = [],
       sparkle_fl_crop = [],
+      sparkle_vocalo = null,
       event_1 = null,
       event_1s = null,
       evtArray = [], evtArray2 = [], evtArray3 = [],
@@ -1087,6 +1088,7 @@ export const pcget: EPR = async (info, data, send) => {
       case 33:
         sparkle_fl_room = await DB.Find(refid, { collection: "event_1", version: version, event_data: "sparkle_fruit_lab" });
         sparkle_fl_crop = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "sparkle_fruit_lab_crop" });
+        sparkle_vocalo = await DB.FindOne(refid, { collection: "event_1", version: version, event_data: "sparkle_vocalo" });
         break;
 
       default:
@@ -1641,6 +1643,7 @@ export const pcget: EPR = async (info, data, send) => {
         result = Object.assign(result, {
           sparkle_fl_room,
           sparkle_fl_crop,
+          sparkle_vocalo,
         });
         break;
 
@@ -4678,6 +4681,29 @@ export const pcsave: EPR = async (info, data, send) => {
             });
           });
           break;
+      }
+    }
+
+    if (version == 33) {
+      let vocaloEvt = $(data).element("event_v");
+      if (!_.isNil(vocaloEvt)) {
+        DB.Upsert(
+          refid,
+          {
+            collection: "event_1",
+            version: version,
+            event_data: "sparkle_vocalo",
+          },
+          {
+            play_num: vocaloEvt.attr().play_num,
+            last_select_music: vocaloEvt.attr().last_select_music,
+            point_get: vocaloEvt.attr().point_get,
+            point_use_0: vocaloEvt.attr().point_use_0,
+            point_use_1: vocaloEvt.attr().point_use_1,
+            booster_get: vocaloEvt.attr().booster_get,
+            booster_use_0: vocaloEvt.attr().booster_use_0,
+            booster_use_1: vocaloEvt.attr().booster_use_1,
+          });
       }
     }
 

@@ -517,6 +517,12 @@ export function register() {
     type: "integer",
     default: 1,
   });
+  R.Config("ss_cyber", {
+    name: "CYBER LOADER",
+    desc: "CYBER LOADER Phase",
+    type: "integer",
+    default: 1,
+  });
 
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {

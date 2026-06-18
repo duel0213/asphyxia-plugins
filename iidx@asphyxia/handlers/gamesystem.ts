@@ -194,9 +194,11 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       result = Object.assign(result, {
         Event1Phase: K.ATTR({ val: String(U.GetConfig("ss_event1")) }),
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
+        isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
         BPLBattleOpenPhase: K.ATTR({ val: String(2) }),
-        beat: K.ATTR({ val: String(Number(U.GetConfig("BeatPhase"))) }), // is this same old beat attr at common or something else...? //
+        VocaloidEvent: K.ATTR({ val: String(U.GetConfig("ss_cyber")) }),
+        beat: K.ATTR({ val: String(5293) }), // It wasn't. TODO:: Figure out what this value does //
       });
       break;
 

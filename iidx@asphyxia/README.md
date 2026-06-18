@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [96ff64]**
+Plugin Version: **STAGING [6e02d0]**
 
 ---
 
@@ -24,7 +24,7 @@ Supported Versions
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
-  - beatmaniaIIDX 33 Sparkle Shower (2026022400)
+  - beatmaniaIIDX 33 Sparkle Shower (2026031000)
 
 ---
 
