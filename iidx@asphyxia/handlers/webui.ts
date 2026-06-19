@@ -1,11 +1,11 @@
 import { profile } from "../models/profile";
-import { rival } from "../models/rival";
+import { rival, rival_sub } from "../models/rival";
 import { custom } from "../models/custom";
 import { score, old_score } from "../models/score";
 import { lightning_custom } from "../models/lightning";
 
 export const updateRivalSettings = async (data) => {
-  let update_array = [];
+  let rival_array = [], rival_sub_array = [];
 
   if (!(_.isEmpty(data.sp_rival1))) {
     let update_data = {
@@ -14,7 +14,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.sp_rival1,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -32,7 +32,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.sp_rival2,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -50,7 +50,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.sp_rival3,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -68,7 +68,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.sp_rival4,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -86,7 +86,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.sp_rival5,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -104,7 +104,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.dp_rival1,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -122,7 +122,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.dp_rival2,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -140,7 +140,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.dp_rival3,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -158,7 +158,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.dp_rival4,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -176,7 +176,7 @@ export const updateRivalSettings = async (data) => {
       rival_refid: data.dp_rival5,
     };
 
-    update_array.push(update_data);
+    rival_array.push(update_data);
   } else {
     await DB.Remove<rival>(data.refid,
       {
@@ -187,16 +187,209 @@ export const updateRivalSettings = async (data) => {
     )
   }
 
-  for (let i = 0; i < update_array.length; i++) {
+  if (!(_.isEmpty(data.sp_rival1_sub))) {
+    let update_data = {
+      play_style: 1,
+      index: 0,
+      rival_refid: data.sp_rival1_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 1,
+        index: 0,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.sp_rival2_sub))) {
+    let update_data = {
+      play_style: 1,
+      index: 1,
+      rival_refid: data.sp_rival2_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 1,
+        index: 1,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.sp_rival3_sub))) {
+    let update_data = {
+      play_style: 1,
+      index: 2,
+      rival_refid: data.sp_rival3_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 1,
+        index: 2,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.sp_rival4_sub))) {
+    let update_data = {
+      play_style: 1,
+      index: 3,
+      rival_refid: data.sp_rival4_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 1,
+        index: 3,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.sp_rival5_sub))) {
+    let update_data = {
+      play_style: 1,
+      index: 4,
+      rival_refid: data.sp_rival5_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 1,
+        index: 4,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.dp_rival1_sub))) {
+    let update_data = {
+      play_style: 2,
+      index: 0,
+      rival_refid: data.dp_rival1_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 2,
+        index: 0,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.dp_rival2_sub))) {
+    let update_data = {
+      play_style: 2,
+      index: 1,
+      rival_refid: data.dp_rival2_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 2,
+        index: 1,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.dp_rival3_sub))) {
+    let update_data = {
+      play_style: 2,
+      index: 2,
+      rival_refid: data.dp_rival3_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 2,
+        index: 2,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.dp_rival4_sub))) {
+    let update_data = {
+      play_style: 2,
+      index: 3,
+      rival_refid: data.dp_rival4_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 2,
+        index: 3,
+      }
+    )
+  }
+
+  if (!(_.isEmpty(data.dp_rival5_sub))) {
+    let update_data = {
+      play_style: 2,
+      index: 4,
+      rival_refid: data.dp_rival5_sub,
+    };
+
+    rival_sub_array.push(update_data);
+  } else {
+    await DB.Remove<rival_sub>(data.refid,
+      {
+        collection: "rival_sub",
+        play_style: 2,
+        index: 4,
+      }
+    )
+  }
+
+  for (let i = 0; i < rival_array.length; i++) {
     await DB.Upsert<rival>(data.refid, {
       collection: "rival",
-      play_style: update_array[i].play_style,
-      index: update_array[i].index,
+      play_style: rival_array[i].play_style,
+      index: rival_array[i].index,
     }, {
       $set: {
-        rival_refid: update_array[i].rival_refid,
+        rival_refid: rival_array[i].rival_refid,
         }
       }
+    )
+  }
+
+  for (let i = 0; i < rival_sub_array.length; i++) {
+    await DB.Upsert<rival_sub>(data.refid, {
+      collection: "rival_sub",
+      play_style: rival_sub_array[i].play_style,
+      index: rival_sub_array[i].index,
+    }, {
+      $set: {
+        rival_refid: rival_sub_array[i].rival_refid,
+        }
+     }
     )
   }
 };

@@ -55,6 +55,11 @@ IIDX32pc(status="0")
         qprodata(body=rd.qprodata[3] face=rd.qprodata[2] hair=rd.qprodata[0] hand=rd.qprodata[4] head=rd.qprodata[1] back=rd.qprodata[5])
         shop(name=shop_data.opname)
   rlist_sub
+    - for (let rsd of rsArray)
+      rival(spdp=rsd.play_style id=rsd.profile[2] id_str=rsd.profile[3] djname=rsd.profile[0] pid=rsd.profile[1] sg=rsd.pcdata[0] dg=rsd.pcdata[1] sa=rsd.pcdata[2] da=rsd.pcdata[3])
+        is_robo(__type="bool") 0
+        qprodata(body=rsd.qprodata[3] face=rsd.qprodata[2] hair=rsd.qprodata[0] hand=rsd.qprodata[4] head=rsd.qprodata[1] back=rsd.qprodata[5])
+        shop(name=shop_data.opname)
   notes_radar(style="0")
     radar_score(__type="s32" __count="6") #{pcdata.nr_spradar[0]} #{pcdata.nr_spradar[1]} #{pcdata.nr_spradar[2]} #{pcdata.nr_spradar[3]} #{pcdata.nr_spradar[4]} #{pcdata.nr_spradar[5]}
   notes_radar(style="1")

@@ -4,7 +4,7 @@ import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicfilter_sort, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicfilter_sort_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
-import { rival, rival_data } from "../models/rival";
+import { rival, rival_data, rival_sub } from "../models/rival";
 import { world_tourism } from "../models/worldtourism";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
@@ -589,6 +589,7 @@ export const pcget: EPR = async (info, data, send) => {
   const custom = await DB.FindOne<custom>(refid, { collection: "custom", version: version });
   const grade = await DB.Find<grade>(refid, { collection: "grade", version: version });
   const rivals = await DB.Find<rival>(refid, { collection: "rival" });
+  const rivals_sub = await DB.Find<rival_sub>(refid, { collection: "rival_sub" });
   const shop_data = await DB.FindOne<shop_data>({ collection: "shop_data" });
   const expert = await DB.Find<expert>(refid, { collection: "expert", version: version });
   const world_tourism = await DB.Find<world_tourism>(refid, { collection: "world_tourism", version: version });
@@ -699,7 +700,9 @@ export const pcget: EPR = async (info, data, send) => {
     custom.hide_iidxid,
     custom.disable_beginner_option,
   );
-  let dArray = [], eArray = [], rArray = [], mArray = [], bArray = [], fArray = [], fsArray = [], efArray = [];
+  let dArray = [], eArray = [], rArray = [],
+    rsArray = [], mArray = [], bArray = [],
+    fArray = [], fsArray = [], efArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -741,6 +744,27 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     rArray.sort((a: rival_data, b: rival_data): number => a.play_style - b.play_style || a.index - b.index);
+  }
+
+  if (rivals_sub.length > 0) {
+    for (let a = 0; a < rivals_sub.length; a++) {
+      let profile = await ReftoProfile(rivals_sub[a].rival_refid);
+      let pcdata = await ReftoPcdata(rivals_sub[a].rival_refid, version);
+      let qprodata = await ReftoQPRO(rivals_sub[a].rival_refid, version);
+
+      let rival_data: rival_data = {
+        play_style: rivals_sub[a].play_style,
+        index: rivals_sub[a].index,
+
+        profile: profile,
+        pcdata: pcdata,
+        qprodata: qprodata,
+      }
+
+      rsArray.push(rival_data);
+    }
+
+    rsArray.sort((a: rival_data, b: rival_data): number => a.play_style - b.play_style || a.index - b.index);
   }
 
   let wArray = [];
@@ -1659,6 +1683,7 @@ export const pcget: EPR = async (info, data, send) => {
         });
       case 32:
         result = Object.assign(result, {
+          rsArray,
           fsArray,
           activityDayId,
           activityTimestamp,

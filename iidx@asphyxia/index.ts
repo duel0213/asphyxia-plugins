@@ -592,6 +592,7 @@ export function register() {
 
   MultiRoute("music.crate", musiccrate);
   MultiRoute("music.getrank", musicgetrank);
+  MultiRoute("music.getranksub", true); // TODO //
   MultiRoute("music.getralive", musicgetralive);
   MultiRoute("music.appoint", musicappoint);
   MultiRoute("music.reg", musicreg);

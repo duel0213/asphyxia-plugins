@@ -7,6 +7,15 @@ export interface rival {
   rival_refid: string;
 };
 
+export interface rival_sub {
+  collection: "rival_sub";
+
+  play_style: number;
+
+  index: number;
+  rival_refid: string;
+}
+
 export interface rival_data {
   play_style: number;
   index: number;
