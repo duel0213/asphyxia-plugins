@@ -215,6 +215,33 @@ export const musicgetrank: EPR = async (info, data, send) => {
   });
 }
 
+export const musicgetranksub: EPR = async (info, data, send) => {
+  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const rival_refids = [
+    [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+    [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+    [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+    [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+    [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
+  ];
+
+  let m = [];
+  let score_data: number[];
+
+  for (let i = 0; i < rival_refids.length; i++) {
+    if (_.isNaN(rival_refids[i][0])) continue;
+
+    // idx, ... //
+    score_data = [i + 5, 10, 0, 0, 0, 0, 0];
+    m.push(K.ARRAY("s32", score_data));
+  }
+
+  return send.object({
+    style: K.ATTR({ type: String(cltype) }),
+    m,
+  });
+}
+
 export const musicgetralive: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const refid = await IDtoRef(Number($(data).attr().iidxid));
