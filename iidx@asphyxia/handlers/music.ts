@@ -133,6 +133,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
 
+      if (res.mid < 0) return; // HOW //
+
       let mVersion = Math.floor(res.mid / 1000);
       if (mVersion > version) return;
 
@@ -166,6 +168,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     if (score_top.length > 0) {
       if (version >= 27) {
         score_top.forEach((res) => {
+          if (res.mid < 0) return;
+
           let mVersion = Math.floor(res.mid / 1000);
           if (mVersion > version) return;
 
@@ -267,7 +271,12 @@ export const musicgetralive: EPR = async (info, data, send) => {
   let indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
 
   music_data.forEach((res: score) => {
+    if (res.mid < 0) return;
+
     if (_.isNil(res.cArray)) throw new Error("[music.getralive] There is unsupported entry in Database");
+    let mid = NewMidToOldMid(res.mid);
+    let verMid = OldMidToVerMid(mid);
+    if (verMid[0] > version) return;
 
     myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
   });
@@ -276,13 +285,15 @@ export const musicgetralive: EPR = async (info, data, send) => {
     if (_.isNaN(rival_refids[i][0])) continue;
 
     const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
-      { collection: "score", }
+      { collection: "score" }
     );
 
     // [0~2] - NOPLAY/WIN/LOSE (ANOTHER/HYPER/NORMAL), //
     // consider same score as LOSE, tho theres seems DRAW state but game render as LOSE //
     // TODO:: figure out what other elements does //
     rival_score.forEach((res: score) => {
+      if (res.mid < 0) return;
+
       let mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(mid);
       if (verMid[0] > version) return;
@@ -532,6 +543,8 @@ export const musicreg: EPR = async (info, data, send) => {
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0, rid = -1;
+
+  if (mid < 0) return send.deny();
 
   // TODO:: Leggendaria until HEROIC VERSE has seperate music_id //
   // TODO:: SUPER FUTURE 2323 has seperate music_id //
@@ -951,6 +964,8 @@ export const musicbreg: EPR = async (info, data, send) => {
   let clid = 0; // SP BEGINNER //
   let exscore = (pgnum * 2 + gnum);
 
+  if (mid < 0) return send.deny();
+
   if (version < 20) mid = OldMidToNewMid(mid);
 
   const music_data: score | null = await DB.FindOne<score>(refid, {
@@ -1040,6 +1055,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   scores.forEach((res) => {
     let mVersion = Math.floor(res.mid / 1000);
     if (mVersion > version) return;
+    if (res.mid < 0) return;
 
     let totalArray = Array<number>(10).fill(0);
     let cFlgArray = Array<number>(10).fill(0);
