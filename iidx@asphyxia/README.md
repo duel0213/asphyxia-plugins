@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [48dee1]**
+Plugin Version: **STAGING [676fc6]**
 
 ---
 
@@ -77,7 +77,7 @@ Changelogs
 
 **v0.1.5**
   - Added Initial support for Resort Anthem
-    -  LEAGUE, STORY does not work yet
+    -  LEAGUE does not work yet
   - Fixed where s\_hispeed/d\_hispeed doesn't save correctly
  
 **v0.1.6**
@@ -183,3 +183,5 @@ Changelogs
 **STAGING**
   - Added Initial support for Sparkle Shower
   - Added ALL/STORE/RIVAL TOP pacemaker support
+  - Added basic save support of STORY mode (Resort Anthem)
+  - Fixed where tricoro does not work after Asphyxia Core update

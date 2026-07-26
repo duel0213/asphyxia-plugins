@@ -49,9 +49,6 @@ IIDX33pc(status="0")
   vskin(__type="s32" __count="4") #{lm_custom.premium_skin} #{lm_custom.premium_bg} #{lm_custom.premium_bg_concent} #{lm_custom.entry_bg}
   vskin_customize_setting(entry_bg_brightness=lm_custom.entry_bg_brightness)
   qprodata(__type="u32" __count="6") #{custom.qpro_head} #{custom.qpro_hair} #{custom.qpro_face} #{custom.qpro_hand} #{custom.qpro_body} #{custom.qpro_back}
-  qproattendant0(__type="u32" __count="6") 0 0 0 0 0 0
-  qproattendant1(__type="u32" __count="6") 0 0 0 0 0 0
-  qproattendant2(__type="u32" __count="6") 0 0 0 0 0 0
   rlist
     - for (let rd of rArray)
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
@@ -120,10 +117,15 @@ IIDX33pc(status="0")
   popn_cheers(music_list="65535")
   triple_tribe_5(music_list="65535")
   triple_tribe_6(music_list="65535")
+  bemani_summer(music_list="65535")
   language_setting(language=profile.language)
   movie_agreement(agreement_version="1")
   movie_setting
     hide_name(__type="bool") 0
+  if sparkle_extra_boss != null
+    extra_boss_event(phase=sparkle_extra_boss.phase progress=sparkle_extra_boss.progress progress_point_score=sparkle_extra_boss.progress_point_score progress_point_miss=sparkle_extra_boss.progress_point_miss unlock_point=sparkle_extra_boss.unlock_point)
+    - for (let ebp of sparkle_extra_boss_play)
+      extra_boss_play(phase=ebp.phase gauge_level=ebp.gauge_level extra_play_num=ebp.extra_play_num extra_clear_num=ebp.extra_clear_num onemore_play_num=ebp.onemore_play_num onemore_clear_num=ebp.onemore_clear_num)
   world_tourism
     - for (let wd of wArray)
       tour_data(tour_id=wd.tour_id progress=wd.progress)

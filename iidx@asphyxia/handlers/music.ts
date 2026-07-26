@@ -235,7 +235,7 @@ export const musicgetranksub: EPR = async (info, data, send) => {
   for (let i = 0; i < rival_refids.length; i++) {
     if (_.isNaN(rival_refids[i][0])) continue;
 
-    // idx, ... //
+    // TODO:: [idx, ...] //
     score_data = [i + 5, 10, 0, 0, 0, 0, 0];
     m.push(K.ARRAY("s32", score_data));
   }

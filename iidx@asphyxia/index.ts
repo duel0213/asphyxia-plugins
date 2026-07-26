@@ -523,6 +523,17 @@ export function register() {
     type: "integer",
     default: 1,
   });
+  R.Config("ss_extraboss", {
+    name: "EXTRA CHALLENGE (SS)",
+    desc: "EXTRA CHALLENGE Phase",
+    type: "integer",
+    default: 3,
+  });
+  R.Config("ss_extraboss_season", {
+    name: "EXTRA CHALLENGE Season (SS)",
+    type: "integer",
+    default: 2,
+  });
 
   R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
     const pcdata = await DB.FindOne(data.refid, {

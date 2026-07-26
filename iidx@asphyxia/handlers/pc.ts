@@ -984,6 +984,8 @@ export const pcget: EPR = async (info, data, send) => {
       sparkle_fl_room = [],
       sparkle_fl_crop = [],
       sparkle_vocalo = null,
+      sparkle_extra_boss = null,
+      sparkle_extra_boss_play = [],
       event_1 = null,
       event_1s = null,
       evtArray = [], evtArray2 = [], evtArray3 = [],
@@ -1119,6 +1121,8 @@ export const pcget: EPR = async (info, data, send) => {
         sparkle_fl_room = await DB.Find(refid, { collection: "event_1", version: version, event_data: "sparkle_fruit_lab" });
         sparkle_fl_crop = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "sparkle_fruit_lab_crop" });
         sparkle_vocalo = await DB.FindOne(refid, { collection: "event_1", version: version, event_data: "sparkle_vocalo" });
+        sparkle_extra_boss = await DB.FindOne(refid, { collection: "extra_boss", version: version });
+        sparkle_extra_boss_play = await DB.Find(refid, { collection: "extra_boss_play", version: version });
         break;
 
       default:
@@ -1674,6 +1678,8 @@ export const pcget: EPR = async (info, data, send) => {
           sparkle_fl_room,
           sparkle_fl_crop,
           sparkle_vocalo,
+          sparkle_extra_boss,
+          sparkle_extra_boss_play,
         });
         break;
 
@@ -4747,16 +4753,56 @@ export const pcsave: EPR = async (info, data, send) => {
             event_data: "sparkle_vocalo",
           },
           {
-            play_num: vocaloEvt.attr().play_num,
-            last_select_music: vocaloEvt.attr().last_select_music,
-            point_get: vocaloEvt.attr().point_get,
-            point_use_0: vocaloEvt.attr().point_use_0,
-            point_use_1: vocaloEvt.attr().point_use_1,
-            booster_get: vocaloEvt.attr().booster_get,
-            booster_use_0: vocaloEvt.attr().booster_use_0,
-            booster_use_1: vocaloEvt.attr().booster_use_1,
+            $set: {
+              play_num: Number(vocaloEvt.attr().play_num),
+              last_select_music: Number(vocaloEvt.attr().last_select_music),
+              point_get: Number(vocaloEvt.attr().point_get),
+              point_use_0: Number(vocaloEvt.attr().point_use_0),
+              point_use_1: Number(vocaloEvt.attr().point_use_1),
+              booster_get: Number(vocaloEvt.attr().booster_get),
+              booster_use_0: Number(vocaloEvt.attr().booster_use_0),
+              booster_use_1: Number(vocaloEvt.attr().booster_use_1),
+            }
           });
       }
+
+      let extraBossEvt = $(data).element("extraboss_event");
+      if (!_.isNil(extraBossEvt)) {
+          await DB.Upsert(
+            refid,
+            {
+              collection: "extra_boss",
+              version: version,
+              phase: Number(extraBossEvt.attr().phase)
+            },
+            {
+              $set: {
+                progress: Number(extraBossEvt.attr().progress),
+                progress_point_score: Number(extraBossEvt.attr().progress_point_score),
+                progress_point_miss: Number(extraBossEvt.attr().progress_point_miss),
+                unlock_point: Number(extraBossEvt.attr().unlock_point),
+              }
+            });
+
+          $(data).elements("extraboss_play").forEach(res => {
+            DB.Upsert(
+              refid,
+              {
+                collection: "extra_boss_play",
+                version: version,
+                phase: Number(res.attr().phase),
+                gauge_level: Number(res.attr().gauge_level)
+              },
+              {
+                $set: {
+                  extra_play_num: Number(res.attr().extra_play_num),
+                  extra_clear_num: Number(res.attr().extra_clear_num),
+                  onemore_play_num: Number(res.attr().onemore_play_num),
+                  onemore_clear_num: Number(res.attr().onemore_clear_num),
+                }
+              });
+          });
+        }
     }
 
     if (hasWorldTourism) {

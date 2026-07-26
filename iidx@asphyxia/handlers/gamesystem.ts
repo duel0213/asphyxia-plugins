@@ -124,6 +124,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
     }
   }
 
+  let eventData = null;
   switch (version) {
     case 29:
       result = Object.assign(result, {
@@ -151,7 +152,7 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       break;
     case 31:
       let totalMetron = 0;
-      let eventData = await DB.Find(null, {
+      eventData = await DB.Find(null, {
         collection: "event_1",
         version: version,
         event_data: "myepo_map",
@@ -191,8 +192,22 @@ export const gssysteminfo: EPR = async (info, data, send) => {
       });
       break;
     case 33:
+      let totalScorePoint = 0, totalMissPoint = 0;
+      let extra_boss = await DB.Find(null, {
+        collection: "extra_boss",
+        version: version,
+      });
+
+      if (!_.isNil(extra_boss)) {
+        extra_boss.forEach((res: any) => {
+          totalScorePoint += Number(res.progress_point_score);
+          totalMissPoint += Number(res.progress_point_miss);
+        });
+      }
+
       result = Object.assign(result, {
         Event1Phase: K.ATTR({ val: String(U.GetConfig("ss_event1")) }),
+        ExtraBossEvent: K.ATTR({ val: String(U.GetConfig("ss_extraboss")) }),
         isNewSongAnother12OpenFlg: K.ATTR({ val: String(Number(U.GetConfig("NewSongAnother12"))) }),
         isKiwamiOpenFlg: K.ATTR({ val: String(Number(U.GetConfig("Eisei"))) }),
         WorldTourismOpenList: K.ATTR({ val: String(-1) }),
@@ -201,6 +216,22 @@ export const gssysteminfo: EPR = async (info, data, send) => {
         KrankAppendSeason: K.ATTR({ val: String(0) }),
         the4thEvent: K.ATTR({ val: String(1)} ),
         beat: K.ATTR({ val: String(5293) }), // It wasn't. TODO:: Figure out what this value does //
+        extraevent_2: {
+          "@attr": {
+            all_point_score: String(totalScorePoint),
+            all_point_miss: String(totalMissPoint),
+            season: String(Number(U.GetConfig("ss_extraboss_season"))),
+          },
+          /* up to 32 entries
+          info: K.ATTR({
+            gauge_level: String(),
+            class_id: String(),
+            score_extra: String(),
+            miss_extra: String(),
+            score_onemore: String(),
+            miss_onemore: String()
+          }),*/
+        }
       });
       break;
 
