@@ -780,7 +780,7 @@ export const pcget: EPR = async (info, data, send) => {
     wArray.sort((a, b) => a.tour_id - b.tour_id);
   }
 
-  let event, gradeStr = "", exStr = "", skinStr = "";
+  let event, party, gradeStr = "", exStr = "", skinStr = "";
   if (version == 14) {
     dArray.forEach((res) => {
       gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
@@ -885,6 +885,11 @@ export const pcget: EPR = async (info, data, send) => {
       );
     }
 
+    party = await DB.FindOne(refid, { collection: "party", version: version });
+    if (!_.isNil(party)) {
+      party.cflg = Buffer.from(party.cflg, "base64").toString("hex");
+    }
+
     event = await DB.FindOne(refid, { collection: "event_1", version: version });
     if (!_.isNil(event)) {
       event.cf = Buffer.from(event.cf, "base64").toString("hex");
@@ -899,6 +904,7 @@ export const pcget: EPR = async (info, data, send) => {
       appendsettings,
       custom,
       rArray,
+      party,
       event,
     });
   }
@@ -2169,7 +2175,28 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.liflen = Number($(data).attr().lift);
     pcdata.fcombo[cltype] = Number($(data).attr().fcombo);
 
-    // TODO:: STORY/LEAGUE //
+    // TODO:: LEAGUE //
+
+    // pc, pf seems to be not refered but save it for future purpose //
+    if (!_.isNil($(data).element("party"))) {
+      let party_data = {
+        ev: Number($(data).attr("party").ev),
+        dif: Number($(data).attr("party").dif),
+        pc: Number($(data).attr("party").pc),
+        pf: Number($(data).attr("party").pf),
+        cflg: $(data).buffer("party").toString("base64"),
+      }
+
+      await DB.Upsert(refid,
+        {
+          collection: "party",
+          version: version,
+        },
+        {
+          $set: party_data,
+        }
+      );
+    }
 
     if (!_.isNil($(data).element("tour"))) {
       let event_data = {
