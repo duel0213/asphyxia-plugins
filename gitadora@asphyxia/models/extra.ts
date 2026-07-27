@@ -18,7 +18,7 @@ export interface Extra {
 }
 
 export function getDefaultExtra(game: 'gf' | 'dm', version: string, id: number) : Extra {
-  const playstyleLength = version == 'galaxywave' || version == 'galaxywave_delta' ? 70 : 50;
+  const playstyleLength = version == 'galaxywave_delta' ? 70 : 50;
   const result : Extra = {
     collection: 'extra',
     pluginVer: PLUGIN_VER,

@@ -24,7 +24,7 @@ Supported Versions
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
-  - beatmaniaIIDX 33 Sparkle Shower (2026033100)
+  - beatmaniaIIDX 33 Sparkle Shower (2026042200)
 
 ---
 
@@ -77,7 +77,7 @@ Changelogs
 
 **v0.1.5**
   - Added Initial support for Resort Anthem
-    -  LEAGUE does not work yet
+    -  LEAGUE, STORY does not work yet
   - Fixed where s\_hispeed/d\_hispeed doesn't save correctly
  
 **v0.1.6**
