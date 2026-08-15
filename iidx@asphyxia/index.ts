@@ -16,6 +16,7 @@ export function register() {
   R.Contributor("duel0213");
   R.Contributor("anzuwork");
 
+  R.GameCode("FDD");
   R.GameCode("GLD");
   R.GameCode("HDD");
   R.GameCode("I00");

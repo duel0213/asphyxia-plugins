@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId } from "../util";
@@ -20,7 +20,10 @@ export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   let result: any = {
-    "@attr": { expire: 300 },
+    "@attr": {
+      expire: String(300),
+      ls: String(0), // have no idea what this value does //
+    },
     ir: K.ATTR({ beat: String(U.GetConfig("BeatPhase")) }),
     expert: K.ATTR({ phase: String(U.GetConfig("ExpertPhase")) }),
     expert_random_secret: K.ATTR({ phase: String(U.GetConfig("ExpertRandomPhase")) }),
@@ -30,6 +33,8 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 13:
+      break;
     case 14:
       result = Object.assign(result, {
         gshop: {
@@ -398,20 +403,30 @@ export const pccommon: EPR = async (info, data, send) => {
       return send.deny();
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result["@attr"]["method"] = "pccommon";
+    sendOption = {
+      rootName: "FDD"
+    };
+  }
+
+  return send.object(result, sendOption);
 };
 
 export const pcreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const id = _.random(10000000, 99999999);
-  const idstr = IDtoCode(id);
   const refid = $(data).attr().rid;
+  const profile = await DB.FindOne<profile>(refid, { collection: "profile" });
 
   let pcdata: object;
   let lightning_settings: object;
   let lightning_playdata: object;
   let lightning_custom: object;
   switch (version) {
+    case 13:
+      pcdata = FDD_pcdata;
+      break;
     case 14:
       pcdata = GLD_pcdata;
       break;
@@ -497,6 +512,18 @@ export const pcreg: EPR = async (info, data, send) => {
       return send.deny();
   }
 
+  let name = $(data).attr().name;
+  let pid = Number($(data).attr().pid);
+  let id = _.random(10000000, 99999999);
+  let idstr = IDtoCode(id);
+  // DistorteD temp code //
+  if (version == 13 && !_.isNil(profile)) {
+    name = profile.name;
+    pid = profile.pid;
+    id = profile.id;
+    idstr = profile.idstr;
+  }
+
   await DB.Upsert<profile>(
     refid,
     {
@@ -504,8 +531,8 @@ export const pcreg: EPR = async (info, data, send) => {
     },
     {
       $set: {
-        name: $(data).attr().name,
-        pid: Number($(data).attr().pid),
+        name,
+        pid,
         id,
         idstr,
         ...default_profile,
@@ -572,6 +599,15 @@ export const pcreg: EPR = async (info, data, send) => {
     }
   }
 
+  if (version == 13) {
+    return send.object({
+      "@attr": {
+        status: String(0),
+        method: "pcreg",
+      },
+    }, { rootName: "FDD" })
+  }
+
   return send.object(
     K.ATTR({
       id: String(id),
@@ -605,7 +641,18 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_music_filter_sort = await DB.Find<lightning_musicfilter_sort>(refid, { collection: "lightning_musicfilter_sort", version: version });
   let lm_custom: any = await DB.FindOne<lightning_custom>(refid, { collection: "lightning_custom", version: version });
 
-  if (_.isNil(pcdata)) return send.deny();
+  if (_.isNil(pcdata)) {
+    if (version == 13) {
+      return send.object({
+        "@attr": {
+          status: String(1),
+          method: "pcget"
+        }
+      }, { rootName: "FDD" });
+    }
+
+    return send.deny();
+  }
 
   // migration //
   {
@@ -781,7 +828,32 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, party, gradeStr = "", exStr = "", skinStr = "";
-  if (version == 14) {
+  if (version == 13) {
+    dArray.forEach((res) => {
+      gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
+    });
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exStr += NumArrayToString([6, 5, 1], [res.coid, a, res.cArray[a]]);
+        exStr += NumArrayToString([18], [res.pgArray[a]]);
+        exStr += NumArrayToString([18], [res.gArray[a]]);
+      }
+    });
+
+    skinStr += NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
+
+    return send.pugFile("pug/FDD/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exStr,
+      skinStr,
+      rArray,
+    });
+  }
+  else if (version == 14) {
     dArray.forEach((res) => {
       gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
     });
@@ -2019,7 +2091,26 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = Number($(data).attr().mode);
   pcdata.pmode = Number($(data).attr().pmode);
 
-  if (version == 14) {
+  if (version == 13) {
+    if (cltype == 0) {
+      pcdata.sach = Number($(data).attr().achi);
+      pcdata.sp_opt = Number($(data).attr().opt);
+    }
+    else {
+      pcdata.dach = Number($(data).attr().achi);
+      pcdata.dp_opt = Number($(data).attr().opt);
+      pcdata.dp_opt2 = Number($(data).attr().opt2);
+    }
+
+    pcdata.gno = Number($(data).attr().gno);
+    pcdata.sflg0 = Number($(data).attr().sflg0);
+    pcdata.sflg1 = Number($(data).attr().sflg1);
+    pcdata.sflg2 = Number($(data).attr().sflg2);
+    pcdata.sdhd = Number($(data).attr().sdhd);
+    pcdata.ncomb = Number($(data).attr().ncomb);
+    pcdata.mcomb = Number($(data).attr().mcomb);
+  }
+  else if (version == 14) {
     if (cltype == 0) {
       pcdata.sach = Number($(data).attr().achi);
       pcdata.sp_opt = Number($(data).attr().opt);
@@ -5267,6 +5358,17 @@ export const pcsave: EPR = async (info, data, send) => {
       $set: custom
     }
   );
+
+  if (version == 13) {
+    return send.object({
+      "@attr": {
+        status: String(0),
+        method: "pcsave",
+      }
+    }, {
+      rootName: "FDD"
+    })
+  }
 
   return send.success();
 };

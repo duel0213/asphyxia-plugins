@@ -26,11 +26,12 @@ export const musicgetrank: EPR = async (info, data, send) => {
     [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
+  let result = null;
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
   let indices, temp_mid = 0;
   let arrayType = version < 33 ? "s16" as const : "s32" as const;
-  if (version == 14 || version == 15) {
+  if (version < 16) {
     let result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
@@ -80,7 +81,20 @@ export const musicgetrank: EPR = async (info, data, send) => {
       );
     });
 
-    return send.object(result);
+    let sendOption: EamuseSendOption = null;
+    if (version == 13) {
+      result = Object.assign(result, {
+        "@attr": {
+          status: String(0),
+          method: "musicgetrank"
+        }
+      })
+      sendOption = {
+        rootName: "FDD"
+      }
+    }
+
+    return send.object(result, sendOption);
   }
   else if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
@@ -211,7 +225,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   else {
     return send.success();
   }
-
+  
   return send.object({
     m,
     b,
@@ -328,7 +342,20 @@ export const musicgetralive: EPR = async (info, data, send) => {
     );
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result = Object.assign(result, {
+      "@attr": {
+        status: String(0),
+        method: "musicgetralive"
+      }
+    })
+    sendOption = {
+      rootName: "FDD"
+    }
+  }
+
+  return send.object(result, sendOption);
 }
 
 export const musicappoint: EPR = async (info, data, send) => {
@@ -519,7 +546,20 @@ export const musicappoint: EPR = async (info, data, send) => {
     if (!_.isNil(mydata) && !_.isNil(sdata)) result = { mydata, sdata };
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result = Object.assign(result, {
+      "@attr": {
+        status: String(0),
+        method: "musicappoint"
+      }
+    })
+    sendOption = {
+      rootName: "FDD"
+    }
+  }
+
+  return send.object(result, sendOption);
 }
 
 export const musicreg: EPR = async (info, data, send) => {
@@ -581,7 +621,8 @@ export const musicreg: EPR = async (info, data, send) => {
   else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
   if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
-  if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  if (version < 14) ghost = Buffer.from($(data).obj["@content"], "hex").toString("base64");
+  else if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
   else ghost = $(data).buffer("ghost").toString("base64");
 
   if (version >= 27) {
@@ -949,7 +990,15 @@ export const musicreg: EPR = async (info, data, send) => {
     shopdata: K.ATTR({ rank: String(shop_rank) }),
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result["@attr"]["method"] = "musicreg";
+    sendOption = {
+      rootName: "FDD"
+    };
+  }
+
+  return send.object(result, sendOption);
 }
 
 export const musicbreg: EPR = async (info, data, send) => {
@@ -1038,6 +1087,17 @@ export const musicbreg: EPR = async (info, data, send) => {
     }
   );
 
+  if (version == 13) {
+    return send.object({
+      "@attr": {
+        status: String(0),
+        method: "musicbreg",
+      }
+    }, {
+      rootName: "FDD"
+    })
+  }
+
   return send.success();
 };
 
@@ -1093,7 +1153,7 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
 
     let indices = [1, 2, 3, 6, 7, 8];
-    if (version == 14 || version == 15) {
+    if (version < 16) {
       let verMid = OldMidToVerMid(Number(key));
 
       let str = cltype == 0 ?
@@ -1112,9 +1172,18 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   }
 
-  result = (version == 14 || version == 15) ? { cdata } : { c };
+  result = (version < 16) ? { cdata } : { c };
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result = {
+      "@attr": { method: "musiccrate" },
+      ...result
+    };
+    sendOption = { rootName: "FDD" }
+  }
+
+  return send.object(result, sendOption);
 }
 
 // this is not valid response //

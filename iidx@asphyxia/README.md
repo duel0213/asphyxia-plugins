@@ -1,10 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [676fc6]**
+Plugin Version: **STAGING [9eee87]**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 13 DistorteD (JAC)
   - beatmaniaIIDX 14 GOLD (2007072301)
   - beatmaniaIIDX 15 DJ TROOPERS (2008031100)
   - beatmaniaIIDX 16 EMPRESS (2009072200)
@@ -182,6 +183,8 @@ Changelogs
 
 **STAGING**
   - Added Initial support for Sparkle Shower
+  - Added Initial support for DistorteD
+    - Existing card with no DistorteD data will treat as new card on registration but it will use existing profile data.
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update

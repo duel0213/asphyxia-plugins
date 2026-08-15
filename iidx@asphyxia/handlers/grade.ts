@@ -201,9 +201,19 @@ export const graderaised: EPR = async (info, data, send) => {
     maxStage: 4,
   });
 
-  return send.object(
-    K.ATTR({
+  let result = {
+    "@attr": {
       pnum: String(gradeUser.length),
-    })
-  );
+    }
+  }
+
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result["@attr"]["method"] = "graderaised";
+    sendOption = {
+      rootName: "FDD"
+    }
+  }
+
+  return send.object(result, sendOption);
 };

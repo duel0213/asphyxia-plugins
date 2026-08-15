@@ -115,10 +115,22 @@ export const rankingentry: EPR = async (info, data, send) => {
   expertUser.sort((a: ranking, b: ranking) => b.exscore - a.exscore);
   let rankPos = expertUser.findIndex((a: ranking) => a.name == name);
 
-  return send.object(K.ATTR({
-    anum: String(expertUser.length), 
-    jun: String(rankPos + 1),
-  }));
+  let result = {
+    "@attr": {
+      anum: String(expertUser.length),
+      jun: String(rankPos + 1),
+    }
+  }
+
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result["@attr"]["method"] = "rankingentry"
+    sendOption = {
+      rootName: "FDD"
+    };
+  }
+
+  return send.object(result, sendOption);
 };
 
 export const rankingoentry: EPR = async (info, data, send) => {
@@ -169,5 +181,13 @@ export const rankinggetranker: EPR = async (info, data, send) => {
     );
   });
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = null;
+  if (version == 13) {
+    result = Object.assign(result, {
+      "@attr": { method: "rankinggetranker" },
+    });
+    sendOption = { rootName: "FDD" };
+  }
+
+  return send.object(result, sendOption);
 };
