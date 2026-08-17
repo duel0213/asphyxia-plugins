@@ -122,7 +122,7 @@ export const rankingentry: EPR = async (info, data, send) => {
     }
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result["@attr"]["method"] = "rankingentry"
     sendOption = {
@@ -181,7 +181,7 @@ export const rankinggetranker: EPR = async (info, data, send) => {
     );
   });
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result = Object.assign(result, {
       "@attr": { method: "rankinggetranker" },

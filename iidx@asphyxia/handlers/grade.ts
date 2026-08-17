@@ -207,7 +207,7 @@ export const graderaised: EPR = async (info, data, send) => {
     }
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result["@attr"]["method"] = "graderaised";
     sendOption = {

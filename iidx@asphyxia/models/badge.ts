@@ -38,6 +38,7 @@ export const badgeVersionMap: Record<number | "default", Record<string, number>>
     step_up: 3,
     visitor: 6,
     notes_radar: 7,
+    event1: 3301,
   },
   default: {
     step_up: 3,

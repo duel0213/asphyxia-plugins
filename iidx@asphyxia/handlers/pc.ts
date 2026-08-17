@@ -403,7 +403,7 @@ export const pccommon: EPR = async (info, data, send) => {
       return send.deny();
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version == 13) {
     result["@attr"]["method"] = "pccommon";
     sendOption = {

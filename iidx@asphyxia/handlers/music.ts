@@ -81,7 +81,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       );
     });
 
-    let sendOption: EamuseSendOption = null;
+    let sendOption: EamuseSendOption = {};
     if (version < 14) {
       result = Object.assign(result, {
         "@attr": {
@@ -341,7 +341,7 @@ export const musicgetralive: EPR = async (info, data, send) => {
     );
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result = Object.assign(result, {
       "@attr": {
@@ -544,7 +544,7 @@ export const musicappoint: EPR = async (info, data, send) => {
     if (!_.isNil(mydata) && !_.isNil(sdata)) result = { mydata, sdata };
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result = Object.assign(result, {
       "@attr": {
@@ -987,7 +987,7 @@ export const musicreg: EPR = async (info, data, send) => {
     shopdata: K.ATTR({ rank: String(shop_rank) }),
   }
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result["@attr"]["method"] = "musicreg";
     sendOption = {
@@ -1170,7 +1170,7 @@ export const musiccrate: EPR = async (info, data, send) => {
 
   result = (version < 16) ? { cdata } : { c };
 
-  let sendOption: EamuseSendOption = null;
+  let sendOption: EamuseSendOption = {};
   if (version < 14) {
     result = {
       "@attr": { method: "musiccrate" },
