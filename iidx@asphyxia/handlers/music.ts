@@ -1,4 +1,4 @@
-import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetWeekId } from "../util";
+import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetWeekId, GetModel } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
@@ -82,15 +82,14 @@ export const musicgetrank: EPR = async (info, data, send) => {
     });
 
     let sendOption: EamuseSendOption = null;
-    if (version == 13) {
+    if (version < 14) {
       result = Object.assign(result, {
         "@attr": {
-          status: String(0),
           method: "musicgetrank"
         }
       })
       sendOption = {
-        rootName: "FDD"
+        rootName: GetModel(info),
       }
     }
 
@@ -343,15 +342,14 @@ export const musicgetralive: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result = Object.assign(result, {
       "@attr": {
-        status: String(0),
         method: "musicgetralive"
       }
     })
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
     }
   }
 
@@ -547,15 +545,14 @@ export const musicappoint: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result = Object.assign(result, {
       "@attr": {
-        status: String(0),
         method: "musicappoint"
       }
     })
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
     }
   }
 
@@ -991,10 +988,10 @@ export const musicreg: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result["@attr"]["method"] = "musicreg";
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
     };
   }
 
@@ -1087,14 +1084,13 @@ export const musicbreg: EPR = async (info, data, send) => {
     }
   );
 
-  if (version == 13) {
+  if (version < 14) {
     return send.object({
       "@attr": {
-        status: String(0),
         method: "musicbreg",
       }
     }, {
-      rootName: "FDD"
+      rootName: GetModel(info),
     })
   }
 
@@ -1175,12 +1171,12 @@ export const musiccrate: EPR = async (info, data, send) => {
   result = (version < 16) ? { cdata } : { c };
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result = {
       "@attr": { method: "musiccrate" },
       ...result
     };
-    sendOption = { rootName: "FDD" }
+    sendOption = { rootName: GetModel(info) };
   }
 
   return send.object(result, sendOption);

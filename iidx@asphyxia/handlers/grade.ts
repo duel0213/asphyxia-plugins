@@ -1,6 +1,6 @@
 import { pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
-import { IDtoRef, GetVersion } from "../util";
+import { IDtoRef, GetVersion, GetModel } from "../util";
 import { eisei_grade } from "../models/lightning";
 import { badge } from "../models/badge";
 
@@ -208,10 +208,10 @@ export const graderaised: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result["@attr"]["method"] = "graderaised";
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
     }
   }
 

@@ -1,7 +1,7 @@
 import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId } from "../util";
+import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId, GetModel } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicfilter_sort, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicfilter_sort_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data, rival_sub } from "../models/rival";
@@ -599,13 +599,12 @@ export const pcreg: EPR = async (info, data, send) => {
     }
   }
 
-  if (version == 13) {
+  if (version < 14) {
     return send.object({
       "@attr": {
-        status: String(0),
         method: "pcreg",
       },
-    }, { rootName: "FDD" })
+    }, { rootName: GetModel(info) });
   }
 
   return send.object(
@@ -642,13 +641,15 @@ export const pcget: EPR = async (info, data, send) => {
   let lm_custom: any = await DB.FindOne<lightning_custom>(refid, { collection: "lightning_custom", version: version });
 
   if (_.isNil(pcdata)) {
-    if (version == 13) {
+    if (version < 14) {
       return send.object({
         "@attr": {
-          status: String(1),
           method: "pcget"
         }
-      }, { rootName: "FDD" });
+      }, {
+        rootName: GetModel(info),
+        status: 1,
+      });
     }
 
     return send.deny();
@@ -5359,14 +5360,13 @@ export const pcsave: EPR = async (info, data, send) => {
     }
   );
 
-  if (version == 13) {
+  if (version < 14) {
     return send.object({
       "@attr": {
-        status: String(0),
         method: "pcsave",
       }
     }, {
-      rootName: "FDD"
+      rootName: GetModel(info),
     })
   }
 

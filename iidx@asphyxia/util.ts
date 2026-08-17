@@ -107,6 +107,10 @@ export function GetVersion(info: EamuseInfo) {
   return version;
 }
 
+export function GetModel(info: EamuseInfo) {
+  return info.model.slice(0, 3);
+}
+
 export function appendSettingConverter(
   rf: boolean,
   cf: boolean,

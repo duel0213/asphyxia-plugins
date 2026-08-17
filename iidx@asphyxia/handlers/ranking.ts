@@ -1,6 +1,6 @@
 import { expert, ranking } from "../models/ranking";
 import { profile } from "../models/profile";
-import { GetVersion, IDtoRef } from "../util";
+import { GetModel, GetVersion, IDtoRef } from "../util";
 
 export const rankingentry: EPR = async (info, data, send) => {
   // pside //
@@ -123,10 +123,10 @@ export const rankingentry: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result["@attr"]["method"] = "rankingentry"
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
     };
   }
 
@@ -182,11 +182,11 @@ export const rankinggetranker: EPR = async (info, data, send) => {
   });
 
   let sendOption: EamuseSendOption = null;
-  if (version == 13) {
+  if (version < 14) {
     result = Object.assign(result, {
       "@attr": { method: "rankinggetranker" },
     });
-    sendOption = { rootName: "FDD" };
+    sendOption = { rootName: GetModel(info) };
   }
 
   return send.object(result, sendOption);
