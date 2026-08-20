@@ -8,10 +8,40 @@ import { activity_mybest } from "../models/activity";
 import { djtraining } from "../models/djtraining";
 import { rival } from "../models/rival";
 
+export const musicmethod: EPR = async (info, data, send) => {
+  let command = $(data).attr().command.split(' ')[0];
+
+  switch (command) {
+    case "getrank":
+      return await musicgetrank(info, data, send);
+    case "getralive":
+      // this is most likely impossible until core has session implmentation with pcbid as game doesn't send player's iidxid //
+      return send.object({
+        "@attr": {
+          method: "musicgetralive"
+        }
+      }, {
+        rootName: GetModel(info),
+        status: "SOK",
+      });
+    case "appoint":
+      return await musicappoint(info, data, send);
+    case "reg":
+      return await musicreg(info, data, send);
+    case "crate":
+      return await musiccrate(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny();
+}
+
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
-  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -32,7 +62,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let indices, temp_mid = 0;
   let arrayType = version < 33 ? "s16" as const : "s32" as const;
   if (version < 16) {
-    let result = {
+    result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
@@ -90,6 +120,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       })
       sendOption = {
         rootName: GetModel(info),
+        status: version < 13 ? "SOK" : 0,
       }
     }
 
@@ -263,6 +294,7 @@ export const musicgetralive: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const refid = await IDtoRef(Number($(data).attr().iidxid));
   const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -350,6 +382,7 @@ export const musicgetralive: EPR = async (info, data, send) => {
     })
     sendOption = {
       rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
     }
   }
 
@@ -360,11 +393,11 @@ export const musicappoint: EPR = async (info, data, send) => {
   const version = GetVersion(info);
 
   // clid, ctype, grd, iidxid, lv, mid, subtype //
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
-  const ctype = Number($(data).attr().ctype);
-  const subtype = Number($(data).attr().subtype);
-  let mid = Number($(data).attr().mid);
-  let clid = Number($(data).attr().clid);
+  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[5])) : await IDtoRef(Number($(data).attr().iidxid));
+  const ctype = version < 13 ? Number($(data).attr().command.split(' ')[3]) : Number($(data).attr().ctype);
+  const subtype = version < 13 ? Number($(data).attr().command.split(' ')[4]) : Number($(data).attr().subtype);
+  let mid = version < 13 ? Number($(data).attr().command.split(' ')[1]) : Number($(data).attr().mid);
+  let clid = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().clid);
 
   const mapping = [1, 2, 3, 6, 7, 8];
   if (version < 20) {
@@ -378,11 +411,14 @@ export const musicappoint: EPR = async (info, data, send) => {
   let result: any = {};
 
   // MINE //
-  const music_data: score | null = await DB.FindOne<score>(refid, {
-    collection: "score",
-    mid: mid,
-    [clid]: { $exists: true },
-  });
+  let music_data: score | null = null;
+  if (!_.isNil(refid)) {
+    music_data = await DB.FindOne<score>(refid, {
+      collection: "score",
+      mid: mid,
+      [clid]: { $exists: true },
+    });
+  }
 
   let mydata, option = 0, option2 = 0;
   if (!_.isNil(music_data)) {
@@ -488,7 +524,20 @@ export const musicappoint: EPR = async (info, data, send) => {
     }
   }
 
-  if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
+  if (_.isNil(mydata) && _.isNil(sdata)) {
+    if (version < 14) {
+      return send.object({
+        "@attr": {
+          method: "musicappoint"
+        }
+      }, {
+        rootName: GetModel(info),
+        status: version < 13 ? "ENODATA" : 0,
+      });
+    }
+
+    return send.success();
+  }
 
   if (version >= 27) {
     let my_gauge_data = Buffer.alloc(0), other_gauge_data = Buffer.alloc(0);
@@ -544,25 +593,26 @@ export const musicappoint: EPR = async (info, data, send) => {
     if (!_.isNil(mydata) && !_.isNil(sdata)) result = { mydata, sdata };
   }
 
-  let sendOption: EamuseSendOption = {};
   if (version < 14) {
-    result = Object.assign(result, {
-      "@attr": {
-        method: "musicappoint"
+    if (_.isNil(mydata)) mydata = { "@content": "" };
+
+    return send.pugFile(`pug/${GetModel(info)}/musicappoint.pug`, {
+      mydata: mydata["@content"],
+      sdata: {
+        score: sdata["@attr"]["score"],
+        pid: sdata["@attr"]["pid"],
+        name: sdata["@attr"]["name"],
+        content: sdata["@content"],
       }
-    })
-    sendOption = {
-      rootName: GetModel(info),
-    }
+    });
   }
 
-  return send.object(result, sendOption);
+  return send.object(result);
 }
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
-
+  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
   });
@@ -571,15 +621,20 @@ export const musicreg: EPR = async (info, data, send) => {
   });
 
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  const pgnum = Number($(data).attr().pgnum);
-  const gnum = Number($(data).attr().gnum);
-  const mnum = Number($(data).attr().mnum);
-  const cflg = Number($(data).attr().cflg);
-  let mid = Number($(data).attr().mid);
-  let clid = Number($(data).attr().clid);
+  let mid = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().mid);
+  let clid = version < 13 ? Number($(data).attr().command.split(' ')[3]) : Number($(data).attr().clid);
+  const pgnum = version < 13 ? Number($(data).attr().command.split(' ')[4]) : Number($(data).attr().pgnum);
+  const gnum = version < 13 ? Number($(data).attr().command.split(' ')[5]) : Number($(data).attr().gnum);
+  const mnum = version < 13 ? -1 : Number($(data).attr().mnum);
+  const cflg = version < 13 ? Number($(data).attr().command.split(' ')[7]) : Number($(data).attr().cflg);
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0, rid = -1;
+
+  if (version < 13) rid = Number($(data).attr().command.split(' ')[6]);
+  else if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
+  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
+  if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
   if (mid < 0) return send.deny();
 
@@ -613,10 +668,6 @@ export const musicreg: EPR = async (info, data, send) => {
   let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
-
-  if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
-  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
-  if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
 
   if (version < 14) ghost = Buffer.from($(data).obj["@content"], "hex").toString("base64");
   else if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
@@ -992,6 +1043,7 @@ export const musicreg: EPR = async (info, data, send) => {
     result["@attr"]["method"] = "musicreg";
     sendOption = {
       rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
     };
   }
 
@@ -1102,7 +1154,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
-  const cltype = Number($(data).attr().cltype);
+  const cltype = version < 13 ? Number($(data).attr().command.split(" ")[1]) : Number($(data).attr().cltype);
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
@@ -1176,7 +1228,10 @@ export const musiccrate: EPR = async (info, data, send) => {
       "@attr": { method: "musiccrate" },
       ...result
     };
-    sendOption = { rootName: GetModel(info) };
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+    };
   }
 
   return send.object(result, sendOption);

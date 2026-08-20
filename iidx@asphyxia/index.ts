@@ -1,11 +1,11 @@
-﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister } from "./handlers/pc";
-import { shopgetname, shopsavename, shopgetconvention, shopsetconvention } from "./handlers/shop";
-import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive, musicgetranksub } from "./handlers/music";
-import { graderaised } from "./handlers/grade";
+﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister, pcmethod } from "./handlers/pc";
+import { shopgetname, shopsavename, shopgetconvention, shopsetconvention, shopmethod } from "./handlers/shop";
+import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive, musicgetranksub, musicmethod } from "./handlers/music";
+import { grademethod, graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
 import { updateRivalSettings, updateCustomSettings, importScoreData, exportScoreData } from "./handlers/webui";
 import { GetVersion } from "./util";
-import { rankingentry, rankinggetranker, rankingoentry } from "./handlers/ranking";
+import { rankingentry, rankinggetranker, rankingmethod, rankingoentry } from "./handlers/ranking";
 
 export function register() {
   if (CORE_VERSION_MAJOR <= 1 && CORE_VERSION_MINOR < 31) {
@@ -16,6 +16,7 @@ export function register() {
   R.Contributor("duel0213");
   R.Contributor("anzuwork");
 
+  R.GameCode("ECO");
   R.GameCode("FDD");
   R.GameCode("GLD");
   R.GameCode("HDD");
@@ -566,6 +567,12 @@ export function register() {
   R.WebUIEvent("iidxUpdateCustom", updateCustomSettings);
   R.WebUIEvent("iidxImportScoreData", importScoreData);
   R.WebUIEvent("iidxExportScoreData", exportScoreData);
+
+  R.Route("ECO.music", musicmethod);
+  R.Route("ECO.pc", pcmethod);
+  R.Route("ECO.ranking", rankingmethod);
+  R.Route("ECO.grade", grademethod);
+  R.Route("ECO.shop", shopmethod);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`${method}`, handler);

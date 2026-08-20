@@ -4,15 +4,28 @@ import { IDtoRef, GetVersion, GetModel } from "../util";
 import { eisei_grade } from "../models/lightning";
 import { badge } from "../models/badge";
 
+export const grademethod: EPR = async (info, data, send) => {
+  let command = $(data).attr().command.split(' ')[0];
+  switch (command) {
+    case "raised":
+      return await graderaised(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny();
+}
+
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const iidxid = Number($(data).attr().iidxid);
-  const refid = await IDtoRef(iidxid);
-  const gid = Number($(data).attr().gid);
-  const gtype = Number($(data).attr().gtype);
+  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
+  const gid = version < 13 ? Number($(data).attr().command.split(' ')[3]) : Number($(data).attr().gid);
+  const gtype = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().gtype);
 
-  let cflg = Number($(data).attr().cflg);
-  let achi = Number($(data).attr().achi);
+  let cflg = version < 13 ? Number($(data).attr().command.split(' ')[4]) : Number($(data).attr().cflg);
+  if (version >= 23) cflg = Number($(data).attr().cstage);
+  let achi = version < 13 ? Number($(data).attr().command.split(' ')[5]) : Number($(data).attr().achi);
 
   let pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
   let grade = await DB.FindOne<grade>(refid, {
@@ -21,8 +34,6 @@ export const graderaised: EPR = async (info, data, send) => {
     style: gtype,
     gradeId: gid,
   });
-
-  if (version >= 23) cflg = Number($(data).attr().cstage);
 
   const isTDJ = !_.isNil($(data).element("lightning_play_data")); // lightning model //
   const hasEiseiData = (!_.isNil($(data).element("eisei_data")) || !_.isNil($(data).element("eisei_grade_data")) || !_.isNil($(data).element("kiwami_data")));
@@ -119,16 +130,19 @@ export const graderaised: EPR = async (info, data, send) => {
 
   let updatePcdata = false;
   let updateGrade = false;
+  if (version < 23) {
+    if (gtype == 0 && cflg == 4) updatePcdata = true;
+    else if (gtype == 1 && cflg == 3) updatePcdata = true;
+  } else {
+    if (cflg == 4) updatePcdata = true;
+  }
+
   if (_.isNil(pcdata)) return send.deny();
   if (_.isNil(grade)) {
-    if (cflg == 4) {
+    if (updatePcdata) {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
       else pcdata.dgid = Math.max(gid, pcdata.dgid);
-
-      updatePcdata = true;
     }
-
-    updateGrade = true;
   } else {
     if (cflg >= grade.maxStage || achi >= grade.archive) {
       cflg = Math.max(cflg, grade.maxStage);
@@ -137,11 +151,9 @@ export const graderaised: EPR = async (info, data, send) => {
       updateGrade = true;
     }
 
-    if (cflg == 4) {
+    if (updatePcdata) {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
       else pcdata.dgid = Math.max(gid, pcdata.dgid);
-
-      updatePcdata = true;
     }
   }
 
@@ -212,6 +224,7 @@ export const graderaised: EPR = async (info, data, send) => {
     result["@attr"]["method"] = "graderaised";
     sendOption = {
       rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
     }
   }
 

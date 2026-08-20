@@ -1,10 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [ccb2b3]**
+Plugin Version: **STAGING [ee4d9c]**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 12 HAPPY SKY (JAC)
   - beatmaniaIIDX 13 DistorteD (JAC)
   - beatmaniaIIDX 14 GOLD (2007072301)
   - beatmaniaIIDX 15 DJ TROOPERS (2008031100)
@@ -42,14 +43,15 @@ Features
 
 Known Issues
   - Clear Lamps may display invalid lamps due to missing conversion code
-  - DJ LEVEL folders are broken in ~ DJ TROOPERS due to missing rank\_id
+  - DJ LEVEL folders are broken before EMPRESS due to missing rank\_id
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
   - SUPER FUTURE 2323 play records doesn't display on other version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
+  - DOUBLE PLAY or two persons play may not work properly (can't test this due to skill issue)
+  - New card cannot be registered before DistorteD (this is due to those games uses magnetic card)
   - Some of licensed songs are locked behind (kinda solved with music\_open but needs to be verified)
-  - Some of badges aren't saving in RESIDENT ~ (needs to figure out name to id)
+  - Some of badges aren't saving in RESIDENT and above (needs to figure out name to id)
   - Some of records may have invalid MISS COUNT
-  - DJ TRAINING folder won't appear (this most likely requires mdb parsing)
 
 ---
 
@@ -185,6 +187,13 @@ Changelogs
   - Added Initial support for Sparkle Shower
   - Added Initial support for DistorteD
     - Existing card with no DistorteD data will treat as new card on registration but it will use existing profile data.
+    - Migration from HAPPY SKY menu will not work.
+  - Added Initial support for HAPPY SKY
+    - Requires forked version of asphyxia-core otherwise NETWORK will turn OK to WARNING after a while and MY BEST ghost data will go through the roof.
+      - This will be submit to PR once theres no regression.
+    - New card cannot be registered
+      - Need to invoke new card registration to core.
+    - RIVAL does not work on this version
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update

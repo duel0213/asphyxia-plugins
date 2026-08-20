@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetWeekId, GetModel } from "../util";
@@ -15,6 +15,25 @@ import { extra_favorite } from "../models/favorite";
 import { activity, activity_mybest } from "../models/activity";
 import { extra_boss } from "../models/extraboss";
 import { djtraining } from "../models/djtraining";
+
+export const pcmethod: EPR = async (info, data, send) => {
+  let command = $(data).attr().command.split(' ')[0];
+  switch (command) {
+    case "common":
+      return await pccommon(info, data, send);
+    case "reg":
+      return await pcreg(info, data, send);
+    case "get":
+      return await pcget(info, data, send);
+    case "save":
+      return await pcsave(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny();
+}
 
 export const pccommon: EPR = async (info, data, send) => {
   const version = GetVersion(info);
@@ -33,6 +52,7 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 12:
     case 13:
       break;
     case 14:
@@ -404,10 +424,11 @@ export const pccommon: EPR = async (info, data, send) => {
   }
 
   let sendOption: EamuseSendOption = {};
-  if (version == 13) {
+  if (version < 14) {
     result["@attr"]["method"] = "pccommon";
     sendOption = {
-      rootName: "FDD"
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
     };
   }
 
@@ -416,14 +437,26 @@ export const pccommon: EPR = async (info, data, send) => {
 
 export const pcreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = $(data).attr().rid;
+  const refid = version < 13 ? $(data).attr().command.split(' ')[1].split('|')[0] : $(data).attr().rid;
   const profile = await DB.FindOne<profile>(refid, { collection: "profile" });
+
+  let name = version < 13 ? $(data).attr().command.split(' ')[2] : $(data).attr().name;
+  let pid = Number($(data).attr().pid);
+  let id = _.random(10000000, 99999999);
+  let idstr = IDtoCode(id);
+  let updateProfile = true;
+  if (version < 14 && !_.isNil(profile)) {
+    updateProfile = false;
+  }
 
   let pcdata: object;
   let lightning_settings: object;
   let lightning_playdata: object;
   let lightning_custom: object;
   switch (version) {
+    case 12:
+      pcdata = ECO_pcdata;
+      break;
     case 13:
       pcdata = FDD_pcdata;
       break;
@@ -512,33 +545,23 @@ export const pcreg: EPR = async (info, data, send) => {
       return send.deny();
   }
 
-  let name = $(data).attr().name;
-  let pid = Number($(data).attr().pid);
-  let id = _.random(10000000, 99999999);
-  let idstr = IDtoCode(id);
-  // DistorteD temp code //
-  if (version == 13 && !_.isNil(profile)) {
-    name = profile.name;
-    pid = profile.pid;
-    id = profile.id;
-    idstr = profile.idstr;
-  }
-
-  await DB.Upsert<profile>(
-    refid,
-    {
-      collection: "profile",
-    },
-    {
-      $set: {
-        name,
-        pid,
-        id,
-        idstr,
-        ...default_profile,
+  if (updateProfile) {
+    await DB.Upsert<profile>(
+      refid,
+      {
+        collection: "profile",
+      },
+      {
+        $set: {
+          name,
+          pid,
+          id,
+          idstr,
+          ...default_profile,
+        }
       }
-    }
-  );
+    );
+  }
 
   await DB.Upsert<pcdata>(
     refid,
@@ -604,7 +627,10 @@ export const pcreg: EPR = async (info, data, send) => {
       "@attr": {
         method: "pcreg",
       },
-    }, { rootName: GetModel(info) });
+    }, {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+    });
   }
 
   return send.object(
@@ -617,7 +643,7 @@ export const pcreg: EPR = async (info, data, send) => {
 
 export const pcget: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = $(data).attr().rid;
+  const refid = version < 13 ? $(data).attr().command.split(' ')[1].split('|')[0] : $(data).attr().rid;
   
   const profile = await DB.FindOne<profile>(refid, { collection: "profile" });
   const pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
@@ -640,6 +666,9 @@ export const pcget: EPR = async (info, data, send) => {
   const lm_music_filter_sort = await DB.Find<lightning_musicfilter_sort>(refid, { collection: "lightning_musicfilter_sort", version: version });
   let lm_custom: any = await DB.FindOne<lightning_custom>(refid, { collection: "lightning_custom", version: version });
 
+  // since happy sky and below does not use cardmng deny if theres no profile avaialble //
+  if (version < 13 && _.isNil(profile)) return send.deny();
+
   if (_.isNil(pcdata)) {
     if (version < 14) {
       return send.object({
@@ -648,7 +677,7 @@ export const pcget: EPR = async (info, data, send) => {
         }
       }, {
         rootName: GetModel(info),
-        status: 1,
+        status: version < 13 ? "ENOCARDID" : 1,
       });
     }
 
@@ -829,7 +858,35 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, party, gradeStr = "", exStr = "", skinStr = "";
-  if (version == 13) {
+  if (version == 12) {
+    const style = Number($(data).attr().command.split(' ')[2]);
+    const maxStage = style == 0 ? 4 : 3;
+    dArray.forEach((res) => {
+      if (res[0] != style) return;
+      gradeStr += NumArrayToString([5, 7, 6], [res[1], res[3], maxStage == res[2] ? 1 : 0]);
+    });
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exStr += NumArrayToString([6, 5, 1], [res.coid, a, res.cArray[a]]);
+        exStr += NumArrayToString([18], [res.pgArray[a]]);
+        exStr += NumArrayToString([18], [res.gArray[a]]);
+      }
+    });
+
+    skinStr += NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover, 0, custom.category_vox]);
+
+    return send.pugFile("pug/ECO/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exStr,
+      skinStr,
+      rArray,
+    });
+  }
+  else if (version == 13) {
     dArray.forEach((res) => {
       gradeStr += NumArrayToString([6, 3, 2, 7], [res[1], res[2], res[0], res[3]]);
     });
@@ -2016,7 +2073,7 @@ export const pcvisit: EPR = async (info, data, send) => {
 
 export const pcsave: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
   const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
 
   if (version == -1) return send.deny();
@@ -2045,8 +2102,14 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasBadgeData = !(_.isNil($(data).element("badge")));
   const hasActivityData = !(_.isNil($(data).element("activity_data")));
 
-  if (cltype == 0) pcdata.spnum += 1;
-  else pcdata.dpnum += 1;
+  if (version < 13) {
+    // attr[2] is unknown //
+    pcdata.spnum = Number($(data).attr().command.split(' ')[5]);
+    pcdata.dpnum = Number($(data).attr().command.split(' ')[6]);
+  } else {
+    if (cltype == 0) pcdata.spnum += 1;
+    else pcdata.dpnum += 1;
+  }
 
   if (isTDJ) {
     if (cltype == 0) lm_playdata.sp_num += 1;
@@ -2092,7 +2155,13 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = Number($(data).attr().mode);
   pcdata.pmode = Number($(data).attr().pmode);
 
-  if (version == 13) {
+  if (version == 12) {
+    pcdata.sach = Number($(data).attr().command.split(' ')[3]);
+    pcdata.dach = Number($(data).attr().command.split(' ')[4]);
+    pcdata.gno = Number($(data).attr().command.split(' ')[7]);
+    pcdata.sflg0 = Number($(data).attr().command.split(' ')[8]);
+  }
+  else if (version == 13) {
     if (cltype == 0) {
       pcdata.sach = Number($(data).attr().achi);
       pcdata.sp_opt = Number($(data).attr().opt);
@@ -5367,6 +5436,7 @@ export const pcsave: EPR = async (info, data, send) => {
       }
     }, {
       rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
     })
   }
 

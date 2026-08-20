@@ -91,6 +91,7 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
   switch (info.model.slice(0, 3)) {
+    case "ECO": return 12;
     case "FDD": return 13;
     case "GLD": return 14;
     case "HDD": return 15;

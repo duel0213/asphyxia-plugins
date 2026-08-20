@@ -241,6 +241,26 @@ export interface pcdata {
   tourism_secret_flg2: string[];
 }
 
+export const ECO_pcdata = {
+  version: 12,
+
+  spnum: 0,
+  dpnum: 0,
+  ctype: 0,
+  sach: 0,
+  dach: 0,
+  sflg: 0,
+  gno: 0,
+  gono: 0,
+  sd: 0,
+  hd: 0,
+  sdhd: 0,
+  to: 0,
+
+  sgid: -1,
+  dgid: -1,
+}
+
 export const FDD_pcdata = {
   version: 13,
 
