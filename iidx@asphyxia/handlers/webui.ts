@@ -421,8 +421,6 @@ export const updateCustomSettings = async (data) => {
     disable_hcn_color: StoB(data.disable_hcn_color),
     first_note_preview: Number(data.first_note_preview),
     note_size: Number(data.note_size),
-    lift_cover: Number(data.lift_cover),
-    note_beam_size: Number(data.note_beam_size),
     cn_color: Number(data.cn_color),
     cn_size: Number(data.cn_size),
 
