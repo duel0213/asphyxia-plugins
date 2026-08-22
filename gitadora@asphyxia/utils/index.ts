@@ -44,3 +44,7 @@ export function isSharedFavoriteMusicEnabled() : boolean{
 export function isSharedSongScoresEnabled() : boolean{
   return  Boolean(U.GetConfig("shared_song_scores"))
 }
+
+export function isRivalEnabled() : boolean {
+  return Boolean(U.GetConfig("enable_rivals"))
+}

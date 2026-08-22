@@ -1,7 +1,7 @@
 import { gameInfoGet, shopInfoRegist } from "./handlers/info";
 import { playableMusic } from "./handlers/MusicList"
 import { getPlayer, check, regist, savePlayers } from "./handlers/profiles";
-import { updatePlayerInfo } from "./handlers/webui";
+import { updatePlayerInfo, updateRival } from "./handlers/webui";
 import { isAsphyxiaDebugMode, isRequiredCoreVersion } from "./utils";
 import Logger from "./utils/logger";
 
@@ -61,6 +61,13 @@ export function register() {
     default: false,
   })
 
+  R.Config("enable_rivals", {
+    name: "Enable Rivals",
+    desc: "Enable registered rivals and their skill data.",
+    type: "boolean",
+    default: false,
+  })
+
   R.DataFile("data/mdb/custom.xml", {
     accept: ".xml",
     name: "Custom MDB",
@@ -68,6 +75,7 @@ export function register() {
   })
 
   R.WebUIEvent('updatePlayerInfo', updatePlayerInfo);
+  R.WebUIEvent('updateRival', updateRival);
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     // Helper for register multiple versions.
@@ -103,5 +111,6 @@ export function register() {
     if (["eventlog"].includes(info.module)) return;
     logger.error(`Received Unhandled Request on Method "${info.method}" by ${info.model}/${info.module}`)
     logger.debugError(`Received Request: ${JSON.stringify(data, null, 4)}`)
+
   })
 }

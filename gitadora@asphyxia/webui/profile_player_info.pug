@@ -1,6 +1,8 @@
 //DATA//
   info: DB.Find(refid, { collection: 'playerinfo' })
   profile: DB.Find(refid, { collection: 'profile' })
+  rivals: DB.Find(refid, { collection: 'rival' })
+  all_players: DB.Find(null, { collection: 'playerinfo' })
 -
 
 -
@@ -117,3 +119,37 @@ div
             label.label Sessions
             .control
               input.input(type="text" name="session_cnt", value=pr.session_cnt readonly)
+
+    .card
+      .card-header
+        p.card-header-title
+          span.icon
+            i.mdi.mdi-account-multiple
+          | Rivals (#{getFullGameName(pr.game)} #{getFullGameVersion(pr.version)})
+      .card-content
+        -
+          const selectedRivals = (rivals || [])
+            .filter(r => r.game === pr.game && r.version === pr.version)
+            .sort((a, b) => (a.slot || 0) - (b.slot || 0))
+            .map(r => r.rival_refid);
+          const candidates = (all_players || []).filter(p =>
+            p.__refid !== refid && p.version === pr.version);
+        form(method="post" action="/emit/updateRival")
+          input(type="hidden" name="refid" value=refid)
+          input(type="hidden" name="version" value=pr.version)
+          input(type="hidden" name="game" value=pr.game)
+          p.help Select up to five distinct players. Only players with the same game version are shown.
+          each slot in [1, 2, 3, 4, 5]
+            .field
+              label.label Rival #{slot}
+              .control
+                .select.is-fullwidth
+                  select(name=`rival${slot}`)
+                    option(value="") None
+                    each candidate in candidates
+                      option(value=candidate.__refid selected=(selectedRivals[slot - 1] === candidate.__refid)) #{candidate.name} (DID: #{candidate.id})
+          .field
+            button.button.is-primary(type="submit")
+              span.icon
+                i.mdi.mdi-check
+              span Save rivals

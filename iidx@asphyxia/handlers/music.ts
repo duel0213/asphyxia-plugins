@@ -545,11 +545,13 @@ export const musicappoint: EPR = async (info, data, send) => {
           riidxid: String(other_profile[2])
         });
       } else {
-        sdata = {
-          "@attr": {
-            score: other_musicdata.esArray[clid],
-            pid: other_profile[1],
-            name: other_profile[0],
+        if (version < 12) {
+          sdata = {
+            "@attr": {
+              score: other_musicdata.esArray[clid],
+              pid: other_profile[1],
+              name: other_profile[0],
+            }
           }
         }
       }

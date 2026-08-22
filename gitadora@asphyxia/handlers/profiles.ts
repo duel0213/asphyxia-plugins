@@ -10,7 +10,7 @@ import { getDefaultScores, Scores } from "../models/scores";
 
 import { PLUGIN_VER } from "../const";
 import Logger from "../utils/logger"
-import { isAsphyxiaDebugMode, isSharedSongScoresEnabled } from "../utils/index";
+import { isAsphyxiaDebugMode, isRivalEnabled, isSharedSongScoresEnabled } from "../utils/index";
 import { SecretMusicEntry } from "../models/secretmusicentry";
 import { CheckPlayerResponse, getCheckPlayerResponse } from "../models/Responses/checkplayerresponse";
 import { getPlayerStickerResponse, PlayerStickerResponse } from "../models/Responses/playerstickerresponse";
@@ -22,8 +22,52 @@ import { getPlayerRecordResponse } from "../models/Responses/playerrecordrespons
 import { getPlayerPlayInfoResponse, PlayerPlayInfoResponse } from "../models/Responses/playerplayinforesponse";
 import { getMergedSharedScores, mergeScoresIntoShared } from "./SharedScores";
 import { regist as registDelta, check as checkDelta, getPlayer as getPlayerDelta, savePlayers as savePlayersDelta } from "./profiles_delta";
+import { getRivalDataResponse } from "./rival";
+import { Rival } from "../models/rival";
+import { findMDBFile, loadSongsForGameVersion, readMDBFile } from "../data/mdb";
 
 const logger = new Logger("profiles")
+
+// gametop.get first loads the card owner, then loads each listed rival with
+// the same request_key and player.is_rival=1. Keep that short-lived context so
+// every response preserves the owner's rival list instead of replacing it
+// with the fetched rival's own list.
+const rivalRequestOwners = new Map<string, { refid: string; expiresAt: number }>();
+const RIVAL_REQUEST_OWNER_TTL_MS = 5 * 60 * 1000;
+const rivalSkillHotMapCache = new Map<string, Promise<Map<number, boolean>>>();
+
+async function getRivalSkillHotMap(version: string): Promise<Map<number, boolean>> {
+  const customEnabled = Boolean(U.GetConfig("enable_custom_mdb"));
+  const cacheKey = `${version}:${customEnabled ? "custom" : "default"}`;
+  let pending = rivalSkillHotMapCache.get(cacheKey);
+  if (!pending) {
+    pending = (async () => {
+      let music = [];
+      if (customEnabled) {
+        const customMdb = findMDBFile("custom");
+        if (customMdb) music = (await readMDBFile(customMdb)).music;
+      }
+      if (music.length === 0) {
+        music = (await loadSongsForGameVersion(version)).music;
+      }
+
+      const result = new Map<number, boolean>();
+      for (const entry of music) {
+        const musicId = Number(entry.id["@content"][0]);
+        result.set(musicId, Boolean(entry.is_hot["@content"][0]));
+      }
+      return result;
+    })();
+    rivalSkillHotMapCache.set(cacheKey, pending);
+  }
+
+  try {
+    return await pending;
+  } catch (error) {
+    rivalSkillHotMapCache.delete(cacheKey);
+    throw error;
+  }
+}
 
 export const regist: EPR = async (info, data, send) => {
   if (isGalaxyWaveDeltaModel(info.model)) {
@@ -84,6 +128,32 @@ export const getPlayer: EPR = async (info, data, send) => {
   const time = BigInt(31536000);
   const dm = isDM(info);
   const game = dm ? 'dm' : 'gf';
+  const requestedAsRival = $(data).bool('player.is_rival');
+  const requestKey = $(data).str('request_key');
+  const now = Date.now();
+  for (const [key, context] of rivalRequestOwners) {
+    if (context.expiresAt <= now) rivalRequestOwners.delete(key);
+  }
+
+  let rivalOwnerRefid = refid;
+  if (requestKey) {
+    if (requestedAsRival) {
+      rivalOwnerRefid = rivalRequestOwners.get(requestKey)?.refid ?? refid;
+    } else {
+      rivalRequestOwners.set(requestKey, {
+        refid,
+        expiresAt: now + RIVAL_REQUEST_OWNER_TTL_MS,
+      });
+    }
+  }
+  const targetRivalSlot = requestedAsRival
+    ? (await DB.FindOne<Rival>(rivalOwnerRefid, {
+      collection: 'rival',
+      version,
+      game,
+      rival_refid: refid,
+    }))?.slot ?? 1
+    : 0;
   const sharedScoresEnabled = isSharedSongScoresEnabled();
 
   logger.debugInfo(`Loading ${game} profile for player ${no} with refid: ${refid}`)
@@ -113,10 +183,43 @@ export const getPlayer: EPR = async (info, data, send) => {
   // Format scores
   const musicdata = [];
   const scores = dm ? dmScores : gfScores;
-  for (const [musicid, score] of _.entries(scores)) {
+  // FUZZ-UP's rival-skill builder only uses records whose mdata[0] is
+  // positive. Put the highest skill records first so the client receives the
+  // actual skill targets instead of whichever music IDs are enumerated first.
+  let scoreEntries = _.entries(scores);
+  if (requestedAsRival) {
+    // A failed play still creates a score document, but FUZZ-UP may use the
+    // rival musiclist count when deciding whether a rival has skill targets.
+    // Do not expose zero-skill placeholder records as rival skill data.
+    scoreEntries = scoreEntries.filter(([, score]) =>
+      _.get(score, 'update.1', 0) > 0
+    );
+    scoreEntries.sort(([, left], [, right]) =>
+      _.get(right, 'update.1', 0) - _.get(left, 'update.1', 0)
+    );
+    try {
+      const hotMap = await getRivalSkillHotMap(version);
+      const hotScores = scoreEntries.filter(([musicId]) =>
+        hotMap.get(Number(musicId)) === true
+      );
+      const otherScores = scoreEntries.filter(([musicId]) =>
+        hotMap.get(Number(musicId)) === false
+      );
+      // FUZZ-UP skill is the best 25 HOT songs plus the best 25 OTHER songs.
+      scoreEntries = hotScores.slice(0, 25).concat(otherScores.slice(0, 25));
+    } catch (error) {
+      // Keep login usable if the MDB cannot be classified. Fifty entries are
+      // still below the client's physical 53-entry rival buffer.
+      logger.warn("Unable to classify rival skill songs with MDB; using overall top 50.");
+      logger.debugWarn(error?.stack ?? error);
+      scoreEntries = scoreEntries.slice(0, 50);
+    }
+  }
+  for (const [musicid, score] of scoreEntries) {
+    const newSkill = _.get(score, 'update.1', 0);
     musicdata.push(K.ATTR({ musicid }, {
       mdata: K.ARRAY('s16', [
-        -1,
+        requestedAsRival && newSkill > 0 ? 1 : -1,
         _.get(score, 'diffs.1.clear', false) ? _.get(score, 'diffs.1.perc', -2) : -1,
         _.get(score, 'diffs.2.clear', false) ? _.get(score, 'diffs.2.perc', -2) : -1,
         _.get(score, 'diffs.3.clear', false) ? _.get(score, 'diffs.3.perc', -2) : -1,
@@ -199,8 +302,11 @@ export const getPlayer: EPR = async (info, data, send) => {
       sticker,
     },
     player_info: {
-      player_type: K.ITEM('s8', 0),
-      did: K.ITEM('s32', 13376666),
+      // The initial profile is player type 0. Each follow-up rival profile is
+      // copied into its own Rival 1..5 slot by the client, so identify it with
+      // the owner's one-based registered slot rather than a shared type.
+      player_type: K.ITEM('s8', targetRivalSlot),
+      did: K.ITEM('s32', name.id),
       name: K.ITEM('str', name.name),
       title: K.ITEM('str', name.title),
       charaid: K.ITEM('s32', 0),
@@ -344,6 +450,12 @@ export const getPlayer: EPR = async (info, data, send) => {
   const innerSecretMusic = getSecretMusicResponse(profile)
   const innerFriendData = getFriendDataResponse(profile)
   const innerBattleData = getDefaultBattleDataResponse()
+  // The client also needs rivaldata on its follow-up is_rival=1 profile
+  // response. Omitting it lets the request complete but prevents the rival
+  // list from being displayed.
+  const innerRivalData = isRivalEnabled()
+    ? await getRivalDataResponse(rivalOwnerRefid, version, game)
+    : {};
   
   const response = {
     player: K.ATTR({ 'no': `${no}` }, {
@@ -359,7 +471,7 @@ export const getPlayer: EPR = async (info, data, send) => {
       reward: {
         status: K.ARRAY('u32', extra.reward_status ??  Array(50).fill(0)),
       },          
-      rivaldata: {},
+      rivaldata: innerRivalData,
       frienddata:  {
         friend: innerFriendData
       },

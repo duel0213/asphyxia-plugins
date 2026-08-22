@@ -54,7 +54,7 @@ export const pccommon: EPR = async (info, data, send) => {
   switch (version) {
     case 11:
       result["@attr"].tf = 1;
-      result["@attr"].csok = 1
+      result["@attr"].csok = 1;
       break;
     case 12:
       result["@attr"].tf = 1;
@@ -656,7 +656,7 @@ export const pcget: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
   const refid = version < 13 ? command[1].split('|')[0] : $(data).attr().rid;
-  const play_style = Number(GetCommand(data)[2]);
+  const play_style = version < 13 ? Number(GetCommand(data)[2]) : -1;
   
   const profile = await DB.FindOne<profile>(refid, { collection: "profile" });
   const pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
