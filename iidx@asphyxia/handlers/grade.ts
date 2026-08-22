@@ -144,6 +144,8 @@ export const graderaised: EPR = async (info, data, send) => {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
       else pcdata.dgid = Math.max(gid, pcdata.dgid);
     }
+
+    updateGrade = true;
   } else {
     if (cflg >= grade.maxStage || achi >= grade.archive) {
       cflg = Math.max(cflg, grade.maxStage);

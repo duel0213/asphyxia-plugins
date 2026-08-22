@@ -34,7 +34,8 @@ export const rankingentry: EPR = async (info, data, send) => {
   const opt2 = version < 13 ? Number(command[7]) : Number($(data).attr().opt2); // unk #2 //
   
   const exscore = (pgnum * 2 + gnum);
-  const cstage = version < 13 ? Number(command[11]) : Number($(data).attr().cstage);
+  const cstage_indice = version < 12 ? 10 : 11;
+  const cstage = version < 13 ? Number(command[cstage_indice]) : Number($(data).attr().cstage);
   const clr = version < 13 ? (cstage == 5 ? 1 : 0) : Number($(data).attr().clr);
 
   const expert_data = await DB.FindOne<expert>(refid, {

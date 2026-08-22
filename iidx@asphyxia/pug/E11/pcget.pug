@@ -1,0 +1,8 @@
+E11(status="SOK" method="pcget")
+  pc(id=profile.id idstr=profile.idstr name=profile.name pid=profile.pid spnum=pcdata.spnum dpnum=pcdata.dpnum ctype="0" sach=pcdata.sach dach=pcdata.dach gno=pcdata.gno sflg=pcdata.sflg0 pflg=pcdata.pflg)
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid) #{gradeStr}
+  ex #{exStr}
+  skin #{skinStr}
+  rlist
+    - for (let rd of rArray)
+      rival(rno=rd.index id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])

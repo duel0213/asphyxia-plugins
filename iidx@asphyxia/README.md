@@ -1,10 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [e4fa63]**
+Plugin Version: **STAGING [e16887]**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 11 IIDXRED (JAB)
   - beatmaniaIIDX 12 HAPPY SKY (JAC)
   - beatmaniaIIDX 13 DistorteD (JAC)
   - beatmaniaIIDX 14 GOLD (2007072301)
@@ -193,6 +194,8 @@ Changelogs
       - This will be submit to PR once theres no regression.
     - New card cannot be registered
       - Need to invoke new card registration to core.
+  - Added Initial support for IIDXRED
+    - (same as above)
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update

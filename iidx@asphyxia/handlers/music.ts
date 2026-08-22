@@ -58,6 +58,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+    const mapValue = (x => x > 3 ? x - 3 : x - 1);
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
 
@@ -70,12 +71,21 @@ export const musicgetrank: EPR = async (info, data, send) => {
         if (res.esArray[indices[a]] == 0) continue;
         let rank_id = _.isNil(res.rArray) ? -1 : res.rArray[indices[a]];
 
-        result.r.push(
-          K.ITEM("str", NumArrayToString(
-            [7, 4, 13, 3, 3],
-            [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
-          ), { v: String(verMid[0]) })
-        );
+        if (version < 12) {
+          result.r.push(
+            K.ITEM("str", NumArrayToString(
+              [11, 3, 3, 13],
+              [temp_mid, res.cArray[indices[a]], rank_id, res.esArray[indices[a]]]
+            ), { cl: String(mapValue(indices[a])) })
+          );
+        } else {
+          result.r.push(
+            K.ITEM("str", NumArrayToString(
+              [7, 4, 13, 3, 3],
+              [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
+            ), { v: String(verMid[0]) })
+          );
+        }
       }
 
       // BEGINNER //
@@ -447,8 +457,10 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
     }
 
-    if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
-    else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
+    if (!_.isNil(music_data[clid])) { // can be null as RED doesn't send ghost data //
+      if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
+      else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
+    }
   }
 
   /*** ctype
@@ -525,12 +537,22 @@ export const musicappoint: EPR = async (info, data, send) => {
 
   if (!_.isNil(other_musicdata) && !_.isNil(other_profile)) {
     if (version < 16) {
-      sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
-        score: String(other_musicdata.esArray[clid]),
-        pid: String(other_profile[1]),
-        name: String(other_profile[0]),
-        riidxid: String(other_profile[2])
-      });
+      if (!_.isNil(other_musicdata[clid])) {
+        sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
+          score: String(other_musicdata.esArray[clid]),
+          pid: String(other_profile[1]),
+          name: String(other_profile[0]),
+          riidxid: String(other_profile[2])
+        });
+      } else {
+        sdata = {
+          "@attr": {
+            score: other_musicdata.esArray[clid],
+            pid: other_profile[1],
+            name: other_profile[0],
+          }
+        }
+      }
     }
     else {
       sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
@@ -614,6 +636,20 @@ export const musicappoint: EPR = async (info, data, send) => {
   if (version < 14) {
     if (_.isNil(mydata)) mydata = { "@content": "" };
 
+    if (version < 12) {
+      if (!_.isNil(sdata)) {
+        return send.object({
+          "@attr": {
+            method: "musicappoint"
+          },
+          data: sdata,
+        }, {
+          rootName: GetModel(info),
+          status: version < 13 ? "SOK" : 0,
+        });
+      }
+    }
+
     return send.pugFile(`pug/${GetModel(info)}/musicappoint.pug`, {
       mydata: mydata["@content"],
       sdata: {
@@ -639,9 +675,12 @@ export const musicreg: EPR = async (info, data, send) => {
     collection: "profile",
   });
 
+  const mid_indice = version < 12 ? 3 : 2;
+  const clid_indice = version < 12 ? 2 : 3;
+
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  let mid = version < 13 ? Number(command[2]) : Number($(data).attr().mid);
-  let clid = version < 13 ? Number(command[3]) : Number($(data).attr().clid);
+  let mid = version < 13 ? Number(command[mid_indice]) : Number($(data).attr().mid);
+  let clid = version < 13 ? Number(command[clid_indice]) : Number($(data).attr().clid);
   const pgnum = version < 13 ? Number(command[4]) : Number($(data).attr().pgnum);
   const gnum = version < 13 ? Number(command[5]) : Number($(data).attr().gnum);
   const mnum = version < 13 ? -1 : Number($(data).attr().mnum);
@@ -688,9 +727,13 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (version < 14) ghost = Buffer.from($(data).obj["@content"], "hex").toString("base64");
-  else if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
-  else ghost = $(data).buffer("ghost").toString("base64");
+  if (version == 12 || version == 13) {
+    ghost = Buffer.from($(data).obj["@content"], "hex").toString("base64");
+  } else if (version == 14 || version == 15) {
+    ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  } else if (version > 15) {
+    ghost = $(data).buffer("ghost").toString("base64");
+  }
 
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
@@ -1221,16 +1264,24 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
 
     let indices = [1, 2, 3, 6, 7, 8];
+    const mapValue = (x => x > 3 ? x - 3 : x - 1);
     if (version < 16) {
-      let verMid = OldMidToVerMid(Number(key));
-
-      let str = cltype == 0 ?
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ` :
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[6], cRate[7], cRate[8]])}ZZZZ`;
-
-      cdata.push(
-        K.ITEM("str", str, { ver: String(verMid[0]) })
-      );
+      indices = cltype == 0 ? [1, 2, 3] : [6, 7, 8];
+      if (version < 12) {
+        for (let a = 0; a < indices.length; a++) {
+          cdata.push(
+            K.ITEM("str", NumArrayToString([11, 7], [Number(key), cRate[indices[a]]]), {
+              clid: String(mapValue(indices[a])),
+            }),
+          );
+        }
+      } else {
+        let verMid = OldMidToVerMid(Number(key));
+        let str = `${NumArrayToString([7, 7, 7, 7], [verMid[1], ...indices.map(i => cRate[i])])}ZZZZ`;
+        cdata.push(
+          K.ITEM("str", str, { ver: String(verMid[0]) })
+        );
+      }
     }
     else {
       let rateArray = version < 27 ? [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])] : [...cRate, ...fcRate];

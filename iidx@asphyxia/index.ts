@@ -16,15 +16,10 @@ export function register() {
   R.Contributor("duel0213");
   R.Contributor("anzuwork");
 
-  R.GameCode("ECO");
-  R.GameCode("FDD");
-  R.GameCode("GLD");
-  R.GameCode("HDD");
-  R.GameCode("I00");
-  R.GameCode("JDJ");
-  R.GameCode("JDZ");
-  R.GameCode("KDZ");
-  R.GameCode("LDJ");
+  const gameCodes = ["E11", "ECO", "FDD", "GLD", "HDD", "I00", "JDJ", "JDZ", "KDZ", "LDJ"];
+  gameCodes.forEach((res) => {
+    R.GameCode(res);
+  });
 
   // common //
   R.Config("BeatPhase", {
@@ -568,13 +563,13 @@ export function register() {
   R.WebUIEvent("iidxImportScoreData", importScoreData);
   R.WebUIEvent("iidxExportScoreData", exportScoreData);
 
-  const oldVersion = ['ECO'];
+  const oldVersion = ["E11", "ECO"];
   oldVersion.forEach((res) => {
-    R.Route(`${oldVersion}.music`, musicmethod);
-    R.Route(`${oldVersion}.pc`, pcmethod);
-    R.Route(`${oldVersion}.ranking`, rankingmethod);
-    R.Route(`${oldVersion}.grade`, grademethod);
-    R.Route(`${oldVersion}.shop`, shopmethod);
+    R.Route(`${res}.music`, musicmethod);
+    R.Route(`${res}.pc`, pcmethod);
+    R.Route(`${res}.ranking`, rankingmethod);
+    R.Route(`${res}.grade`, grademethod);
+    R.Route(`${res}.shop`, shopmethod);
   });
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {

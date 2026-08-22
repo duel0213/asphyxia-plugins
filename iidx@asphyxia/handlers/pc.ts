@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata, E11_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetModel, GetCommand } from "../util";
@@ -52,6 +52,10 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 11:
+      result["@attr"].tf = 1;
+      result["@attr"].csok = 1
+      break;
     case 12:
       result["@attr"].tf = 1;
       result["@attr"].beok = 1;
@@ -458,6 +462,9 @@ export const pcreg: EPR = async (info, data, send) => {
   let lightning_playdata: object;
   let lightning_custom: object;
   switch (version) {
+    case 11:
+      pcdata = E11_pcdata;
+      break;
     case 12:
       pcdata = ECO_pcdata;
       break;
@@ -864,7 +871,37 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, party, gradeStr = "", exStr = "", skinStr = "";
-  if (version == 12) {
+  if (version == 11) {
+    const style = Number(command[2]);
+    const maxStage = style == 0 ? 4 : 3;
+    dArray.forEach((res) => {
+      if (res[0] != style) return;
+      gradeStr += NumArrayToString([5, 7, 6], [res[1], res[3], maxStage == res[2] ? 1 : 0]);
+    });
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exStr += NumArrayToString([6, 5, 1], [res.coid, a, res.cArray[a]]);
+        exStr += NumArrayToString([18], [res.pgArray[a]]);
+        exStr += NumArrayToString([18], [res.gArray[a]]);
+      }
+    });
+
+    skinStr += NumArrayToString([12], [custom.frame, custom.turntable, custom.note_burst, custom.menu_music, appendsettings, custom.lane_cover]);
+
+    rArray = rArray.filter((res: rival) => res.play_style == (play_style + 1));
+
+    return send.pugFile("pug/E11/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exStr,
+      skinStr,
+      rArray,
+    });
+  }
+  else if (version == 12) {
     const style = Number(command[2]);
     const maxStage = style == 0 ? 4 : 3;
     dArray.forEach((res) => {
@@ -2164,7 +2201,14 @@ export const pcsave: EPR = async (info, data, send) => {
   pcdata.mode = Number($(data).attr().mode);
   pcdata.pmode = Number($(data).attr().pmode);
 
-  if (version == 12) {
+  if (version == 11) {
+    pcdata.sach = Number(command[3]);
+    pcdata.dach = Number(command[4]);
+    pcdata.gno = Number(command[7]);
+    pcdata.sflg0 = Number(command[8]);
+    pcdata.pflg = Number(command[9]);
+  }
+  else if (version == 12) {
     pcdata.sach = Number(command[3]);
     pcdata.dach = Number(command[4]);
     pcdata.gno = Number(command[7]);

@@ -10,6 +10,7 @@ export interface pcdata {
   sflg0: number;
   sflg1: number;
   sflg2: number;
+  pflg: number;
   gno: number;
   timing: number;
   sdhd: number;
@@ -239,6 +240,22 @@ export interface pcdata {
 
   tourism_secret_flg1: string[];
   tourism_secret_flg2: string[];
+}
+
+export const E11_pcdata = {
+  version: 11,
+
+  spnum: 0,
+  dpnum: 0,
+  ctype: 0,
+  sach: 0,
+  dach: 0,
+  gno: 0,
+  sflg: 0,
+  pflg: 0,
+
+  sgid: -1,
+  dgid: -1,
 }
 
 export const ECO_pcdata = {
