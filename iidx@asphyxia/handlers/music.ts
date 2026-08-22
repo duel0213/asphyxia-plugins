@@ -59,6 +59,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
     };
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
     const mapValue = (x => x > 3 ? x - 3 : x - 1);
+    const musicData: Record<string, string> = {};
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
 
@@ -79,13 +80,19 @@ export const musicgetrank: EPR = async (info, data, send) => {
             ), { cl: String(mapValue(indices[a])) })
           );
         } else {
-          result.r.push(
-            K.ITEM("str", NumArrayToString(
-              [7, 4, 13, 3, 3],
-              [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
-            ), { v: String(verMid[0]) })
-          );
+          const data = NumArrayToString([7, 4, 13, 3, 3], [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]]);
+          if (verMid[0] in musicData) {
+            musicData[verMid[0]] += data;
+          } else {
+            musicData[verMid[0]] = data;
+          }
         }
+      }
+
+      if (version > 11) {
+        result.r = Object.entries(musicData).map(([version, packed]) =>
+          K.ITEM("str", packed, { v: version }),
+        );
       }
 
       // BEGINNER //
