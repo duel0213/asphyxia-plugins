@@ -15,6 +15,7 @@ export function register() {
 
   R.Contributor("duel0213");
   R.Contributor("anzuwork");
+  R.Contributor("COLV9");
 
   const gameCodes = ["E11", "ECO", "FDD", "GLD", "HDD", "I00", "JDJ", "JDZ", "KDZ", "LDJ"];
   gameCodes.forEach((res) => {
