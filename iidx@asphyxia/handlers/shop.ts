@@ -1,9 +1,9 @@
 ﻿import { convention_data, shop_data } from "../models/shop";
-import { GetModel, GetVersion } from "../util";
+import { GetCommand, GetModel, GetVersion } from "../util";
 
 export const shopmethod: EPR = async (info, data, send) => {
-  let command = $(data).attr().command.split(' ')[0];
-  switch (command) {
+  const command = GetCommand(data);
+  switch (command[0]) {
     case "sentinfo":
       return await shopsentinfo(info, data, send);
 

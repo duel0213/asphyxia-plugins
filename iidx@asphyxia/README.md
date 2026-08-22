@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [ee4d9c]**
+Plugin Version: **STAGING [e4fa63]**
 
 ---
 
@@ -193,7 +193,6 @@ Changelogs
       - This will be submit to PR once theres no regression.
     - New card cannot be registered
       - Need to invoke new card registration to core.
-    - RIVAL does not work on this version
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update

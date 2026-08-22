@@ -568,11 +568,14 @@ export function register() {
   R.WebUIEvent("iidxImportScoreData", importScoreData);
   R.WebUIEvent("iidxExportScoreData", exportScoreData);
 
-  R.Route("ECO.music", musicmethod);
-  R.Route("ECO.pc", pcmethod);
-  R.Route("ECO.ranking", rankingmethod);
-  R.Route("ECO.grade", grademethod);
-  R.Route("ECO.shop", shopmethod);
+  const oldVersion = ['ECO'];
+  oldVersion.forEach((res) => {
+    R.Route(`${oldVersion}.music`, musicmethod);
+    R.Route(`${oldVersion}.pc`, pcmethod);
+    R.Route(`${oldVersion}.ranking`, rankingmethod);
+    R.Route(`${oldVersion}.grade`, grademethod);
+    R.Route(`${oldVersion}.shop`, shopmethod);
+  });
 
   const MultiRoute = (method: string, handler: EPR | boolean) => {
     R.Route(`${method}`, handler);

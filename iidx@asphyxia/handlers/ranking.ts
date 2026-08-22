@@ -1,10 +1,10 @@
 import { expert, ranking } from "../models/ranking";
 import { profile } from "../models/profile";
-import { GetModel, GetVersion, IDtoRef } from "../util";
+import { GetCommand, GetModel, GetVersion, IDtoRef } from "../util";
 
 export const rankingmethod: EPR = async (info, data, send) => {
-  let command = $(data).attr().command.split(' ')[0];
-  switch (command) {
+  const command = GetCommand(data);
+  switch (command[0]) {
     case "entry":
       return await rankingentry(info, data, send);
     case "getranker":
@@ -20,20 +20,21 @@ export const rankingmethod: EPR = async (info, data, send) => {
 export const rankingentry: EPR = async (info, data, send) => {
   // pside //
   const version = GetVersion(info);
-  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
+  const command = GetCommand(data);
+  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
 
-  const coid = version < 13 ? Number($(data).attr().command.split(' ')[3]) : Number($(data).attr().coid);
-  const clid = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().clid);
+  const coid = version < 13 ? Number(command[3]) : Number($(data).attr().coid);
+  const clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
 
-  const opname = version < 13 ? $(data).attr().command.split(' ')[9] : $(data).attr().opname;
-  const oppid = version < 13 ? Number($(data).attr().command.split(' ')[10]) : Number($(data).attr().oppid);
-  const pgnum = version < 13 ? Number($(data).attr().command.split(' ')[4]) : Number($(data).attr().pgnum);
-  const gnum = version < 13 ? Number($(data).attr().command.split(' ')[5]) : Number($(data).attr().gnum);
-  const opt = version < 13 ? Number($(data).attr().command.split(' ')[6]) : Number($(data).attr().opt);
-  const opt2 = version < 13 ? Number($(data).attr().command.split(' ')[7]) : Number($(data).attr().opt2); // unk #2 //
+  const opname = version < 13 ? command[9] : $(data).attr().opname;
+  const oppid = version < 13 ? Number(command[10]) : Number($(data).attr().oppid);
+  const pgnum = version < 13 ? Number(command[4]) : Number($(data).attr().pgnum);
+  const gnum = version < 13 ? Number(command[5]) : Number($(data).attr().gnum);
+  const opt = version < 13 ? Number(command[6]) : Number($(data).attr().opt);
+  const opt2 = version < 13 ? Number(command[7]) : Number($(data).attr().opt2); // unk #2 //
   
   const exscore = (pgnum * 2 + gnum);
-  const cstage = version < 13 ? Number($(data).attr().command.split(' ')[11]) : Number($(data).attr().cstage);
+  const cstage = version < 13 ? Number(command[11]) : Number($(data).attr().cstage);
   const clr = version < 13 ? (cstage == 5 ? 1 : 0) : Number($(data).attr().clr);
 
   const expert_data = await DB.FindOne<expert>(refid, {
@@ -171,8 +172,10 @@ export const rankingoentry: EPR = async (info, data, send) => {
 
 export const rankinggetranker: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const coid = version < 13 ? Number($(data).attr().command.split(' ')[1]) : Number($(data).attr().coid);
-  const clid = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().clid);
+  const command = GetCommand(data);
+
+  const coid = version < 13 ? Number(command[1]) : Number($(data).attr().coid);
+  const clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
   const ranking = await DB.Find<ranking>({
     collection: "ranking",
     version: version,

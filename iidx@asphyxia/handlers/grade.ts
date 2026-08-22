@@ -1,12 +1,12 @@
 import { pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
-import { IDtoRef, GetVersion, GetModel } from "../util";
+import { IDtoRef, GetVersion, GetModel, GetCommand } from "../util";
 import { eisei_grade } from "../models/lightning";
 import { badge } from "../models/badge";
 
 export const grademethod: EPR = async (info, data, send) => {
-  let command = $(data).attr().command.split(' ')[0];
-  switch (command) {
+  const command = GetCommand(data);
+  switch (command[0]) {
     case "raised":
       return await graderaised(info, data, send);
 
@@ -19,13 +19,14 @@ export const grademethod: EPR = async (info, data, send) => {
 
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = version < 13 ? await IDtoRef(Number($(data).attr().command.split(' ')[1])) : await IDtoRef(Number($(data).attr().iidxid));
-  const gid = version < 13 ? Number($(data).attr().command.split(' ')[3]) : Number($(data).attr().gid);
-  const gtype = version < 13 ? Number($(data).attr().command.split(' ')[2]) : Number($(data).attr().gtype);
+  const command = GetCommand(data);
+  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
+  const gid = version < 13 ? Number(command[3]) : Number($(data).attr().gid);
+  const gtype = version < 13 ? Number(command[2]) : Number($(data).attr().gtype);
 
-  let cflg = version < 13 ? Number($(data).attr().command.split(' ')[4]) : Number($(data).attr().cflg);
+  let cflg = version < 13 ? Number(command[4]) : Number($(data).attr().cflg);
   if (version >= 23) cflg = Number($(data).attr().cstage);
-  let achi = version < 13 ? Number($(data).attr().command.split(' ')[5]) : Number($(data).attr().achi);
+  let achi = version < 13 ? Number(command[5]) : Number($(data).attr().achi);
 
   let pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
   let grade = await DB.FindOne<grade>(refid, {
