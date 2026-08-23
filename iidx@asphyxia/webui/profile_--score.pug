@@ -1,6 +1,8 @@
+//- 1. data section
 //DATA//
   score: DB.Find(refid, { collection: 'score' })
 
+//- 2. song db
 script.
   window.musicDB = {
       "1000": "5.1.1.",
@@ -1869,7 +1871,7 @@ div
               
               - if (lamp > 0 || ex > 0 || miss > -1) {
                 tr
-                  //- ID 대신 제목이 들어갈 칸
+                  //- A space for the title instead of the ID
                   td.music-title(data-mid=i.mid) 
                     strong #{i.mid}
                   td
@@ -1881,6 +1883,7 @@ div
               - }
             - }
 
+//- 3. run Title Replacement
 script.
   $(document).ready(function() {
     $('.music-title').each(function() {
