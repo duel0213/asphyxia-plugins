@@ -22,6 +22,103 @@ export function register() {
     R.GameCode(res);
   });
 
+  const oldVersion = ["E11", "ECO"];
+  oldVersion.forEach((res) => {
+    R.Route(`${res}.music`, musicmethod);
+    R.Route(`${res}.pc`, pcmethod);
+    R.Route(`${res}.ranking`, rankingmethod);
+    R.Route(`${res}.grade`, grademethod);
+    R.Route(`${res}.shop`, shopmethod);
+  });
+
+  const MultiRoute = (method: string, handler: EPR | boolean) => {
+    R.Route(`${method}`, handler);
+    R.Route(`IIDX21${method}`, handler);
+    R.Route(`IIDX22${method}`, handler);
+    R.Route(`IIDX23${method}`, handler);
+    R.Route(`IIDX24${method}`, handler);
+    R.Route(`IIDX25${method}`, handler);
+    R.Route(`IIDX26${method}`, handler);
+    R.Route(`IIDX27${method}`, handler);
+    R.Route(`IIDX28${method}`, handler);
+    R.Route(`IIDX29${method}`, handler);
+    R.Route(`IIDX30${method}`, handler);
+    R.Route(`IIDX31${method}`, handler);
+    R.Route(`IIDX32${method}`, handler);
+    R.Route(`IIDX33${method}`, handler);
+  };
+
+  MultiRoute("pc.common", pccommon);
+  MultiRoute("pc.reg", pcreg);
+  MultiRoute("pc.get", pcget);
+  MultiRoute("pc.getname", pcgetname);
+  MultiRoute("pc.oldget", pcoldget);
+  MultiRoute("pc.takeover", pctakeover);
+  MultiRoute("pc.visit", pcvisit);
+  MultiRoute("pc.save", pcsave);
+  MultiRoute("pc.shopregister", pcshopregister);
+  MultiRoute("pc.getLaneGachaTicket", pcgetlanegacha);
+  MultiRoute("pc.drawLaneGacha", pcdrawlanegacha);
+  MultiRoute("pc.consumeLaneGachaTicket", true);
+
+  MultiRoute("shop.getname", shopgetname);
+  MultiRoute("shop.savename", shopsavename);
+  MultiRoute("shop.getconvention", shopgetconvention);
+  MultiRoute("shop.setconvention", shopsetconvention);
+
+  MultiRoute("music.crate", musiccrate);
+  MultiRoute("music.getrank", musicgetrank);
+  MultiRoute("music.getranksub", musicgetranksub);
+  MultiRoute("music.getralive", musicgetralive);
+  MultiRoute("music.appoint", musicappoint);
+  MultiRoute("music.reg", musicreg);
+  MultiRoute("music.breg", musicbreg);
+  MultiRoute("music.arenaCPU", musicarenacpu);
+
+  MultiRoute("grade.raised", graderaised);
+
+  MultiRoute("ranking.entry", rankingentry);
+  MultiRoute("ranking.oentry", rankingoentry);
+  MultiRoute("ranking.getranker", rankinggetranker);
+
+  MultiRoute("gameSystem.systemInfo", gssysteminfo);
+
+  R.Unhandled((req: EamuseInfo, data: any, send: EamuseSend) => {
+    console.warn(`Unhandled Request : [${GetVersion(req)}], ${req.module}.${req.method}, ${JSON.stringify(data)}`);
+    return send.success();
+  });
+
+  R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
+    const pcdata = await DB.FindOne(data.refid, {
+      collection: "pcdata",
+      version: Number(data.version),
+    });
+
+    return send.json({
+      pcdata,
+    });
+  });
+  R.WebUIEvent("iidxGetSetting", async (data, send: WebUISend) => {
+    const custom = await DB.FindOne(data.refid, {
+      collection: "custom",
+      version: Number(data.version),
+    });
+
+    const lm_custom = await DB.FindOne(data.refid, {
+      collection: "lightning_custom",
+      version: Number(data.version),
+    });
+
+    return send.json({
+      custom,
+      lm_custom,
+    });
+  });
+  R.WebUIEvent("iidxUpdateRival", updateRivalSettings);
+  R.WebUIEvent("iidxUpdateCustom", updateCustomSettings);
+  R.WebUIEvent("iidxImportScoreData", importScoreData);
+  R.WebUIEvent("iidxExportScoreData", exportScoreData);
+
   // common //
   R.Config("BeatPhase", {
     name: "Beat #",
@@ -225,7 +322,7 @@ export function register() {
   });
   R.Config("sp_triparkskip", {
     name: "Everyone's SPACEWAR!! Skip",
-    desc: "Skips クプロ・ミミニャミ・パステルくんのみんなで宇宙戦争!! Event Scenes", 
+    desc: "Skips クプロ・ミミニャミ・パステルくんのみんなで宇宙戦争!! Event Scenes",
     type: "integer",
     default: 2,
   });
@@ -302,12 +399,12 @@ export function register() {
     default: 2,
   });
   R.Config("cp_extraboss",
-  {
-    name: "Extra Boss Phase (CP)",
-    desc: "Extra Boss Phase",
-    type: "integer",
-    default: 30,
-  });
+    {
+      name: "Extra Boss Phase (CP)",
+      desc: "Extra Boss Phase",
+      type: "integer",
+      default: 30,
+    });
   R.Config("cp_bemanisummer", {
     name: "BEMANI Summer 2016",
     desc: "NEW Generation 夏の流星フェスタ2016 Phase",
@@ -335,12 +432,12 @@ export function register() {
     default: 1,
   });
   R.Config("sb_extraboss",
-  {
-    name: "BUZRA ARTS",
-    desc: "BUZRA ARTS Phase",
-    type: "integer",
-    default: 35,
-  });
+    {
+      name: "BUZRA ARTS",
+      desc: "BUZRA ARTS Phase",
+      type: "integer",
+      default: 35,
+    });
 
   // CANNON BALLERS //
   R.Config("cb_boss", {
@@ -356,12 +453,12 @@ export function register() {
     default: 3,
   });
   R.Config("cb_extraboss",
-  {
-    name: "IIDX AIR RACE",
-    desc: "IIDX AIR RACE Phase",
-    type: "integer",
-    default: 35,
-  });
+    {
+      name: "IIDX AIR RACE",
+      desc: "IIDX AIR RACE Phase",
+      type: "integer",
+      default: 35,
+    });
 
   // Rootage //
   R.Config("rt_boss", {
@@ -383,12 +480,12 @@ export function register() {
     default: 2,
   });
   R.Config("rt_extraboss",
-  {
-    name: "ARC SCORE",
-    desc: "ARC SCORE Phase",
-    type: "integer",
-    default: 3,
-  });
+    {
+      name: "ARC SCORE",
+      desc: "ARC SCORE Phase",
+      type: "integer",
+      default: 3,
+    });
 
   // HEROIC VERSE //
   R.Config("hv_boss", {
@@ -404,12 +501,12 @@ export function register() {
     default: 4,
   });
   R.Config("hv_extraboss",
-  {
-    name: "SHADOW REBELLION",
-    desc: "SHADOW REBELLION Phase",
-    type: "integer",
-    default: 1,
-  });
+    {
+      name: "SHADOW REBELLION",
+      desc: "SHADOW REBELLION Phase",
+      type: "integer",
+      default: 1,
+    });
 
   // BISTROVER //
   R.Config("bo_boss", {
@@ -531,102 +628,5 @@ export function register() {
     name: "EXTRA CHALLENGE Season (SS)",
     type: "integer",
     default: 2,
-  });
-
-  R.WebUIEvent("iidxGetProfile", async (data, send: WebUISend) => {
-    const pcdata = await DB.FindOne(data.refid, {
-      collection: "pcdata",
-      version: Number(data.version),
-    });
-
-    return send.json({
-      pcdata,
-    });
-  });
-  R.WebUIEvent("iidxGetSetting", async (data, send: WebUISend) => {
-    const custom = await DB.FindOne(data.refid, {
-      collection: "custom",
-      version: Number(data.version),
-    });
-
-    const lm_custom = await DB.FindOne(data.refid, {
-      collection: "lightning_custom",
-      version: Number(data.version),
-    });
-
-    return send.json({
-      custom,
-      lm_custom,
-    });
-  });
-  R.WebUIEvent("iidxUpdateRival", updateRivalSettings);
-  R.WebUIEvent("iidxUpdateCustom", updateCustomSettings);
-  R.WebUIEvent("iidxImportScoreData", importScoreData);
-  R.WebUIEvent("iidxExportScoreData", exportScoreData);
-
-  const oldVersion = ["E11", "ECO"];
-  oldVersion.forEach((res) => {
-    R.Route(`${res}.music`, musicmethod);
-    R.Route(`${res}.pc`, pcmethod);
-    R.Route(`${res}.ranking`, rankingmethod);
-    R.Route(`${res}.grade`, grademethod);
-    R.Route(`${res}.shop`, shopmethod);
-  });
-
-  const MultiRoute = (method: string, handler: EPR | boolean) => {
-    R.Route(`${method}`, handler);
-    R.Route(`IIDX21${method}`, handler);
-    R.Route(`IIDX22${method}`, handler);
-    R.Route(`IIDX23${method}`, handler);
-    R.Route(`IIDX24${method}`, handler);
-    R.Route(`IIDX25${method}`, handler);
-    R.Route(`IIDX26${method}`, handler);
-    R.Route(`IIDX27${method}`, handler);
-    R.Route(`IIDX28${method}`, handler);
-    R.Route(`IIDX29${method}`, handler);
-    R.Route(`IIDX30${method}`, handler);
-    R.Route(`IIDX31${method}`, handler);
-    R.Route(`IIDX32${method}`, handler);
-    R.Route(`IIDX33${method}`, handler);
-  };
-
-  MultiRoute("pc.common", pccommon);
-  MultiRoute("pc.reg", pcreg);
-  MultiRoute("pc.get", pcget);
-  MultiRoute("pc.getname", pcgetname);
-  MultiRoute("pc.oldget", pcoldget);
-  MultiRoute("pc.takeover", pctakeover);
-  MultiRoute("pc.visit", pcvisit);
-  MultiRoute("pc.save", pcsave);
-  MultiRoute("pc.shopregister", pcshopregister);
-  MultiRoute("pc.getLaneGachaTicket", pcgetlanegacha);
-  MultiRoute("pc.drawLaneGacha", pcdrawlanegacha);
-  MultiRoute("pc.consumeLaneGachaTicket", true);
-
-  MultiRoute("shop.getname", shopgetname);
-  MultiRoute("shop.savename", shopsavename);
-  MultiRoute("shop.getconvention", shopgetconvention);
-  MultiRoute("shop.setconvention", shopsetconvention);
-
-  MultiRoute("music.crate", musiccrate);
-  MultiRoute("music.getrank", musicgetrank);
-  MultiRoute("music.getranksub", musicgetranksub);
-  MultiRoute("music.getralive", musicgetralive);
-  MultiRoute("music.appoint", musicappoint);
-  MultiRoute("music.reg", musicreg);
-  MultiRoute("music.breg", musicbreg);
-  MultiRoute("music.arenaCPU", musicarenacpu);
-
-  MultiRoute("grade.raised", graderaised);
-
-  MultiRoute("ranking.entry", rankingentry);
-  MultiRoute("ranking.oentry", rankingoentry);
-  MultiRoute("ranking.getranker", rankinggetranker);
-
-  MultiRoute("gameSystem.systemInfo", gssysteminfo);
-
-  R.Unhandled((req: EamuseInfo, data: any, send: EamuseSend) => {
-    console.warn(`Unhandled Request : [${GetVersion(req)}], ${req.module}.${req.method}, ${JSON.stringify(data)}`);
-    return send.success();
   });
 }

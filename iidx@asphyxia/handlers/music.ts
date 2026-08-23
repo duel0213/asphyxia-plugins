@@ -51,14 +51,21 @@ export const musicgetrank: EPR = async (info, data, send) => {
   let result = null;
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
-  let indices, temp_mid = 0;
+  let indices, mapValue, temp_mid = 0;
   let arrayType = version < 33 ? "s16" as const : "s32" as const;
   if (version < 16) {
     result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
-    indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
-    const mapValue = (x => x > 3 ? x - 3 : x - 1);
+    
+    if (version < 12) {
+      indices = cltype === 0 ? [2, 1, 3] : [7, 6, 8];
+      mapValue = (x => indices.indexOf(x) + (cltype === 0 ? 0 : 3));
+    } else {
+      indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+      mapValue = (x => x > 3 ? x - 3 : x - 1);
+    }
+    
     const musicData: Record<string, string> = {};
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
@@ -434,7 +441,7 @@ export const musicappoint: EPR = async (info, data, send) => {
   let mid = version < 13 ? Number(command[1]) : Number($(data).attr().mid);
   let clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
 
-  const mapping = [1, 2, 3, 6, 7, 8];
+  const mapping = version < 12 ? [2, 1, 3, 7, 6, 8] : [1, 2, 3, 6, 7, 8];
   if (version < 20) {
     mid = OldMidToNewMid(mid);
     clid = mapping[clid];
@@ -707,7 +714,7 @@ export const musicreg: EPR = async (info, data, send) => {
 
   // TODO:: Leggendaria until HEROIC VERSE has seperate music_id //
   // TODO:: SUPER FUTURE 2323 has seperate music_id //
-  const mapping = [1, 2, 3, 6, 7, 8];
+  const mapping = version < 12 ? [2, 1, 3, 7, 6, 8] : [1, 2, 3, 6, 7, 8];
   if (version == -1) return send.deny();
   else if (version < 20) {
     mid = OldMidToNewMid(mid);
@@ -1272,11 +1279,12 @@ export const musiccrate: EPR = async (info, data, send) => {
       }
     }
 
-    let indices = [1, 2, 3, 6, 7, 8];
-    const mapValue = (x => x > 3 ? x - 3 : x - 1);
+    let indices = [1, 2, 3, 6, 7, 8], mapValue = null;
     if (version < 16) {
       indices = cltype == 0 ? [1, 2, 3] : [6, 7, 8];
       if (version < 12) {
+        indices = cltype === 0 ? [2, 1, 3] : [7, 6, 8];
+        mapValue = (x => indices.indexOf(x) + (cltype === 0 ? 0 : 3));
         for (let a = 0; a < indices.length; a++) {
           cdata.push(
             K.ITEM("str", NumArrayToString([11, 7], [Number(key), cRate[indices[a]]]), {

@@ -52,6 +52,8 @@ export const pccommon: EPR = async (info, data, send) => {
   // have no idea what some of attribute or value does //
   // exposing these to plugin setting or use static value //
   switch (version) {
+    case 10:
+      break;
     case 11:
       result["@attr"].tf = 1;
       result["@attr"].csok = 1;
