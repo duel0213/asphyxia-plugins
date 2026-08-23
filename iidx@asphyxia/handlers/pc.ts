@@ -1,7 +1,7 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata, E11_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata, E11_pcdata, D01_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
-import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetModel, GetCommand } from "../util";
+import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetModel, GetCommand, NumArrayToHex } from "../util";
 import { eisei_grade, eisei_grade_data, lightning_custom, lightning_musicfilter, lightning_musicfilter_sort, lightning_musicmemo, lightning_musicmemo_new, lightning_playdata, lightning_settings, lm_customdata, lm_playdata, lm_settings, lm_settings_new, musicfilter_data, musicfilter_sort_data, musicmemo_data, musicmemo_data_new } from "../models/lightning";
 import { profile, default_profile } from "../models/profile";
 import { rival, rival_data, rival_sub } from "../models/rival";
@@ -449,6 +449,7 @@ export const pcreg: EPR = async (info, data, send) => {
   const command = GetCommand(data);
   const refid = version < 13 ? command[1].split('|')[0] : $(data).attr().rid;
   const profile = await DB.FindOne<profile>(refid, { collection: "profile" });
+  const myPcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
 
   let name = version < 13 ? command[2] : $(data).attr().name;
   let pid = Number($(data).attr().pid);
@@ -459,11 +460,44 @@ export const pcreg: EPR = async (info, data, send) => {
     updateProfile = false;
   }
 
+  if (version < 11 && !_.isNil(myPcdata)) {
+    await DB.Upsert<pcdata>(
+      refid,
+      {
+        collection: "pcdata",
+        version: version,
+      },
+      {
+        $set: {
+          spnum: Number(command[4]),
+          sflg0: Number(command[5]),
+          ctype: Number(command[6]),
+          sach: Number(command[7]),
+          dach: Number(command[8]),
+        },
+      }
+    );
+
+    if (version < 14) {
+      return send.object({
+        "@attr": {
+          method: "pcreg",
+        },
+      }, {
+        rootName: GetModel(info),
+        status: version < 13 ? "SOK" : 0,
+      });
+    }
+  }
+
   let pcdata: object;
   let lightning_settings: object;
   let lightning_playdata: object;
   let lightning_custom: object;
   switch (version) {
+    case 10:
+      pcdata = D01_pcdata;
+      break;
     case 11:
       pcdata = E11_pcdata;
       break;
@@ -794,7 +828,8 @@ export const pcget: EPR = async (info, data, send) => {
   );
   let dArray = [], eArray = [], rArray = [],
     rsArray = [], mArray = [], bArray = [],
-    fArray = [], fsArray = [], efArray = [];
+    fArray = [], fsArray = [], efArray = [],
+    exArray = [];
 
   grade.forEach((res: grade) => {
     dArray.push([res.style, res.gradeId, res.maxStage, res.archive]);
@@ -873,9 +908,35 @@ export const pcget: EPR = async (info, data, send) => {
   }
 
   let event, party, gradeStr = "", exStr = "", skinStr = "";
-  if (version == 11) {
-    const style = Number(command[2]);
-    const maxStage = style == 0 ? 4 : 3;
+  const style = version < 13 ? Number(command[2]) : -1;
+  const maxStage = version < 13 ? (style == 0 ? 4 : 3) : -1;
+  if (version == 10) {
+    dArray.forEach((res) => {
+      if (res[0] != style) return;
+      gradeStr += NumArrayToHex([8, 4, 8], [res[1], res[2], res[3]]);
+    });
+
+    expert.sort((a: expert, b: expert) => a.coid - b.coid);
+    expert.forEach((res) => {
+      for (let a = 0; a < 6; a++) {
+        exArray.push({
+          clid: a,
+          coid: res.coid,
+          cflg: res.cArray[a] == 1 ? 5 : 0, // cflg == cstage //
+          pgnum: res.pgArray[a],
+          gnum: res.gArray[a],
+        });
+      }
+    });
+
+    return send.pugFile("pug/D01/pcget.pug", {
+      profile,
+      pcdata,
+      gradeStr,
+      exArray,
+    });
+  }
+  else if (version == 11) {
     dArray.forEach((res) => {
       if (res[0] != style) return;
       gradeStr += NumArrayToString([5, 7, 6], [res[1], res[3], maxStage == res[2] ? 1 : 0]);
@@ -904,8 +965,6 @@ export const pcget: EPR = async (info, data, send) => {
     });
   }
   else if (version == 12) {
-    const style = Number(command[2]);
-    const maxStage = style == 0 ? 4 : 3;
     dArray.forEach((res) => {
       if (res[0] != style) return;
       gradeStr += NumArrayToString([5, 7, 6], [res[1], res[3], maxStage == res[2] ? 1 : 0]);

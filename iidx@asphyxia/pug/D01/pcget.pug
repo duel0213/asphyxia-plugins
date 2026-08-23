@@ -1,0 +1,6 @@
+D01(status="SOK" method="pcget")
+  pc(name=profile.name playnum=pcdata.spnum sach=pcdata.sach dach=pcdata.dach sflg=pcdata.sflg0)
+  grade(sgid=pcdata.sgid dgid=pcdata.dgid) #{gradeStr}
+  ex(rid="3")
+    - for (let ed of exArray)
+      score(clid=ed.clid coid=ed.coid pgnum=ed.pgnum gnum=ed.gnum tcnt="0" cflg=ed.cflg)

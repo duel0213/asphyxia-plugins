@@ -88,6 +88,24 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
   return result;
 }
 
+export function NumArrayToHex(bits: number[], numArray: number[]): string {
+  let packed = 0;
+  let totalBits = 0;
+
+  for (let i = 0; i < bits.length; i++) {
+    const radix = Math.pow(2, bits[i]);
+    const value = Math.trunc(numArray[i]);
+
+    packed = packed * radix + ((value % radix) + radix) % radix;
+    totalBits += bits[i];
+  }
+
+  return packed
+    .toString(16)
+    .padStart(totalBits / 4, "0")
+    .toUpperCase();
+}
+
 export function appendSettingConverter(
   rf: boolean,
   cf: boolean,
@@ -226,6 +244,7 @@ export async function ReftoQPRO(refid: string, version: number) {
 export function GetVersion(info: EamuseInfo) {
   let version = -1;
   switch (info.model.slice(0, 3)) {
+    case "D01": return 10;
     case "E11": return 11;
     case "ECO": return 12;
     case "FDD": return 13;

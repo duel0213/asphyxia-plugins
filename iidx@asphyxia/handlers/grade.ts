@@ -20,7 +20,12 @@ export const grademethod: EPR = async (info, data, send) => {
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
-  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
+
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
+
   const gid = version < 13 ? Number(command[3]) : Number($(data).attr().gid);
   const gtype = version < 13 ? Number(command[2]) : Number($(data).attr().gtype);
 
@@ -208,12 +213,13 @@ export const graderaised: EPR = async (info, data, send) => {
     );
   }
 
+  const maxStage = version < 23 ? (gtype == 0 ? 4 : 3) : 4;
   let gradeUser = await DB.Find<grade>(null, {
     collection: "grade",
     version: version,
     style: gtype,
     gradeId: gid,
-    maxStage: 4,
+    maxStage,
   });
 
   let result = {

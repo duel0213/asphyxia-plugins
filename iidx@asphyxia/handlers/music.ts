@@ -32,8 +32,17 @@ export const musicmethod: EPR = async (info, data, send) => {
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
-  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
-  const cltype = version < 13 ? Number(command[2]) : Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
+
+  let cltype = null;
+  if (version < 11) cltype = Number(command[2]) == 120 ? 0 : 1;
+  else if (version < 13) cltype = Number(command[2]); // 0 -> SP, 1 -> DP //
+  else cltype = Number($(data).attr().cltype);
+
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -78,11 +87,10 @@ export const musicgetrank: EPR = async (info, data, send) => {
       for (let a = 0; a < 3; a++) {
         if (res.esArray[indices[a]] == 0) continue;
         let rank_id = _.isNil(res.rArray) ? -1 : res.rArray[indices[a]];
-
         if (version < 12) {
           result.r.push(
             K.ITEM("str", NumArrayToString(
-              [11, 3, 3, 13],
+              version < 11 ? [11, 3, 2, 14] : [11, 3, 3, 13],
               [temp_mid, res.cArray[indices[a]], rank_id, res.esArray[indices[a]]]
             ), { cl: String(mapValue(indices[a])) })
           );
@@ -683,7 +691,11 @@ export const musicappoint: EPR = async (info, data, send) => {
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
-  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
+
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
   });

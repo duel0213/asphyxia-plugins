@@ -17,12 +17,12 @@ export function register() {
   R.Contributor("anzuwork");
   R.Contributor("COLV9");
 
-  const gameCodes = ["E11", "ECO", "FDD", "GLD", "HDD", "I00", "JDJ", "JDZ", "KDZ", "LDJ"];
+  const gameCodes = ["D01", "E11", "ECO", "FDD", "GLD", "HDD", "I00", "JDJ", "JDZ", "KDZ", "LDJ"];
   gameCodes.forEach((res) => {
     R.GameCode(res);
   });
 
-  const oldVersion = ["E11", "ECO"];
+  const oldVersion = ["D01", "E11", "ECO"];
   oldVersion.forEach((res) => {
     R.Route(`${res}.music`, musicmethod);
     R.Route(`${res}.pc`, pcmethod);

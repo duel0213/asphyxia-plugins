@@ -21,21 +21,38 @@ export const rankingentry: EPR = async (info, data, send) => {
   // pside //
   const version = GetVersion(info);
   const command = GetCommand(data);
-  const refid = version < 13 ? await IDtoRef(Number(command[1])) : await IDtoRef(Number($(data).attr().iidxid));
+
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
 
   const coid = version < 13 ? Number(command[3]) : Number($(data).attr().coid);
   const clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
 
-  const opname = version < 13 ? command[9] : $(data).attr().opname;
-  const oppid = version < 13 ? Number(command[10]) : Number($(data).attr().oppid);
+  let opname = null;
+  if (version < 11) opname = command[10];
+  else if (version < 13) opname = command[9];
+  else opname = $(data).attr().opname;
+
+  let oppid = null;
+  if (version < 11) oppid = Number(command[11]);
+  else if (version < 13) oppid = Number(command[10]);
+  else oppid = Number($(data).attr().oppid);
+
   const pgnum = version < 13 ? Number(command[4]) : Number($(data).attr().pgnum);
   const gnum = version < 13 ? Number(command[5]) : Number($(data).attr().gnum);
   const opt = version < 13 ? Number(command[6]) : Number($(data).attr().opt);
   const opt2 = version < 13 ? Number(command[7]) : Number($(data).attr().opt2); // unk #2 //
   
   const exscore = (pgnum * 2 + gnum);
-  const cstage_indice = version < 12 ? 10 : 11;
-  const cstage = version < 13 ? Number(command[cstage_indice]) : Number($(data).attr().cstage);
+
+  let cstage = null;
+  if (version < 11) cstage = Number(command[12]);
+  else if (version < 12) cstage = Number(command[10]);
+  else if (version < 13) cstage = Number(command[11]);
+  else cstage = Number($(data).attr().cstage);
+
   const clr = version < 13 ? (cstage == 5 ? 1 : 0) : Number($(data).attr().clr);
 
   const expert_data = await DB.FindOne<expert>(refid, {

@@ -1,10 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [b9f5b0]**
+Plugin Version: **STAGING [5ac062]**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 10th Style (JAE)
   - beatmaniaIIDX 11 IIDXRED (JAB)
   - beatmaniaIIDX 12 HAPPY SKY (JAC)
   - beatmaniaIIDX 13 DistorteD (JAC)
@@ -196,10 +197,11 @@ Changelogs
       - Need to invoke new card registration to core
   - Added Initial support for IIDXRED
     - (same as above)
+  - Added Initial support for 10th Style
+    - (same as above)
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update
   - Fixed where unable to login after playing a while on old versions
   - Improved WebUI customization settings with descriptive dropdown menus (@COLV9)
   - Improved WebUI score viewer with song title mapping and detailed difficulty breakdown (@COLV9)
-  
