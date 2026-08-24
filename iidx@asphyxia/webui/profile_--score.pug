@@ -1848,11 +1848,17 @@ script.
 
 div
   .card
-    .card-header
+    .card-header(style="display: flex; justify-content: space-between; align-items: center; padding-right: 1rem;")
       p.card-header-title
         span.icon
           i.mdi.mdi-format-list-bulleted
         | Score List (Pinky Crush)
+      .select.is-small
+        select(id="score-sort-filter")
+          option(value="recent") Recently Played
+          option(value="mid") Music ID
+          option(value="title") Music Title
+          option(value="lamp") Clear Lamp
     .card-content
       table.table.is-striped.is-fullwidth.is-hoverable
         thead
@@ -1870,7 +1876,8 @@ div
               - let miss = i.mArray[d];
               
               - if (lamp > 0 || ex > 0 || miss > -1) {
-                tr
+                - const updateTime = i.updatedAt ? new Date(i.updatedAt).getTime() : 0;
+                tr(data-mid=i.mid data-updated=updateTime data-lamp=lamp data-ex=ex)
                   //- A space for the title instead of the ID
                   td.music-title(data-mid=i.mid) 
                     strong #{i.mid}
@@ -1886,6 +1893,55 @@ div
 //- 3. run Title Replacement
 script.
   $(document).ready(function() {
+    // Cache music title text attributes for each row
+    $('tbody tr').each(function() {
+      const mid = String($(this).data('mid'));
+      const title = (window.musicDB && window.musicDB[mid]) ? window.musicDB[mid] : mid;
+      $(this).attr('data-title', title);
+    });
+
+    // Define sorting function
+    function sortScoreTable(sortType) {
+      const $tbody = $('tbody');
+      const $rows = $tbody.find('tr').get();
+
+      $rows.sort(function(a, b) {
+        const midA = Number($(a).data('mid')) || 0;
+        const midB = Number($(b).data('mid')) || 0;
+        const updatedA = Number($(a).data('updated')) || 0;
+        const updatedB = Number($(b).data('updated')) || 0;
+        const lampA = Number($(a).data('lamp')) || 0;
+        const lampB = Number($(b).data('lamp')) || 0;
+        const exA = Number($(a).data('ex')) || 0;
+        const exB = Number($(b).data('ex')) || 0;
+        const titleA = $(a).attr('data-title') || '';
+        const titleB = $(b).attr('data-title') || '';
+
+        switch (sortType) {
+          case 'recent': // Recently Played (most recent first / descending)
+            return updatedB - updatedA || midA - midB;
+          case 'mid': // Music ID (ascending)
+            return midA - midB;
+          case 'title': // Music Title (alphabetical / A-Z)
+            return titleA.localeCompare(titleB);
+          case 'lamp': // Clear Lamp (higher lamp first -> tie-breaker: higher EX score)
+            if (lampB !== lampA) return lampB - lampA;
+            return exB - exA;
+          default:
+            return 0;
+        }
+      });
+
+      $.each($rows, function(index, row) {
+        $tbody.append(row);
+      });
+    }
+
+    // Execute default sort (Recently Played) and bind change event
+    sortScoreTable($('#score-sort-filter').val());
+    $('#score-sort-filter').on('change', function() {
+      sortScoreTable($(this).val());
+    });
     $('.music-title').each(function() {
       const $cell = $(this);
       const mid = String($cell.data('mid'));

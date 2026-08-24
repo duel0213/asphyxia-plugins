@@ -220,6 +220,7 @@ export const updateCustomSettings = async (data) => {
 
     note_beam: Number(data.note_beam),
     note_beam_size: Number(data.note_beam_size) || 0,
+    note_size: Number(data.note_size),
     judge_font: Number(data.judge_font),
     pacemaker_cover: Number(data.pacemaker_cover),
     vefx_lock: StoB(data.vefx_lock),
