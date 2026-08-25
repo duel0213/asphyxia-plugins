@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.19**
+Plugin Version: **v0.1.17**
 
 ---
 
