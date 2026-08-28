@@ -705,6 +705,9 @@ export const musicappoint: EPR = async (info, data, send) => {
         name: sdata["@attr"]["name"],
         content: sdata["@content"],
       }
+    }, {
+      format: false,
+      header: false,
     });
   }
 
