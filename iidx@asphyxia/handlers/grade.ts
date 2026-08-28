@@ -14,7 +14,7 @@ export const grademethod: EPR = async (info, data, send) => {
       break;
   }
 
-  return send.deny();
+  return send.deny({ format: false, header: false });
 }
 
 export const graderaised: EPR = async (info, data, send) => {
@@ -136,14 +136,16 @@ export const graderaised: EPR = async (info, data, send) => {
 
   let updatePcdata = false;
   let updateGrade = false;
-  if (version < 23) {
-    if (gtype == 0 && cflg == 4) updatePcdata = true;
-    else if (gtype == 1 && cflg == 3) updatePcdata = true;
-  } else {
-    if (cflg == 4) updatePcdata = true;
+  if (version > 9) {
+    if (version < 23) {
+      if (gtype == 0 && cflg == 4) updatePcdata = true;
+      else if (gtype == 1 && cflg == 3) updatePcdata = true;
+    } else {
+      if (cflg == 4) updatePcdata = true;
+    }
   }
 
-  if (_.isNil(pcdata)) return send.deny();
+  if (version > 9 && _.isNil(pcdata)) return send.deny();
   if (_.isNil(grade)) {
     if (updatePcdata) {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
@@ -234,6 +236,8 @@ export const graderaised: EPR = async (info, data, send) => {
     sendOption = {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     }
   }
 

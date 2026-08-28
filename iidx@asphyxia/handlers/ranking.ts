@@ -9,12 +9,14 @@ export const rankingmethod: EPR = async (info, data, send) => {
       return await rankingentry(info, data, send);
     case "getranker":
       return await rankinggetranker(info, data, send);
+    case "getme":
+      return await rankinggetme(info, data, send);
 
     default:
       break;
   }
 
-  return send.deny();
+  return send.deny({ format: false, header: false });
 }
 
 export const rankingentry: EPR = async (info, data, send) => {
@@ -22,32 +24,46 @@ export const rankingentry: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
 
-  let refid = null;
+  let refid: string;
   if (version < 11) refid = command[1].split('|')[0];
   else if (version < 13) refid = await IDtoRef(Number(command[1]));
   else refid = await IDtoRef(Number($(data).attr().iidxid));
 
+  const profile = await DB.FindOne<profile>(refid, {
+    collection: "profile",
+  });
+
   const coid = version < 13 ? Number(command[3]) : Number($(data).attr().coid);
   const clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
 
-  let opname = null;
-  if (version < 11) opname = command[10];
+  let opname: string;
+  if (version == 9) opname = command[9];
+  else if (version < 11) opname = command[10];
   else if (version < 13) opname = command[9];
   else opname = $(data).attr().opname;
 
-  let oppid = null;
-  if (version < 11) oppid = Number(command[11]);
+  let oppid = -1;
+  if (version == 9) oppid = profile.pid;
+  else if (version < 11) oppid = Number(command[11]);
   else if (version < 13) oppid = Number(command[10]);
   else oppid = Number($(data).attr().oppid);
 
   const pgnum = version < 13 ? Number(command[4]) : Number($(data).attr().pgnum);
   const gnum = version < 13 ? Number(command[5]) : Number($(data).attr().gnum);
-  const opt = version < 13 ? Number(command[6]) : Number($(data).attr().opt);
-  const opt2 = version < 13 ? Number(command[7]) : Number($(data).attr().opt2); // unk #2 //
+
+  let opt = 0;
+  if (version == 9) opt = Number(command[8])
+  else if (version < 13) opt = Number(command[6]);
+  else opt = Number($(data).attr().opt)
+
+  let opt2 = 0;
+  if (version == 9) opt2 = 0;
+  else if (version < 13) opt2 = Number(command[7]);
+  else opt2 = Number($(data).attr().opt2)
   
   const exscore = (pgnum * 2 + gnum);
 
-  let cstage = null;
+  let cstage = 0;
   if (version < 11) cstage = Number(command[12]);
   else if (version < 12) cstage = Number(command[10]);
   else if (version < 13) cstage = Number(command[11]);
@@ -114,10 +130,6 @@ export const rankingentry: EPR = async (info, data, send) => {
     }
   );
 
-  const profile = await DB.FindOne<profile>(refid, {
-    collection: "profile",
-  });
-  const name = profile.name;
   await DB.Upsert<ranking>(
     {
       collection: "ranking",
@@ -129,7 +141,7 @@ export const rankingentry: EPR = async (info, data, send) => {
       $set: {
         pgnum: pgnum,
         gnum: gnum,
-        name: name,
+        name: profile.name,
         opname: opname,
         pid: oppid,
         udate: 0,
@@ -147,7 +159,7 @@ export const rankingentry: EPR = async (info, data, send) => {
     clid: clid,
   });
   expertUser.sort((a: ranking, b: ranking) => b.exscore - a.exscore);
-  let rankPos = expertUser.findIndex((a: ranking) => a.name == name);
+  let rankPos = expertUser.findIndex((a: ranking) => a.name == profile.name);
 
   let result = {
     "@attr": {
@@ -162,6 +174,8 @@ export const rankingentry: EPR = async (info, data, send) => {
     sendOption = {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     };
   }
 
@@ -228,8 +242,52 @@ export const rankinggetranker: EPR = async (info, data, send) => {
     sendOption = {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     };
   }
 
   return send.object(result, sendOption);
 };
+
+export const rankinggetme: EPR = async (info, data, send) => {
+  const version = GetVersion(info);
+  const command = GetCommand(data);
+  const refid = command[1].split('|')[0];
+  const playStyle = Number(command[2]) == 120 ? 0 : 1;
+
+  const expertRecord = await DB.Find<expert>(refid, { collection: "expert", version: version });
+  if (expertRecord.length == 0) return send.object({ "@attr": { method: "rankinggetme" } }, { header: false, format: false, rootName: GetModel(info) });
+
+  let result = {
+    "@attr": {
+      method: "rankinggetme",
+    },
+    data: [],
+  };
+
+  expertRecord.forEach((res) => {
+    let indices = playStyle == 0 ? [0, 1, 2] : [3, 4, 5];
+    for (let a = 0; a < indices.length; a++) {
+      if (res.cArray[indices[a]] == 0) continue;
+      result.data.push(
+        K.ATTR({
+          coid: String(res.coid),
+          clid: String(indices[a]),
+          pgnum: String(res.pgArray[indices[a]]),
+          gnum: String(res.gArray[indices[a]]),
+          tcnt: String(1),
+          cflg: String(res.cArray[indices[a]] == 1 ? 5 : 0),
+        }),
+      );
+    }
+  });
+
+  let sendOption: EamuseSendOption = {
+    status: "SOK",
+    rootName: GetModel(info),
+    format: false,
+    header: false,
+  };
+  return send.object(result, sendOption);
+}

@@ -1,10 +1,11 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [5ac062]**
+Plugin Version: **STAGING [ce0bf1]**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 9th Style (JAH)
   - beatmaniaIIDX 10th Style (JAE)
   - beatmaniaIIDX 11 IIDXRED (JAB)
   - beatmaniaIIDX 12 HAPPY SKY (JAC)
@@ -199,6 +200,9 @@ Changelogs
     - (same as above)
   - Added Initial support for 10th Style
     - (same as above)
+  - Added Initial support for 9th Style
+    - (same as above)
+    - Requires forked version of asphyxia-core otherwise game will crash as soon as hit plugin
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update

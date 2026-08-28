@@ -32,7 +32,7 @@ export const pcmethod: EPR = async (info, data, send) => {
       break;
   }
 
-  return send.deny();
+  return send.deny({ format: false, header: false });
 }
 
 export const pccommon: EPR = async (info, data, send) => {
@@ -438,6 +438,8 @@ export const pccommon: EPR = async (info, data, send) => {
     sendOption = {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     };
   }
 
@@ -486,6 +488,8 @@ export const pcreg: EPR = async (info, data, send) => {
       }, {
         rootName: GetModel(info),
         status: version < 13 ? "SOK" : 0,
+        format: false,
+        header: false,
       });
     }
   }
@@ -677,6 +681,8 @@ export const pcreg: EPR = async (info, data, send) => {
     }, {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     });
   }
 
@@ -727,6 +733,8 @@ export const pcget: EPR = async (info, data, send) => {
       }, {
         rootName: GetModel(info),
         status: version < 13 ? "ENOCARDID" : 1,
+        format: false,
+        header: false,
       });
     }
 
@@ -5551,6 +5559,8 @@ export const pcsave: EPR = async (info, data, send) => {
     }, {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     })
   }
 

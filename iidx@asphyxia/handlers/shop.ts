@@ -11,7 +11,7 @@ export const shopmethod: EPR = async (info, data, send) => {
       break;
   }
 
-  return send.deny();
+  return send.deny({ format: false, header: false });
 }
 
 export const shopgetname: EPR = async (info, data, send) => {
@@ -113,6 +113,8 @@ export const shopsentinfo: EPR = async (info, data, send) => {
     sendOption = {
       rootName: GetModel(info),
       status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
     };
   } else {
     return send.success();
