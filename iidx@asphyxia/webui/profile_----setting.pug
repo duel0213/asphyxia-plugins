@@ -54,10 +54,6 @@ div
             input.input(type="text" name="name", id="name", value=profile.name)
         //- SKIN
         .field
-          label.label Frame
-          .control
-            input.input(type="number" name="frame", id="frame", value=custom.frame)
-        .field
           label.label Menu Music
           .control
             input.input(type="number" name="menu_music", id="menu_music", value=custom.menu_music)
@@ -65,6 +61,10 @@ div
           label.label Category Voice
           .control
             input.input(type="number" name="category_vox", id="category_vox", value=custom.category_vox)
+        .field
+          label.label Frame
+          .control
+            input.input(type="number" name="frame", id="frame", value=custom.frame)   
         .field
           label.label Turntable
           .control
@@ -138,6 +138,93 @@ div
                   ]
                 each item in note_burst_types
                   option(value=item.val, selected=(custom.note_burst == item.val)) #{item.name}
+        .field
+          label.label Note Burst Size
+          .control
+            .select
+              select(name="bomb_size", id="bomb_size")
+                - 
+                  const bomb_size_types = [
+                    {val: 0, name: 'Default (100%)'},
+                    {val: 1, name: '70%'},
+                    {val: 2, name: '80%'},
+                    {val: 3, name: '90%'},
+                    {val: 4, name: '110%'},
+                    {val: 5, name: '120%'},
+                    {val: 6, name: '130%'},
+                  ]
+                each item in bomb_size_types
+                  option(value=item.val, selected=(custom.bomb_size == item.val)) #{item.name}                  
+        .field
+          label.label Note Skin
+          .control
+            .select
+              select(name="note_skin", id="note_skin")
+                - 
+                  const note_skin_types = [
+                    {val: 0, name: 'Default'},
+                    {val: 1, name: 'Gorgeous'},
+                    {val: 2, name: 'Aqua'},
+                    {val: 3, name: 'Gyaru'},
+                    {val: 4, name: 'Photon'},
+                    {val: 5, name: 'Pastel'},
+                    {val: 6, name: 'Simple'},
+                    {val: 7, name: 'Light'},
+                    {val: 8, name: 'Tricoro'},
+                    {val: 9, name: 'Bubble'}
+                    ]
+                each ns in note_skin_types
+                  option(value=ns.val, selected=(custom.note_skin == ns.val)) #{ns.name}
+        .field
+          label.label Note Size
+          .control
+            .select
+              select(name="note_size", id="note_size")
+                - 
+                  const note_size_types = [
+                    {val: 0, name: 'Default'},
+                    {val: 1, name: 'Short'},
+                    {val: 2, name: 'Very Short'}
+                  ]
+                each item in note_size_types
+                  option(value=item.val, selected=(custom.note_size == item.val)) #{item.name}
+        .field
+          label.label Note Beam
+          .control
+            .select
+              select(name="note_beam", id="note_beam")
+                - 
+                  const note_beam_types = [
+                    {val: 0, name: 'Default'},
+                    {val: 1, name: 'オレンジ (orange)'},
+                    {val: 2, name: 'ピンク (pink)'},
+                    {val: 3, name: 'モノクロ (monochrome)'},
+                    {val: 4, name: 'ライトニング (lightning)'},
+                    {val: 5, name: 'オンリーワンビーム (only one beam)'},
+                    {val: 6, name: 'コピュライト (copula-light)'},
+                    {val: 7, name: 'CBビーム (CB Beam)'},
+                    {val: 8, name: 'HEROIC VERSE'},
+                    {val: 9, name: 'BISTROVER BURNER'},
+                    {val: 10, name: 'フレネルビーム (Fresnel beam)'},
+                    {val: 11, name: 'RESIDENT'},
+                    {val: 12, name: 'EPOLIS'},
+                    {val: 13, name: 'Pinky Crush'}
+                  ]
+                each item in note_beam_types
+                  option(value=item.val, selected=(custom.note_beam == item.val)) #{item.name}
+        .field
+          label.label Note Beam Size
+          .control
+            .select
+              select(name="note_beam_size", id="note_beam_size")
+                - 
+                  const beam_sizes = [
+                    {val: 0, name: 'Default'},
+                    {val: 2, name: 'Very Short'},
+                    {val: 3, name: 'Long'}
+                  ]
+                each b in beam_sizes
+                  option(value=b.val, selected=(custom.note_beam_size == b.val)) #{b.name}                                    
         .field
           label.label Lane Cover
           .control
@@ -1168,26 +1255,6 @@ div
                 each item in pacemaker_cover_types
                   option(value=item.val, selected=(custom.pacemaker_cover == item.val)) #{item.name}
         .field
-          label.label Note Skin
-          .control
-            .select
-              select(name="note_skin", id="note_skin")
-                - 
-                  const note_skin_types = [
-                    {val: 0, name: 'Default'},
-                    {val: 1, name: 'Gorgeous'},
-                    {val: 2, name: 'Aqua'},
-                    {val: 3, name: 'Gyaru'},
-                    {val: 4, name: 'Photon'},
-                    {val: 5, name: 'Pastel'},
-                    {val: 6, name: 'Simple'},
-                    {val: 7, name: 'Light'},
-                    {val: 8, name: 'Tricoro'},
-                    {val: 9, name: 'Bubble'}
-                    ]
-                each ns in note_skin_types
-                  option(value=ns.val, selected=(custom.note_skin == ns.val)) #{ns.name}
-        .field
           label.label Full Combo Splash
           .control
             .select
@@ -1222,30 +1289,6 @@ div
                 each item in full_combo_splash_types
                   option(value=item.val, selected=(custom.full_combo_splash == item.val)) #{item.name}
         .field
-          label.label Note Beam
-          .control
-            .select
-              select(name="note_beam", id="note_beam")
-                - 
-                  const note_beam_types = [
-                    {val: 0, name: 'Default'},
-                    {val: 1, name: 'オレンジ (orange)'},
-                    {val: 2, name: 'ピンク (pink)'},
-                    {val: 3, name: 'モノクロ (monochrome)'},
-                    {val: 4, name: 'ライトニング (lightning)'},
-                    {val: 5, name: 'オンリーワンビーム (only one beam)'},
-                    {val: 6, name: 'コピュライト (copula-light)'},
-                    {val: 7, name: 'CBビーム (CB Beam)'},
-                    {val: 8, name: 'HEROIC VERSE'},
-                    {val: 9, name: 'BISTROVER BURNER'},
-                    {val: 10, name: 'フレネルビーム (Fresnel beam)'},
-                    {val: 11, name: 'RESIDENT'},
-                    {val: 12, name: 'EPOLIS'},
-                    {val: 13, name: 'Pinky Crush'}
-                  ]
-                each item in note_beam_types
-                  option(value=item.val, selected=(custom.note_beam == item.val)) #{item.name}
-        .field
           label.label Judgement Font
           .control
             .select
@@ -1276,10 +1319,6 @@ div
                 each item in judge_font_types
                   option(value=item.val, selected=(custom.judge_font == item.val)) #{item.name}
         .field
-          label.label Disable Music Preview
-          .control
-            input(type="checkbox" name="disable_musicpreview", id="disable_musicpreview", checked=Boolean(custom.disable_musicpreview))
-        .field
           label.label VEFX Lock
           .control
             input(type="checkbox" name="vefx_lock", id="vefx_lock", checked=Boolean(custom.vefx_lock))
@@ -1292,27 +1331,6 @@ div
                 each ef in effect_types
                   option(value=ef.val, selected=(custom.effect == ef.val)) #{ef.name}
         .field
-          label.label Note Burst Size
-          .control
-            .select
-              select(name="bomb_size", id="bomb_size")
-                - 
-                  const bomb_size_types = [
-                    {val: 0, name: 'Default (100%)'},
-                    {val: 1, name: '70%'},
-                    {val: 2, name: '80%'},
-                    {val: 3, name: '90%'},
-                    {val: 4, name: '110%'},
-                    {val: 5, name: '120%'},
-                    {val: 6, name: '130%'},
-                  ]
-                each item in bomb_size_types
-                  option(value=item.val, selected=(custom.bomb_size == item.val)) #{item.name}
-        .field
-          label.label Disable HCN Color
-          .control
-            input(type="checkbox" name="disable_hcn_color", id="disable_hcn_color", checked=Boolean(custom.disable_hcn_color))
-        .field
           label.label First Note Preview
           .control
             .select
@@ -1321,25 +1339,13 @@ div
                 each fp in fnp_types
                   option(value=fp.val, selected=(custom.first_note_preview == fp.val)) #{fp.name}
         .field
-          label.label Note Size
+          label.label Disable Music Preview
           .control
-            if custom.note_size === undefined
-              input.input(type="number" name="note_size", id="note_size", value="0")
-            else
-              input.input(type="number" name="note_size", id="note_size", value=custom.note_size)
+            input(type="checkbox" name="disable_musicpreview", id="disable_musicpreview", checked=Boolean(custom.disable_musicpreview))
         .field
-          label.label Note Beam Size
+          label.label Disable HCN Color
           .control
-            .select
-              select(name="note_beam_size", id="note_beam_size")
-                - 
-                  const beam_sizes = [
-                    {val: 0, name: 'Default'},
-                    {val: 2, name: 'Very Short'},
-                    {val: 3, name: 'Long'}
-                  ]
-                each b in beam_sizes
-                  option(value=b.val, selected=(custom.note_beam_size == b.val)) #{b.name}
+            input(type="checkbox" name="disable_hcn_color", id="disable_hcn_color", checked=Boolean(custom.disable_hcn_color))                      
         //- APPEND SETTINGS
         .field
           label.label Rank Folder

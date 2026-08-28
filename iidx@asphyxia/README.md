@@ -168,3 +168,10 @@ Changelogs
 
 **v0.1.17**
   - Added Initial support for Pinky Crush
+  - Changed score page layout for better readability in WebUI
+  - Fixed where some profile setting options in WebUI were not being applied
+  - Changed some WebUI profile setting options to pulldown menus
+    - Temporarily labeled unknown lane cover names as 'laneXXX'
+  - Added score data sorting feature in WebUI
+  - Changed the order of profile setting options in WebUI
+  - Fixed where note size in WebUI profile settings was not being applied and changed it to a pulldown menu
