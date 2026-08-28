@@ -413,6 +413,7 @@ export const updateCustomSettings = async (data) => {
 
     note_beam: Number(data.note_beam),
     note_beam_size: Number(data.note_beam_size) || 0,
+    note_size: Number(data.note_size),
     judge_font: Number(data.judge_font),
     pacemaker_cover: Number(data.pacemaker_cover),
     vefx_lock: StoB(data.vefx_lock),
@@ -420,7 +421,6 @@ export const updateCustomSettings = async (data) => {
     bomb_size: Number(data.bomb_size),
     disable_hcn_color: StoB(data.disable_hcn_color),
     first_note_preview: Number(data.first_note_preview),
-    note_size: Number(data.note_size),
     cn_color: Number(data.cn_color),
     cn_size: Number(data.cn_size),
 

@@ -208,4 +208,4 @@ Changelogs
   - Fixed where tricoro does not work after Asphyxia Core update
   - Fixed where unable to login after playing a while on old versions
   - Improved WebUI customization settings with descriptive dropdown menus (@COLV9)
-  - Improved WebUI score viewer with song title mapping and detailed difficulty breakdown (@COLV9)
+  - Improved WebUI score viewer with song title mapping, detailed difficulty breakdown and sorting (@COLV9)
