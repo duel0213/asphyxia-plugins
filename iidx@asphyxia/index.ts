@@ -9,8 +9,8 @@ import { rankingentry, rankinggetranker, rankingmethod, rankingoentry } from "./
 import { userdataread, userdatawrite } from "./handlers/userdata";
 
 export function register() {
-  if (CORE_VERSION_MAJOR <= 1 && CORE_VERSION_MINOR < 31) {
-    console.error("The current version of Asphyxia Core is not supported. Requires version '1.31' or later.");
+  if (CORE_VERSION_MAJOR <= 1 && CORE_VERSION_MINOR < 70) {
+    console.error("The current version of Asphyxia Core is not supported. Requires version '1.70' or later.");
     return;
   }
 
