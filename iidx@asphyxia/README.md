@@ -190,10 +190,9 @@ Changelogs
   - Added Initial support for Sparkle Shower
   - Added Initial support for DistorteD
     - Existing card with no DistorteD data will treat as new card on registration but it will use existing profile data
-    - Migration from HAPPY SKY menu will not work
+    - Migration from (previous version) menu will not work
   - Added Initial support for HAPPY SKY
-    - Requires forked version of asphyxia-core otherwise NETWORK will turn OK to WARNING after a while and MY BEST ghost data will go through the roof
-      - This will be submit to PR once theres no regression
+    - Requires updated version of asphyxia-core otherwise plugin won't register [v1.70b]
     - New card cannot be registered
       - Need to invoke new card registration to core
   - Added Initial support for IIDXRED
@@ -202,7 +201,6 @@ Changelogs
     - (same as above)
   - Added Initial support for 9th Style
     - (same as above)
-    - Requires forked version of asphyxia-core otherwise game will crash as soon as hit plugin
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update
