@@ -196,7 +196,7 @@ export function register() {
     name: "Movie Upload URL",
     type: "string",
     desc: "API address for play video uploading feature (JSON)",
-    default: "http://localhost/"
+    default: "http://localhost:4399/movie/"
   });
   R.Config("Eisei", {
     name: "Eisei Grade Courses",

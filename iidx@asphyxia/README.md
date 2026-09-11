@@ -29,7 +29,7 @@ Supported Versions
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
-  - beatmaniaIIDX 33 Sparkle Shower (2026042200)
+  - beatmaniaIIDX 33 Sparkle Shower (2026072100)
 
 ---
 
@@ -188,19 +188,13 @@ Changelogs
 
 **STAGING**
   - Added Initial support for Sparkle Shower
-  - Added Initial support for DistorteD
-    - Existing card with no DistorteD data will treat as new card on registration but it will use existing profile data
-    - Migration from (previous version) menu will not work
-  - Added Initial support for HAPPY SKY
+  - Added Initial support for DistorteD, HAPPY SKY, IIDXRED, 10th Style, 9th Style
     - Requires updated version of asphyxia-core otherwise plugin won't register [v1.70b]
-    - New card cannot be registered
-      - Need to invoke new card registration to core
-  - Added Initial support for IIDXRED
-    - (same as above)
-  - Added Initial support for 10th Style
-    - (same as above)
-  - Added Initial support for 9th Style
-    - (same as above)
+    - Migration from (previous version) menu will not work
+      - Existing card with no current version user data will treat as new card on registration but it will use existing profile data
+    - New card cannot be registered (~ HAPPY SKY)
+      - Need to invoke new card registration to core.
+    - 9th Style will use seperate user data database as its using raw blob
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
   - Fixed where tricoro does not work after Asphyxia Core update
