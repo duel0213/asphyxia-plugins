@@ -316,13 +316,28 @@ export const musicgetranksub: EPR = async (info, data, send) => {
 
   let m = [];
   let score_data: number[];
+  let indices = cltype === 0 ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
 
   for (let i = 0; i < rival_refids.length; i++) {
     if (_.isNaN(rival_refids[i][0])) continue;
 
-    // TODO:: [idx, ...] //
-    score_data = [i + 5, 10, 0, 0, 0, 0, 0];
-    m.push(K.ARRAY("s32", score_data));
+    for (let i = 0; i < 5; i++) {
+      if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
+
+      const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
+        { collection: "score" }
+      );
+
+      rival_score.forEach((res: score) => {
+        for (let a = 0; a < indices.length; a++) {
+          if (res.rArray[indices[a]] == -1) continue;
+
+          // [index?, rno?, ...] //
+          score_data = [i, i, res.mid, indices[a], res.cArray[indices[a]], res.esArray[indices[a]], res.mArray[indices[a]]];
+          m.push(K.ARRAY("s32", score_data));
+        }
+      });
+    }
   }
 
   return send.object({
