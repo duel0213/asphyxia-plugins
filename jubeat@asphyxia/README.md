@@ -5,6 +5,7 @@ Jubeat Plugin for Asphyxia Core
 # Supported Versions
 
 - Festo
+- Qubell (tested with L44:J:B:A:2017062001; prop and clan are routed to the same handlers but untested)
 
 # Versions
 
@@ -15,6 +16,10 @@ Jubeat Plugin for Asphyxia Core
     - Now Support Festo Final
     - Support hard mode score saving
     - Support Turn Run
+
+- V2.1.0 (2026/09/14)
+    - Add jubeat Qubell support (profile, score list, save, shop info) via version-split handlers in `qubell/`
+    - Older builds (model date < 2018090000) use the Qubell handlers; festo behaviour is unchanged
 
 # TODO
 
