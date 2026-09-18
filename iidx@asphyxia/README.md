@@ -1,10 +1,15 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.17**
+Plugin Version: **v0.1.18**
 
 ---
 
 Supported Versions
+  - beatmaniaIIDX 9th Style (JAH)
+  - beatmaniaIIDX 10th Style (JAE)
+  - beatmaniaIIDX 11 IIDXRED (JAB)
+  - beatmaniaIIDX 12 HAPPY SKY (JAC)
+  - beatmaniaIIDX 13 DistorteD (JAC)
   - beatmaniaIIDX 14 GOLD (2007072301)
   - beatmaniaIIDX 15 DJ TROOPERS (2008031100)
   - beatmaniaIIDX 16 EMPRESS (2009072200)
@@ -24,6 +29,7 @@ Supported Versions
   - beatmaniaIIDX 30 RESIDENT (2023090500)
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
+  - beatmaniaIIDX 33 Sparkle Shower (2026081900)
 
 ---
 
@@ -40,12 +46,15 @@ Features
 
 Known Issues
   - Clear Lamps may display invalid lamps due to missing conversion code
-  - DJ LEVEL folders are broken in ~ DJ TROOPERS due to missing rank\_id
+  - DJ LEVEL folders are broken before EMPRESS due to missing rank\_id
   - LEGGENDARIA play records before HEROIC VERSE may not display on higher version due to missing conversion code
   - SUPER FUTURE 2323 play records doesn't display on other version due to missing conversion code
   - ONE MORE EXTRA STAGE progress won't save (can't test this due to skill issue)
+  - DOUBLE PLAY or two persons play may not work properly (can't test this due to skill issue)
+  - New card cannot be registered before DistorteD (this is due to those games uses magnetic card)
   - Some of licensed songs are locked behind (kinda solved with music\_open but needs to be verified)
-  - Some of badges aren't saving in RESIDENT ~ (needs to figure out name to id)
+  - Some of badges aren't saving in RESIDENT and above (needs to figure out name to id)
+  - Some of records may have invalid MISS COUNT
 
 ---
 
@@ -168,3 +177,27 @@ Changelogs
 
 **v0.1.17**
   - Added Initial support for Pinky Crush
+  - Fixed where note\_size, lift\_cover, note\_beam\_size doesn't get saved in WebUI (EPOLIS ~)
+  - Fixed STEP UP related issues
+    - Unable to use STEP UP ticket
+    - HARD / EX HARD folder display low level charts regardless player skill
+  - Fixed HEROIC VERSE issues
+    - Unable to complete registration 
+    - Crash after Event room choose
+  - Fixed where unable to complete registration or login (tricoro)
+
+**v0.1.18**
+  - Added Initial support for Sparkle Shower
+  - Added Initial support for DistorteD, HAPPY SKY, IIDXRED, 10th Style, 9th Style
+    - Requires updated version of asphyxia-core otherwise plugin won't register [v1.70b]
+    - Migration from (previous version) menu will not work
+      - Existing card with no current version user data will treat as new card on registration but it will use existing profile data
+    - New card cannot be registered (~ HAPPY SKY)
+      - Need to invoke new card registration to core.
+    - 9th Style will use seperate user data database as its using raw blob
+  - Added ALL/STORE/RIVAL TOP pacemaker support
+  - Added basic save support of STORY mode (Resort Anthem)
+  - Fixed where tricoro does not work after Asphyxia Core update
+  - Fixed where unable to login after playing a while on old versions
+  - Improved WebUI customization settings with descriptive dropdown menus (@COLV9)
+  - Improved WebUI score viewer with song title mapping, detailed difficulty breakdown and sorting (@COLV9)

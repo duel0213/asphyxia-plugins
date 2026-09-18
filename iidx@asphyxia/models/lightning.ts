@@ -14,7 +14,13 @@ export interface lightning_settings {
   concentration: number;
 
   keyboard_kind: number; // epolis //
+
   brightness: number;
+  brightness_concent: number; // sparkle shower ///
+
+  assistant_disp_type: number; // sparkle shower ///
+  assistant_last_tab: number;
+  assistant_chara: number;
 }
 
 export interface lightning_playdata {
@@ -31,7 +37,12 @@ export interface lightning_custom {
   version: number;
 
   premium_skin: number;
-  premium_bg: number;
+
+  premium_bg: number; // epolis //
+
+  premium_bg_concent: number; // sparkle shower //
+  entry_bg: number;
+  entry_bg_brightness: number;
 }
 
 export interface eisei_grade {
@@ -162,10 +173,21 @@ export const lm_settings_new = {
   concentration: 0,
 
   keyboard_kind: 10, // epolis //
-  brightness: 2,
+
+  brightness: 0,
+  brightness_concent: 0, // sparkle shower //
+
+  assistant_disp_type: 0,
+  assistant_last_tab: 0,
+  assistant_chara: 0,
 }
 
 export const lm_customdata = {
   premium_skin: 0, // Icons //
+
   premium_bg: 0, // Background (epolis) //
+
+  premium_bg_concent: 0, // Background [Concentration Mode] (sparkle shower) //
+  entry_bg: 0, // Entry BG //
+  entry_bg_brightness: 0, // Entry BG Brightness //
 }

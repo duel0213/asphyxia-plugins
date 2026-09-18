@@ -1,5 +1,18 @@
 ﻿import { convention_data, shop_data } from "../models/shop";
-import { GetVersion } from "../util";
+import { GetCommand, GetModel, GetVersion } from "../util";
+
+export const shopmethod: EPR = async (info, data, send) => {
+  const command = GetCommand(data);
+  switch (command[0]) {
+    case "sentinfo":
+      return await shopsentinfo(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny({ format: false, header: false });
+}
 
 export const shopgetname: EPR = async (info, data, send) => {
   const shop_data = await DB.FindOne<shop_data>({
@@ -87,3 +100,25 @@ export const shopsetconvention: EPR = async (info, data, send) => {
 
   return send.success();
 };
+
+export const shopsentinfo: EPR = async (info, data, send) => {
+  const version = GetVersion(info);
+
+  let result = {};
+  let sendOption: EamuseSendOption = {};
+  if (version < 14) {
+    result = Object.assign(result, {
+      "@attr": { method: "shopsentinfo" },
+    });
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
+    };
+  } else {
+    return send.success();
+  }
+
+  return send.object(result, sendOption);
+}

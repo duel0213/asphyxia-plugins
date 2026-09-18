@@ -2,6 +2,7 @@
   profile: DB.FindOne(refid, { collection: "profile" })
   profiles: DB.Find(null, { collection: "profile" })
   rival: DB.Find(refid, { collection: "rival" })
+  rival_sub: DB.Find(refid, { collection: "rival_sub" })
 
 -
   let rival_list=[["", "None", "0000-0000"]];
@@ -9,10 +10,14 @@
     rival_list.push([res.__refid, res.name, res.idstr])
   });
 
-  let my_sp_rival = [], my_dp_rival = [];
+  let my_sp_rival = [], my_dp_rival = [], my_sp_rival_sub = [], my_dp_rival_sub = [];
   rival.forEach((res) => {
     if (res.play_style == 1) my_sp_rival[res.index] = res.rival_refid;
     else if (res.play_style == 2) my_dp_rival[res.index] = res.rival_refid;
+  });
+  rival_sub.forEach((res) => {
+    if (res.play_style == 1) my_sp_rival_sub[res.index] = res.rival_refid;
+    else if (res.play_style == 2) my_dp_rival_sub[res.index] = res.rival_refid;
   });
 
 div
@@ -109,6 +114,92 @@ div
                   each i in rival_list
                     if my_dp_rival[4] != null
                       option(selected=i[0]==my_dp_rival[4], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+        .field
+          label.label SP Rivals [SUB]
+          .body
+            .control
+              .select
+                select(name="sp_rival1_sub")
+                  each i in rival_list
+                    if my_sp_rival_sub[0] != null
+                      option(selected=i[0]==my_sp_rival_sub[0], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="sp_rival2_sub")
+                  each i in rival_list
+                    if my_sp_rival_sub[1] != null
+                      option(selected=i[0]==my_sp_rival_sub[1], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="sp_rival3_sub")
+                  each i in rival_list
+                    if my_sp_rival_sub[2] != null
+                      option(selected=i[0]==my_sp_rival_sub[2], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="sp_rival4_sub")
+                  each i in rival_list
+                    if my_sp_rival_sub[3] != null
+                      option(selected=i[0]==my_sp_rival_sub[3], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="sp_rival5_sub")
+                  each i in rival_list
+                    if my_sp_rival_sub[4] != null
+                      option(selected=i[0]==my_sp_rival_sub[4], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+        .field
+          label.label DP Rivals [SUB]
+          .body
+            .control
+              .select
+                select(name="dp_rival1_sub")
+                  each i in rival_list
+                    if my_dp_rival_sub[0] != null
+                      option(selected=i[0]==my_dp_rival_sub[0], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="dp_rival2_sub")
+                  each i in rival_list
+                    if my_dp_rival_sub[1] != null
+                      option(selected=i[0]==my_dp_rival_sub[1], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="dp_rival3_sub")
+                  each i in rival_list
+                    if my_dp_rival_sub[2] != null
+                      option(selected=i[0]==my_dp_rival_sub[2], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="dp_rival4_sub")
+                  each i in rival_list
+                    if my_dp_rival_sub[3] != null
+                      option(selected=i[0]==my_dp_rival_sub[3], value=i[0]) #{i[1]} [#{i[2]}]
+                    else
+                      option(value=i[0]) #{i[1]} [#{i[2]}]
+            .control
+              .select
+                select(name="dp_rival5_sub")
+                  each i in rival_list
+                    if my_dp_rival_sub[4] != null
+                      option(selected=i[0]==my_dp_rival_sub[4], value=i[0]) #{i[1]} [#{i[2]}]
                     else
                       option(value=i[0]) #{i[1]} [#{i[2]}]
         .field

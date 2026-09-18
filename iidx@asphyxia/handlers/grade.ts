@@ -1,18 +1,37 @@
 import { pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
-import { IDtoRef, GetVersion } from "../util";
+import { IDtoRef, GetVersion, GetModel, GetCommand } from "../util";
 import { eisei_grade } from "../models/lightning";
 import { badge } from "../models/badge";
 
+export const grademethod: EPR = async (info, data, send) => {
+  const command = GetCommand(data);
+  switch (command[0]) {
+    case "raised":
+      return await graderaised(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny({ format: false, header: false });
+}
+
 export const graderaised: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const iidxid = Number($(data).attr().iidxid);
-  const refid = await IDtoRef(iidxid);
-  const gid = Number($(data).attr().gid);
-  const gtype = Number($(data).attr().gtype);
+  const command = GetCommand(data);
 
-  let cflg = Number($(data).attr().cflg);
-  let achi = Number($(data).attr().achi);
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
+
+  const gid = version < 13 ? Number(command[3]) : Number($(data).attr().gid);
+  const gtype = version < 13 ? Number(command[2]) : Number($(data).attr().gtype);
+
+  let cflg = version < 13 ? Number(command[4]) : Number($(data).attr().cflg);
+  if (version >= 23) cflg = Number($(data).attr().cstage);
+  let achi = version < 13 ? Number(command[5]) : Number($(data).attr().achi);
 
   let pcdata = await DB.FindOne<pcdata>(refid, { collection: "pcdata", version: version });
   let grade = await DB.FindOne<grade>(refid, {
@@ -21,8 +40,6 @@ export const graderaised: EPR = async (info, data, send) => {
     style: gtype,
     gradeId: gid,
   });
-
-  if (version >= 23) cflg = Number($(data).attr().cstage);
 
   const isTDJ = !_.isNil($(data).element("lightning_play_data")); // lightning model //
   const hasEiseiData = (!_.isNil($(data).element("eisei_data")) || !_.isNil($(data).element("eisei_grade_data")) || !_.isNil($(data).element("kiwami_data")));
@@ -62,6 +79,7 @@ export const graderaised: EPR = async (info, data, send) => {
         break;
       case 31:
       case 32:
+      case 33:
         eisei_clear_type = Number($(data).attr("kiwami_data").clear_type);
         eisei_grade_id = Number($(data).attr("kiwami_data").grade_id);
         eisei_grade_type = Number($(data).attr("kiwami_data").grade_type);
@@ -118,13 +136,20 @@ export const graderaised: EPR = async (info, data, send) => {
 
   let updatePcdata = false;
   let updateGrade = false;
-  if (_.isNil(pcdata)) return send.deny();
+  if (version > 9) {
+    if (version < 23) {
+      if (gtype == 0 && cflg == 4) updatePcdata = true;
+      else if (gtype == 1 && cflg == 3) updatePcdata = true;
+    } else {
+      if (cflg == 4) updatePcdata = true;
+    }
+  }
+
+  if (version > 9 && _.isNil(pcdata)) return send.deny();
   if (_.isNil(grade)) {
-    if (cflg == 4) {
+    if (updatePcdata) {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
       else pcdata.dgid = Math.max(gid, pcdata.dgid);
-
-      updatePcdata = true;
     }
 
     updateGrade = true;
@@ -136,11 +161,9 @@ export const graderaised: EPR = async (info, data, send) => {
       updateGrade = true;
     }
 
-    if (cflg == 4) {
+    if (updatePcdata) {
       if (gtype == 0) pcdata.sgid = Math.max(gid, pcdata.sgid);
       else pcdata.dgid = Math.max(gid, pcdata.dgid);
-
-      updatePcdata = true;
     }
   }
 
@@ -192,17 +215,31 @@ export const graderaised: EPR = async (info, data, send) => {
     );
   }
 
+  const maxStage = version < 23 ? (gtype == 0 ? 4 : 3) : 4;
   let gradeUser = await DB.Find<grade>(null, {
     collection: "grade",
     version: version,
     style: gtype,
     gradeId: gid,
-    maxStage: 4,
+    maxStage,
   });
 
-  return send.object(
-    K.ATTR({
+  let result = {
+    "@attr": {
       pnum: String(gradeUser.length),
-    })
-  );
+    }
+  }
+
+  let sendOption: EamuseSendOption = {};
+  if (version < 14) {
+    result["@attr"]["method"] = "graderaised";
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
+    }
+  }
+
+  return send.object(result, sendOption);
 };
