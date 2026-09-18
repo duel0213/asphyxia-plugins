@@ -10,6 +10,11 @@ pc(status="0")
       rival(spdp=rd.play_style id=rd.profile[2] id_str=rd.profile[3] djname=rd.profile[0] pid=rd.profile[1] sg=rd.pcdata[0] dg=rd.pcdata[1] sa=rd.pcdata[2] da=rd.pcdata[3])
   visitor(anum="10" snum="10" pnum="10" vs_flg="1")
   fcombo(__type="s16" __count="2") #{pcdata.fcombo[0]} #{pcdata.fcombo[1]}
+  if party != null
+    party(ev=party.ev dif=party.dif)
+      cflg(__type="bin") #{party.cflg}
+      //-puzzle
+        flg(dif="" cha="" __type="u32") [loop]
   lincle(comflg="1" flg1="-1" flg2="-1" flg3="-1" flg4="-1" flg5="-1" flg6="-1" flg7="-1" refcomp="1")
   reflec(tf="1" br="1" ssc="1" sr="1" wu="1" sg="1" tb="1")
   jubeat(jflg_0="-1" jflg_1="-1" jflg_2="-1" jflg_3="-1")

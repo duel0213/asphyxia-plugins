@@ -29,6 +29,9 @@ export interface custom {
   lift_cover: number;
   note_beam_size: number;
 
+  cn_color: number; // sparkle shower//
+  cn_size: number;
+
   // appendsettings
   rank_folder: boolean;
   clear_folder: boolean;
@@ -86,6 +89,9 @@ export const default_custom = {
   note_size: 0,
   lift_cover: 0,
   note_beam_size: 0,
+
+  cn_color: 0,
+  cn_size: 0,
 
   rank_folder: true,
   clear_folder: true,

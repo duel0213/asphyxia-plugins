@@ -88,26 +88,22 @@ export function NumArrayToString(bits: number[], numArray: number[]): string {
   return result;
 }
 
-export function GetVersion(info: EamuseInfo) {
-  let version = -1;
-  switch (info.model.slice(0, 3)) {
-    case "GLD": return 14;
-    case "HDD": return 15;
-    case "I00": return 16;
-    case "JDJ": return 17;
-    case "JDZ": return 18;
-    case "KDZ": return 19;
-    case "LDJ":
-      if (info.module.startsWith("IIDX")) {
-        version = Number(info.module.slice(4, 6));
-        if (_.isNaN(version) || version < 20) version = 20;
-      } else {
-        version = 20;
-      }
-      break;
+export function NumArrayToHex(bits: number[], numArray: number[]): string {
+  let packed = 0;
+  let totalBits = 0;
+
+  for (let i = 0; i < bits.length; i++) {
+    const radix = Math.pow(2, bits[i]);
+    const value = Math.trunc(numArray[i]);
+
+    packed = packed * radix + ((value % radix) + radix) % radix;
+    totalBits += bits[i];
   }
 
-  return version;
+  return packed
+    .toString(16)
+    .padStart(totalBits / 4, "0")
+    .toUpperCase();
 }
 
 export function appendSettingConverter(
@@ -245,6 +241,36 @@ export async function ReftoQPRO(refid: string, version: number) {
   return qpro_data;
 }
 
-export function GetWeekId(date: Date) {
-  return Math.ceil((((date.getTime() - Date.UTC(date.getFullYear(), 0, 1)) / 86400000) + new Date(date.getFullYear(), 0, 1).getDay()) / 7);
+export function GetVersion(info: EamuseInfo) {
+  let version = -1;
+  switch (info.model.slice(0, 3)) {
+    case "C02": return 9;
+    case "D01": return 10;
+    case "E11": return 11;
+    case "ECO": return 12;
+    case "FDD": return 13;
+    case "GLD": return 14;
+    case "HDD": return 15;
+    case "I00": return 16;
+    case "JDJ": return 17;
+    case "JDZ": return 18;
+    case "KDZ": return 19;
+    case "LDJ":
+      version = Number(info.module.slice(4, 6));
+      if (_.isNaN(version) || version == 0) version = 20;
+      break;
+  }
+
+  return version;
+}
+
+export function GetModel(info: EamuseInfo) {
+  return info.model.slice(0, 3);
+}
+
+export function GetCommand(data: any) {
+  let command = $(data).attr().command;
+  if (_.isNil(command)) return null;
+
+  return command.split(' ');
 }

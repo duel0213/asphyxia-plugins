@@ -1,15 +1,48 @@
-import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetWeekId } from "../util";
+import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetModel, GetCommand, NumArrayToHex } from "../util";
 import { score, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
 import { badge } from "../models/badge";
 import { activity_mybest } from "../models/activity";
+import { djtraining } from "../models/djtraining";
+import { rival } from "../models/rival";
+
+export const musicmethod: EPR = async (info, data, send) => {
+  const command = GetCommand(data);
+  switch (command[0]) {
+    case "getrank":
+      return await musicgetrank(info, data, send);
+    case "getralive":
+      return await musicgetralive(info, data, send);
+    case "appoint":
+      return await musicappoint(info, data, send);
+    case "reg":
+      return await musicreg(info, data, send);
+    case "crate":
+      return await musiccrate(info, data, send);
+
+    default:
+      break;
+  }
+
+  return send.deny({ format: false, header: false });
+}
 
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
-  const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  const command = GetCommand(data);
+
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
+
+  let cltype = null;
+  if (version < 11) cltype = Number(command[2]) == 120 ? 0 : 1;
+  else if (version < 13) cltype = Number(command[2]); // 0 -> SP, 1 -> DP //
+  else cltype = Number($(data).attr().cltype);
+
   const music_data: any = (
     await DB.Find(refid, {
       collection: "score",
@@ -24,14 +57,25 @@ export const musicgetrank: EPR = async (info, data, send) => {
     [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
+  let result = null;
   let m = [], top = [], b = [], t = [];
   let score_data: number[];
-  let indices, temp_mid = 0;
-  if (version == 14 || version == 15) {
-    let result = {
+  let indices, mapValue, temp_mid = 0;
+  let arrayType = version < 33 ? "s16" as const : "s32" as const;
+  if (version < 16) {
+    result = {
       r: [], // v - (-1, beginner/-2, tutorial) //
     };
-    indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+    
+    if (version < 12) {
+      indices = cltype === 0 ? [2, 1, 3] : [7, 6, 8];
+      mapValue = (x => indices.indexOf(x) + (cltype === 0 ? 0 : 3));
+    } else {
+      indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
+      mapValue = (x => x > 3 ? x - 3 : x - 1);
+    }
+    
+    const musicData: Record<string, string> = {};
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
 
@@ -43,23 +87,52 @@ export const musicgetrank: EPR = async (info, data, send) => {
       for (let a = 0; a < 3; a++) {
         if (res.esArray[indices[a]] == 0) continue;
         let rank_id = _.isNil(res.rArray) ? -1 : res.rArray[indices[a]];
+        if (version < 10) {
+          const data = NumArrayToHex([11, 3, 1, 1], [temp_mid, rank_id, res.cArray[indices[a]] > 1 ? 1 : 0, 0]);
+          if (mapValue(indices[a]) in musicData) {
+            musicData[mapValue(indices[a])] += data;
+          } else {
+            musicData[mapValue(indices[a])] = data;
+          }
+        }
+        else if (version < 12) {
+          const data = NumArrayToString(version < 11 ? [11, 3, 2, 14] : [11, 3, 3, 13], [temp_mid, res.cArray[indices[a]], rank_id, res.esArray[indices[a]]]);
+          if (mapValue(indices[a]) in musicData) {
+            musicData[mapValue(indices[a])] += data;
+          } else {
+            musicData[mapValue(indices[a])] = data;
+          }
+        } else {
+          const data = NumArrayToString([7, 4, 13, 3, 3], [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]]);
+          if (verMid[0] in musicData) {
+            musicData[verMid[0]] += data;
+          } else {
+            musicData[verMid[0]] = data;
+          }
+        }
+      }
 
-        result.r.push(
-          K.ITEM("str", NumArrayToString(
-            [7, 4, 13, 3, 3],
-            [verMid[1], a, res.esArray[indices[a]], rank_id, res.cArray[indices[a]]] // 4th element is rid (rank_id) //
-          ), { v: String(verMid[0]) })
+      if (version < 12) {
+        result.r = Object.entries(musicData).map(([clid, packed]) =>
+          K.ITEM("str", packed, { cl: String(clid) }),
+        );
+      }
+      else {
+        result.r = Object.entries(musicData).map(([version, packed]) =>
+          K.ITEM("str", packed, { v: String(version) }),
         );
       }
 
       // BEGINNER //
-      if (res.cArray[0] == 0) return;
-      result.r.push(
-        K.ITEM("str", NumArrayToString(
-          [12, 6],
-          [temp_mid, res.cArray[0]]
-        ), { v: String("-1") })
-      );
+      if (version > 12) {
+        if (res.cArray[0] == 0) return;
+        result.r.push(
+          K.ITEM("str", NumArrayToString(
+            [12, 6],
+            [temp_mid, res.cArray[0]]
+          ), { v: String("-1") })
+        );
+      }
     });
 
     // TUTORIAL //
@@ -77,7 +150,22 @@ export const musicgetrank: EPR = async (info, data, send) => {
       );
     });
 
-    return send.object(result);
+    let sendOption: EamuseSendOption = {};
+    if (version < 14) {
+      result = Object.assign(result, {
+        "@attr": {
+          method: "musicgetrank"
+        }
+      })
+      sendOption = {
+        rootName: GetModel(info),
+        status: version < 13 ? "SOK" : 0,
+        format: false,
+        header: false,
+      }
+    }
+
+    return send.object(result, sendOption);
   }
   else if (version < 20) {
     indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
@@ -90,16 +178,16 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
       if (version == 16) score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
       else score_data = [-1, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      m.push(K.ARRAY(arrayType, score_data));
 
-      m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [temp_mid, res.cArray[0]]));
     });
 
-    for (let i = 0; i < rival_refids.length; i++) {
-      if (_.isNaN(rival_refids[i][0])) continue;
+    for (let i = 0; i < 5; i++) {
+      if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
 
       const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
-        { collection: "score", }
+        { collection: "score" }
       );
 
       rival_score.forEach((res: score) => {
@@ -109,8 +197,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
         if (version == 16) score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i])];
         else score_data = [i, temp_mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-
-        m.push(K.ARRAY("s16", score_data));
+        m.push(K.ARRAY(arrayType, score_data));
       });
     }
 
@@ -131,17 +218,19 @@ export const musicgetrank: EPR = async (info, data, send) => {
     music_data.forEach((res: score) => {
       if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
 
+      if (res.mid < 0) return; // HOW //
+
       let mVersion = Math.floor(res.mid / 1000);
       if (mVersion > version) return;
 
       score_data = [-1, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+      m.push(K.ARRAY(arrayType, score_data));
 
-      m.push(K.ARRAY("s16", score_data));
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [res.mid, res.cArray[0]]));
     });
 
-    for (let i = 0; i < rival_refids.length; i++) {
-      if (_.isNaN(rival_refids[i][0])) continue;
+    for (let i = 0; i < 5; i++) {
+      if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
 
       const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
         { collection: "score", }
@@ -152,8 +241,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
         if (mVersion > version) return;
 
         score_data = [i, res.mid, ...indices.map(i => res.cArray[i]), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
-
-        m.push(K.ARRAY("s16", score_data));
+        m.push(K.ARRAY(arrayType, score_data));
       });
     }
 
@@ -165,6 +253,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
     if (score_top.length > 0) {
       if (version >= 27) {
         score_top.forEach((res) => {
+          if (res.mid < 0) return;
+
           let mVersion = Math.floor(res.mid / 1000);
           if (mVersion > version) return;
 
@@ -176,7 +266,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
               name3: res.names[3],
               name4: res.names[4],
             }),
-            detail: K.ARRAY("s16", [res.mid, ...res.clflgs, ...res.scores])
+            detail: K.ARRAY(arrayType, [res.mid, ...res.clflgs, ...res.scores])
           });
         });
       } else {
@@ -190,7 +280,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
               name1: res.names[2],
               name2: res.names[3],
             }),
-            detail: K.ARRAY("s16", [res.mid, ...indices.map(i => res.clflgs[i]), ...indices.map(i => res.scores[i])])
+            detail: K.ARRAY(arrayType, [res.mid, ...indices.map(i => res.clflgs[i]), ...indices.map(i => res.scores[i])])
           });
         });
       }
@@ -206,7 +296,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   else {
     return send.success();
   }
-
+  
   return send.object({
     m,
     b,
@@ -214,15 +304,8 @@ export const musicgetrank: EPR = async (info, data, send) => {
   });
 }
 
-export const musicgetralive: EPR = async (info, data, send) => {
-  const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
+export const musicgetranksub: EPR = async (info, data, send) => {
   const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
-  const music_data: any = (
-    await DB.Find(refid, {
-      collection: "score",
-    })
-  );
   const rival_refids = [
     [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
     [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
@@ -231,49 +314,127 @@ export const musicgetralive: EPR = async (info, data, send) => {
     [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
-  let result = {
-    d: []
-  };
-  let myRecord: Record<number, number[]> = {};
-  let rRecord: Record<number, string> = {};
-  let indices = cltype === 0 ? [1, 2, 3] : [6, 7, 8];
-
-  music_data.forEach((res: score) => {
-    if (_.isNil(res.cArray)) throw new Error("[music.getralive] There is unsupported entry in Database");
-
-    myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
-  });
+  let m = [];
+  let score_data: number[];
+  let indices = cltype === 0 ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
 
   for (let i = 0; i < rival_refids.length; i++) {
     if (_.isNaN(rival_refids[i][0])) continue;
 
-    const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
-      { collection: "score", }
-    );
+    for (let i = 0; i < 5; i++) {
+      if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
 
-    // [0~2] - NOPLAY/WIN/LOSE (ANOTHER/HYPER/NORMAL), //
-    // consider same score as LOSE, tho theres seems DRAW state but game render as LOSE //
-    // TODO:: figure out what other elements does //
+      const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
+        { collection: "score" }
+      );
+
+      rival_score.forEach((res: score) => {
+        for (let a = 0; a < indices.length; a++) {
+          if (res.rArray[indices[a]] == -1) continue;
+
+          // [index?, rno?, ...] //
+          score_data = [i, i, res.mid, indices[a], res.cArray[indices[a]], res.esArray[indices[a]], res.mArray[indices[a]]];
+          m.push(K.ARRAY("s32", score_data));
+        }
+      });
+    }
+  }
+
+  return send.object({
+    style: K.ATTR({ type: String(cltype) }),
+    m,
+  });
+}
+
+export const musicgetralive: EPR = async (info, data, send) => {
+  const version = GetVersion(info);
+  const command = GetCommand(data);
+  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const cltype = version < 13 ? Number(command[1]) : Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
+  
+  let rival_refids = [];
+  let music_data = [];
+  let myRecord: Record<number, number[]> = {};
+  let rRecord: Record<number, string> = {};
+  let indices = cltype == 0 ? [1, 2, 3] : [6, 7, 8];
+  if (version < 13) {
+    rival_refids = [
+      [Number(command[2]), await IDtoRef(Number(command[2]))],
+      [Number(command[3]), await IDtoRef(Number(command[3]))],
+      [Number(command[4]), await IDtoRef(Number(command[4]))],
+      [Number(command[5]), await IDtoRef(Number(command[5]))],
+      [Number(command[6]), await IDtoRef(Number(command[6]))],
+    ];
+  } else {
+    rival_refids = [
+      [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
+      [Number($(data).attr().iidxid1), await IDtoRef(Number($(data).attr().iidxid1))],
+      [Number($(data).attr().iidxid2), await IDtoRef(Number($(data).attr().iidxid2))],
+      [Number($(data).attr().iidxid3), await IDtoRef(Number($(data).attr().iidxid3))],
+      [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
+    ];
+
+    music_data = await DB.Find(refid, {
+      collection: "score",
+    });
+    music_data.forEach((res: score) => {
+      if (res.mid < 0) return;
+
+      if (_.isNil(res.cArray)) throw new Error("[music.getralive] There is unsupported entry in Database");
+      let mid = NewMidToOldMid(res.mid);
+      let verMid = OldMidToVerMid(mid);
+      if (verMid[0] > version) return;
+
+      myRecord[NewMidToOldMid(res.mid)] = [...res.esArray, ...res.cArray];
+    });
+  }
+
+  for (let i = 0; i < 5; i++) {
+    if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
+
+    const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
+      { collection: "score" }
+    );
     rival_score.forEach((res: score) => {
+      if (res.mid < 0) return;
+
       let mid = NewMidToOldMid(res.mid);
       let verMid = OldMidToVerMid(mid);
       if (verMid[0] > version) return;
 
       let scoreArray = Array<number>(15).fill(0);
-      if (!_.isNil(myRecord[mid])) {
+      let strResult = "";
+      if (version < 13) {
+        const masks = Array<number>(5).fill(0);
         for (let a = 0; a < 3; a++) {
-          let myExscore = myRecord[mid][indices[a]];
-          let rvExscore = res.esArray[indices[a]];
-          let mycFlg = myRecord[mid][indices[a] + 10];
-          let rvcFlg = res.cArray[indices[a]];
-
-          if (mycFlg == 0 || rvcFlg == 0) continue;
-          scoreArray[2 - a] = myExscore > rvExscore ? 1 : 2;
+          if (res.cArray[indices[a]] > 0) {
+            masks[i] |= 1 << a;
+          }
         }
-      }
 
-      let strResult = NumArrayToString([6], [verMid[1]]);
-      strResult += NumArrayToString(Array<number>(15).fill(2), scoreArray);
+        strResult = NumArrayToString(
+          [7, 2, 3, 3, 3, 3, 3],
+          [verMid[1], 0, masks[4], masks[3], masks[2], masks[1], masks[0]]
+        );
+      } else {
+        // [0~2] - NOPLAY/WIN/LOSE (ANOTHER/HYPER/NORMAL), //
+        // consider same score as LOSE, tho theres seems DRAW state but game render as LOSE //
+        // TODO:: figure out what other elements does //
+        if (!_.isNil(myRecord[mid])) {
+          for (let a = 0; a < 3; a++) {
+            let myExscore = myRecord[mid][indices[a]];
+            let rvExscore = res.esArray[indices[a]];
+            let mycFlg = myRecord[mid][indices[a] + 10];
+            let rvcFlg = res.cArray[indices[a]];
+
+            if (mycFlg == 0 || rvcFlg == 0) continue;
+            scoreArray[i * 3 + (2 - a)] = myExscore > rvExscore ? 1 : 2;
+          }
+        }
+
+        strResult = NumArrayToString([6], [verMid[1]]);
+        strResult += NumArrayToString(Array<number>(15).fill(2), scoreArray);
+      }
 
       if (verMid[0] in rRecord) {
         rRecord[verMid[0]] += strResult;
@@ -283,26 +444,46 @@ export const musicgetralive: EPR = async (info, data, send) => {
     });
   }
 
+  let result = {
+    d: []
+  };
+
   for (const key in rRecord) {
     result.d.push(
       K.ITEM("str", rRecord[key], { v: key })
     );
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = {};
+  if (version < 14) {
+    result = Object.assign(result, {
+      "@attr": {
+        method: "musicgetralive"
+      }
+    })
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
+    }
+  }
+
+  return send.object(result, sendOption);
 }
 
 export const musicappoint: EPR = async (info, data, send) => {
   const version = GetVersion(info);
+  const command = GetCommand(data);
 
   // clid, ctype, grd, iidxid, lv, mid, subtype //
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
-  const ctype = Number($(data).attr().ctype);
-  const subtype = Number($(data).attr().subtype);
-  let mid = Number($(data).attr().mid);
-  let clid = Number($(data).attr().clid);
+  const refid = version < 13 ? await IDtoRef(Number(command[5])) : await IDtoRef(Number($(data).attr().iidxid));
+  const ctype = version < 13 ? Number(command[3]) : Number($(data).attr().ctype);
+  const subtype = version < 13 ? Number(command[4]) : Number($(data).attr().subtype);
+  let mid = version < 13 ? Number(command[1]) : Number($(data).attr().mid);
+  let clid = version < 13 ? Number(command[2]) : Number($(data).attr().clid);
 
-  const mapping = [1, 2, 3, 6, 7, 8];
+  const mapping = version < 12 ? [2, 1, 3, 7, 6, 8] : [1, 2, 3, 6, 7, 8];
   if (version < 20) {
     mid = OldMidToNewMid(mid);
     clid = mapping[clid];
@@ -314,11 +495,14 @@ export const musicappoint: EPR = async (info, data, send) => {
   let result: any = {};
 
   // MINE //
-  const music_data: score | null = await DB.FindOne<score>(refid, {
-    collection: "score",
-    mid: mid,
-    [clid]: { $exists: true },
-  });
+  let music_data: score | null = null;
+  if (!_.isNil(refid)) {
+    music_data = await DB.FindOne<score>(refid, {
+      collection: "score",
+      mid: mid,
+      [clid]: { $exists: true },
+    });
+  }
 
   let mydata, option = 0, option2 = 0;
   if (!_.isNil(music_data)) {
@@ -329,8 +513,10 @@ export const musicappoint: EPR = async (info, data, send) => {
       }
     }
 
-    if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
-    else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
+    if (!_.isNil(music_data[clid])) { // can be null as RED doesn't send ghost data //
+      if (version < 16) mydata = K.ITEM("str", Buffer.from(music_data[clid], "base64").toString("hex").toUpperCase());
+      else mydata = K.ITEM("bin", Buffer.from(music_data[clid], "base64"));
+    }
   }
 
   /*** ctype
@@ -351,10 +537,11 @@ export const musicappoint: EPR = async (info, data, send) => {
    ***/
 
   // OTHERS //
-  let other_refid, other_musicdata: score | null, other_pcdata, other_profile, sdata = null;
-  if (!_.isNaN(subtype)) {
-    switch (ctype) {
-      case 1:
+  let other_refid, other_musicdata, other_pcdata, other_profile, sdata = null;
+  let other_musicdatas = [];
+  switch (ctype) {
+    case 1:
+      if (!_.isNaN(subtype)) {
         other_refid = await IDtoRef(subtype);
         other_profile = await ReftoProfile(other_refid);
         other_pcdata = await ReftoPcdata(other_refid, version);
@@ -363,38 +550,103 @@ export const musicappoint: EPR = async (info, data, send) => {
           mid: mid,
           [clid]: { $exists: true },
         });
-        if (_.isNaN(other_pcdata) || _.isNil(other_musicdata)) break;
+      }
+      break;
 
-        if (version < 16) {
-          sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
-            score: String(other_musicdata.esArray[clid]),
-            pid: String(other_profile[1]),
-            name: String(other_profile[0]),
-            riidxid: String(other_profile[2])
+    case 2: // ALL, STORE TOP //
+    case 10:
+      other_musicdatas = await DB.Find<score>(null, {
+        collection: "score",
+        mid: mid,
+        [clid]: { $exists: true },
+      });
+      break;
+
+    case 8: // RIVAL TOP - refer rival table rather than subtype parsing //
+      let rivals = await DB.Find<rival>(refid, {
+        collection: "rival",
+        play_style: ClidToPlaySide(clid) + 1,
+      });
+      if (rivals.length > 0) {
+        for (const rival of rivals) {
+          let rival_musicdata = await DB.FindOne<score>(rival.rival_refid, {
+            collection: "score",
+            mid: mid,
+            [clid]: { $exists: true },
           });
-        }
-        else {
-          sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
-            score: String(other_musicdata.esArray[clid]),
-            pid: String(other_profile[1]),
-            name: String(other_profile[0]),
-            riidxid: String(other_profile[2])
-          });
-        }
 
-        break;
+          if (!_.isNil(rival_musicdata)) other_musicdatas.push(rival_musicdata);
+        }
+      }
+      break;
 
-      default:
-        break;
+    default:
+      break;
+  }
+
+  if (other_musicdatas.length > 0) {
+    other_musicdatas.sort((a: score, b: score) => b.esArray[clid] - a.esArray[clid]);
+    other_musicdata = other_musicdatas[0];
+    other_profile = await ReftoProfile(other_musicdata.__refid);
+    other_pcdata = await ReftoPcdata(other_musicdata.__refid, version);
+  }
+
+  if (!_.isNil(other_musicdata) && !_.isNil(other_profile)) {
+    if (version < 16) {
+      if (!_.isNil(other_musicdata[clid])) {
+        sdata = K.ITEM("str", Buffer.from(other_musicdata[clid], "base64").toString("hex").toUpperCase(), {
+          score: String(other_musicdata.esArray[clid]),
+          pid: String(other_profile[1]),
+          name: String(other_profile[0]),
+          riidxid: String(other_profile[2])
+        });
+      } else {
+        if (version < 12) {
+          sdata = {
+            "@attr": {
+              score: other_musicdata.esArray[clid],
+              pid: other_profile[1],
+              name: other_profile[0],
+            }
+          }
+        }
+      }
+    }
+    else {
+      sdata = K.ITEM("bin", Buffer.from(other_musicdata[clid], "base64"), {
+        score: String(other_musicdata.esArray[clid]),
+        pid: String(other_profile[1]),
+        name: String(other_profile[0]),
+        riidxid: String(other_profile[2])
+      });
     }
   }
 
-  if (_.isNil(mydata) && _.isNil(sdata)) return send.success();
+  if (_.isNil(mydata) && _.isNil(sdata)) {
+    if (version < 14) {
+      return send.object({
+        "@attr": {
+          method: "musicappoint"
+        }
+      }, {
+        rootName: GetModel(info),
+        status: version < 13 ? "ENODATA" : 0,
+        format: false,
+        header: false,
+      });
+    }
+
+    return send.success();
+  }
 
   if (version >= 27) {
     let my_gauge_data = Buffer.alloc(0), other_gauge_data = Buffer.alloc(0);
-    if (!_.isNil(music_data[clid + 10])) my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
-
+    if (!_.isNil(music_data)) {
+      if (!_.isNil(music_data[clid + 10])) {
+        my_gauge_data = Buffer.from(music_data[clid + 10], "base64");
+      }
+    }
+    
     if (!_.isNil(sdata)) {
       if (_.isNil(other_musicdata.optArray)) { // migration //
         other_musicdata.optArray = Array<number>(10).fill(0);
@@ -441,13 +693,50 @@ export const musicappoint: EPR = async (info, data, send) => {
     if (!_.isNil(mydata) && !_.isNil(sdata)) result = { mydata, sdata };
   }
 
+  if (version < 14) {
+    if (_.isNil(mydata)) mydata = { "@content": "" };
+
+    if (version < 12) {
+      if (!_.isNil(sdata)) {
+        return send.object({
+          "@attr": {
+            method: "musicappoint"
+          },
+          data: sdata,
+        }, {
+          rootName: GetModel(info),
+          status: version < 13 ? "SOK" : 0,
+          format: false,
+          header: false,
+        });
+      }
+    }
+
+    return send.pugFile(`pug/${GetModel(info)}/musicappoint.pug`, {
+      mydata: mydata["@content"],
+      sdata: {
+        score: sdata["@attr"]["score"],
+        pid: sdata["@attr"]["pid"],
+        name: sdata["@attr"]["name"],
+        content: sdata["@content"],
+      }
+    }, {
+      format: false,
+      header: false,
+    });
+  }
+
   return send.object(result);
 }
 
 export const musicreg: EPR = async (info, data, send) => {
   const version = GetVersion(info);
-  const refid = await IDtoRef(Number($(data).attr().iidxid));
+  const command = GetCommand(data);
 
+  let refid = null;
+  if (version < 11) refid = command[1].split('|')[0];
+  else if (version < 13) refid = await IDtoRef(Number(command[1]));
+  else refid = await IDtoRef(Number($(data).attr().iidxid));
   const shop_data = await DB.FindOne<shop_data>({
     collection: "shop_data",
   });
@@ -455,20 +744,30 @@ export const musicreg: EPR = async (info, data, send) => {
     collection: "profile",
   });
 
+  const mid_indice = version < 12 ? 3 : 2;
+  const clid_indice = version < 12 ? 2 : 3;
+
   // wid, oppid, opname, opt, opt2, pside, nocnt, anum //
-  const pgnum = Number($(data).attr().pgnum);
-  const gnum = Number($(data).attr().gnum);
-  const mnum = Number($(data).attr().mnum);
-  const cflg = Number($(data).attr().cflg);
-  let mid = Number($(data).attr().mid);
-  let clid = Number($(data).attr().clid);
+  let mid = version < 13 ? Number(command[mid_indice]) : Number($(data).attr().mid);
+  let clid = version < 13 ? Number(command[clid_indice]) : Number($(data).attr().clid);
+  const pgnum = version < 13 ? Number(command[4]) : Number($(data).attr().pgnum);
+  const gnum = version < 13 ? Number(command[5]) : Number($(data).attr().gnum);
+  const mnum = version < 13 ? -1 : Number($(data).attr().mnum);
+  const cflg = version < 13 ? Number(command[7]) : Number($(data).attr().cflg);
   let exscore = (pgnum * 2 + gnum);
   let ghost = null, ghost_gauge = null; // Heroic Verse //
   let style = 0, option = 0, option_2 = 0, rid = -1;
 
+  if (version < 13) rid = Number(command[6]);
+  else if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
+  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
+  if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
+
+  if (mid < 0) return send.deny();
+
   // TODO:: Leggendaria until HEROIC VERSE has seperate music_id //
   // TODO:: SUPER FUTURE 2323 has seperate music_id //
-  const mapping = [1, 2, 3, 6, 7, 8];
+  const mapping = version < 12 ? [2, 1, 3, 7, 6, 8] : [1, 2, 3, 6, 7, 8];
   if (version == -1) return send.deny();
   else if (version < 20) {
     mid = OldMidToNewMid(mid);
@@ -497,12 +796,13 @@ export const musicreg: EPR = async (info, data, send) => {
   let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
   let update = 0;
 
-  if (!_.isNil($(data).attr().rid)) rid = Number($(data).attr().rid);
-  else if (!_.isNil($(data).attr().dj_level)) rid = Number($(data).attr().dj_level);
-  if (rid > -1) console.log(`[music.reg] rank_id : ${rid}`);
-
-  if (version < 16) ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
-  else ghost = $(data).buffer("ghost").toString("base64");
+  if (version == 12 || version == 13) {
+    ghost = Buffer.from($(data).obj["@content"], "hex").toString("base64");
+  } else if (version == 14 || version == 15) {
+    ghost = Buffer.from($(data).str("ghost"), "hex").toString("base64");
+  } else if (version > 15) {
+    ghost = $(data).buffer("ghost").toString("base64");
+  }
 
   if (version >= 27) {
     ghost_gauge = $(data).buffer("ghost_gauge").toString("base64");
@@ -735,6 +1035,41 @@ export const musicreg: EPR = async (info, data, send) => {
     );
   }
 
+  if (!_.isNil($(data).attr().djt_tier)) {
+    let tier = Number($(data).attr().djt_tier);
+    let part = Number($(data).attr().djt_part);
+    let midx = Number($(data).attr().djt_midx);
+
+    const djt_data: djtraining | null = await DB.FindOne<djtraining>(refid, {
+      collection: "djtraining",
+      version: version,
+      play_style: ClidToPlaySide(clid),
+
+      tier: tier,
+      part: part,
+      midx: midx,
+    });
+    let cflag = _.isNil(djt_data) ? cflg : Math.max(cflg, djt_data.cflg);
+
+    await DB.Upsert<djtraining>(
+      refid,
+      {
+        collection: "djtraining",
+        version: version,
+        play_style: ClidToPlaySide(clid),
+
+        tier: tier,
+        part: part,
+        midx: midx,
+      },
+      {
+        $set: {
+          cflg: cflag,
+        }
+      }
+    );
+  }
+
   let shop_rank = -1, shop_rank_data = [];
   let scores: any[][];
   scores = (
@@ -826,6 +1161,7 @@ export const musicreg: EPR = async (info, data, send) => {
       crate: String(crate),
       frate: String(frate),
       rankside: String(style),
+      bestScore: String(update),
     },
     ranklist: {
       "@attr": { total_user_num: String(shop_rank_data.length) },
@@ -834,7 +1170,18 @@ export const musicreg: EPR = async (info, data, send) => {
     shopdata: K.ATTR({ rank: String(shop_rank) }),
   }
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = {};
+  if (version < 14) {
+    result["@attr"]["method"] = "musicreg";
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
+    };
+  }
+
+  return send.object(result, sendOption);
 }
 
 export const musicbreg: EPR = async (info, data, send) => {
@@ -848,6 +1195,8 @@ export const musicbreg: EPR = async (info, data, send) => {
   let mid = Number($(data).attr().mid);
   let clid = 0; // SP BEGINNER //
   let exscore = (pgnum * 2 + gnum);
+
+  if (mid < 0) return send.deny();
 
   if (version < 20) mid = OldMidToNewMid(mid);
 
@@ -921,15 +1270,28 @@ export const musicbreg: EPR = async (info, data, send) => {
     }
   );
 
+  if (version < 14) {
+    return send.object({
+      "@attr": {
+        method: "musicbreg",
+      }
+    }, {
+      rootName: GetModel(info),
+      format: false,
+      header: false,
+    })
+  }
+
   return send.success();
 };
 
 export const musiccrate: EPR = async (info, data, send) => {
   const version = GetVersion(info);
+  const command = GetCommand(data);
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
-  const cltype = Number($(data).attr().cltype);
+  const cltype = version < 13 ? Number(command[1]) : Number($(data).attr().cltype);
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
@@ -938,6 +1300,7 @@ export const musiccrate: EPR = async (info, data, send) => {
   scores.forEach((res) => {
     let mVersion = Math.floor(res.mid / 1000);
     if (mVersion > version) return;
+    if (res.mid < 0) return;
 
     let totalArray = Array<number>(10).fill(0);
     let cFlgArray = Array<number>(10).fill(0);
@@ -974,17 +1337,26 @@ export const musiccrate: EPR = async (info, data, send) => {
       }
     }
 
-    let indices = [1, 2, 3, 6, 7, 8];
-    if (version == 14 || version == 15) {
-      let verMid = OldMidToVerMid(Number(key));
-
-      let str = cltype == 0 ?
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[1], cRate[2], cRate[3]])}ZZZZ` :
-        `${NumArrayToString([7, 7, 7, 7], [verMid[1], cRate[6], cRate[7], cRate[8]])}ZZZZ`;
-
-      cdata.push(
-        K.ITEM("str", str, { ver: String(verMid[0]) })
-      );
+    let indices = [1, 2, 3, 6, 7, 8], mapValue = null;
+    if (version < 16) {
+      indices = cltype == 0 ? [1, 2, 3] : [6, 7, 8];
+      if (version < 12) {
+        indices = cltype === 0 ? [2, 1, 3] : [7, 6, 8];
+        mapValue = (x => indices.indexOf(x) + (cltype === 0 ? 0 : 3));
+        for (let a = 0; a < indices.length; a++) {
+          cdata.push(
+            K.ITEM("str", NumArrayToString([11, 7], [Number(key), cRate[indices[a]]]), {
+              clid: String(mapValue(indices[a])),
+            }),
+          );
+        }
+      } else {
+        let verMid = OldMidToVerMid(Number(key));
+        let str = `${NumArrayToString([7, 7, 7, 7], [verMid[1], ...indices.map(i => cRate[i])])}ZZZZ`;
+        cdata.push(
+          K.ITEM("str", str, { ver: String(verMid[0]) })
+        );
+      }
     }
     else {
       let rateArray = version < 27 ? [...indices.map(i => cRate[i]), ...indices.map(i => fcRate[i])] : [...cRate, ...fcRate];
@@ -994,9 +1366,23 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   }
 
-  result = (version == 14 || version == 15) ? { cdata } : { c };
+  result = (version < 16) ? { cdata } : { c };
 
-  return send.object(result);
+  let sendOption: EamuseSendOption = {};
+  if (version < 14) {
+    result = {
+      "@attr": { method: "musiccrate" },
+      ...result
+    };
+    sendOption = {
+      rootName: GetModel(info),
+      status: version < 13 ? "SOK" : 0,
+      format: false,
+      header: false,
+    };
+  }
+
+  return send.object(result, sendOption);
 }
 
 // this is not valid response //

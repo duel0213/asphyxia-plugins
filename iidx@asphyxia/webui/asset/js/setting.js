@@ -31,7 +31,7 @@ $("#version").on("change", function () {
       $("#effect").val(data["custom"].effect);
       $("#bomb_size").val(data["custom"].bomb_size);
       $("#disable_hcn_color").prop("checked", data["custom"].disable_hcn_color);
-      $("#first_note_preview").val(data["custom"].first_note_preview);
+      $("#first_note_preview").prop("checked", Number(data["custom"].first_note_preview) === 1);
 
       if (data["custom"].note_size == undefined) $("#note_size").val(0);
       else $("#note_size").val(data["custom"].note_size);
@@ -39,6 +39,10 @@ $("#version").on("change", function () {
       else $("#lift_cover").val(data["custom"].lift_cover);
       if (data["custom"].note_beam_size == undefined) $("#note_beam_size").val(0);
       else $("#note_beam_size").val(data["custom"].note_beam_size);
+      if (data["custom"].cn_color == undefined) $("#cn_color").val(0);
+      else $("#cn_color").val(data["custom"].cn_color);
+      if (data["custom"].cn_size == undefined) $("#cn_size").val(0);
+      else $("#cn_size").val(data["custom"].cn_size);
 
       $("#rank_folder").prop("checked", data["custom"].rank_folder);
       $("#clear_folder").prop("checked", data["custom"].clear_folder);
@@ -68,9 +72,19 @@ $("#version").on("change", function () {
       if (data["lm_custom"] == null) {
         $("#lm_skin").val(0);
         $("#lm_bg").val(0);
+        $("#lm_bg_2").val(0);
+        $("#lm_entry_bg").val(0);
+        $("#lm_entry_bg_bright").val(0);
       } else {
         $("#lm_skin").val(data["lm_custom"].premium_skin);
         $("#lm_bg").val(data["lm_custom"].premium_bg);
+
+        if (data["lm_custom"].premium_bg_concent == undefined) $("#lm_bg_2").val(0);
+        else $("#lm_bg_2").val(data["lm_custom"].premium_bg_concent);
+        if (data["lm_custom"].entry_bg == undefined) $("#lm_entry_bg").val(0);
+        else $("#lm_entry_bg").val(data["lm_custom"].entry_bg);
+        if (data["lm_custom"].entry_bg_brightness == undefined) $("#lm_entry_bg_bright").val(0);
+        else $("#lm_entry_bg_bright").val(data["lm_custom"].entry_bg_brightness);
       }
     },
     error: function () {
