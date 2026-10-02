@@ -5037,7 +5037,7 @@ export const pcsave: EPR = async (info, data, send) => {
           },
           {
             $set: {
-              play_num: Number(vocaloEvt.attr().play_num),
+              play_num: Number(vocaloEvt.attr().event_play_num),
               last_select_music: Number(vocaloEvt.attr().last_select_music),
               point_get: Number(vocaloEvt.attr().point_get),
               point_use_0: Number(vocaloEvt.attr().point_use_0),

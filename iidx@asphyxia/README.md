@@ -204,4 +204,5 @@ Changelogs
 
 **v0.1.18a**
   - Fixed where unable to login (9th Style)
+  - Fixed where CYBER LOADER event data get saved incorrectly (Sparkle Shower)
   - Fixed where classic\_hispeed option doesn't get saved on WebUI
