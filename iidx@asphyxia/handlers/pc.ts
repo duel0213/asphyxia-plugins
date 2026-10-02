@@ -2212,7 +2212,7 @@ export const pcsave: EPR = async (info, data, send) => {
   const hasTowerData = !(_.isNil($(data).element("tower_data")));
   const hasSkinData = !(_.isNil($(data).element("skin_equip"))) || !(_.isNil($(data).element("pskin_equip")));
   const hasTDJSkinData = !(_.isNil($(data).element("tdjskin_equip"))) || !(_.isNil($(data).element("vskin_equip")));
-  const hasVisualSkinData = !(_.isNil($(data).element("vskin_customize_setting")));
+  const hasVisualSkinData = !(_.isNil($(data).element("vskin_setting")));
   const hasMusicFilter = !(_.isNil($(data).element("music_filter")));
   const hasBadgeData = !(_.isNil($(data).element("badge")));
   const hasActivityData = !(_.isNil($(data).element("activity_data")));
