@@ -34,6 +34,7 @@ export interface pcdata {
   help: number;
   fcombo: number[]; 
   ngrade: number; // BISTROVER //
+  mdetail: number; // ZINRAI //
   rtype: number; // Heroic Verse //
   naviflg: number; // Sparkle Shower //
   bgnasst: number;
@@ -100,6 +101,14 @@ export interface pcdata {
   movie_thumbnail: number; // Pinky Crush //
   s_laneobj_brignt: number; // Sparkle Shower //
   d_laneobj_brignt: number;
+  s_bpm_notice: number; // ZINRAI //
+  d_bpm_notice: number;
+  s_sd_adjust: number;
+  d_sd_adjust: number;
+  s_disp_area_fix: number;
+  d_disp_area_fix: number;
+  s_always_disp_num: number;
+  d_always_disp_num: number;
 
   secret_flg1: string[]; // secret (Heroic Verse) //
   secret_flg2: string[];
@@ -1859,6 +1868,141 @@ export const IIDX33_pcdata = {
   movie_thumbnail: 0,
   s_laneobj_brignt: 0,
   d_laneobj_brignt: 0,
+
+  secret_flg1: Array<string>(3).fill("-1"),
+  secret_flg2: Array<string>(3).fill("-1"),
+  secret_flg3: Array<string>(3).fill("-1"),
+  secret_flg4: Array<string>(3).fill("-1"),
+  secret_flg5: Array<string>(3).fill("-1"),
+
+  leggendaria_flg1: Array<string>(3).fill("-1"),
+  leggendaria_flg2: Array<string>(3).fill("-1"),
+
+  tourism_secret_flg1: Array<string>(3).fill("-1"),
+  tourism_secret_flg2: Array<string>(3).fill("-1"),
+
+  nr_spradar: Array<number>(6).fill(0),
+  nr_dpradar: Array<number>(6).fill(0),
+
+  st_enemy_damage: 0,
+  st_progress: 0,
+  st_total_point: 0,
+  st_enemy_defeat_flg: 0,
+  st_is_track_ticket: false,
+  st_sp_level: 0,
+  st_dp_level: 0,
+  st_sp_level_h: -1,
+  st_dp_level_h: -1,
+  st_sp_level_exh: -1,
+  st_dp_level_exh: -1,
+  st_sp_fluctuation: 0,
+  st_dp_fluctuation: 0,
+  st_mission_clear_num: 0,
+  st_sp_mplay: 0,
+  st_dp_mplay: 0,
+  st_tips_read_list: 0,
+
+  sgid: -1,
+  dgid: -1,
+
+  achi_lastweekly: 0,
+  achi_pack: 0,
+  achi_packcomp: 0,
+  achi_rivalcrush: 0,
+  achi_visitflg: 0,
+  achi_weeklynum: 0,
+
+  deller: 0,
+  orb: 0,
+  present_orb: 0,
+
+  event_play_num: 0,
+  event_last_select_id: 0,
+}
+
+export const IIDX34_pcdata = {
+  version: 34,
+
+  spnum: 0,
+  dpnum: 0,
+  sach: 0,
+  dach: 0,
+  mode: 0,
+  category: 0,
+  pmode: 0,
+  ngrade: 0,
+  mdetail: 0,
+  rtype: 0,
+  naviflg: 0,
+  bgnasst: 0,
+  player_kind: 0,
+  sp_opt: 0,
+  dp_opt: 0,
+  dp_opt2: 0,
+  gpos: 0,
+  s_sorttype: 0,
+  d_sorttype: 0,
+  s_pace: 0,
+  d_pace: 0,
+  s_gno: 0,
+  d_gno: 0,
+  s_sub_gno: 0,
+  d_sub_gno: 0,
+  s_gtype: 0,
+  d_gtype: 0,
+  s_sdlen: 0,
+  d_sdlen: 0,
+  s_sdtype: 0,
+  d_sdtype: 0,
+  s_timing: 0,
+  d_timing: 0,
+  s_notes: 0,
+  d_notes: 0,
+  s_judge: 0,
+  d_judge: 0,
+  s_judgeAdj: 0,
+  d_judgeAdj: 0,
+  s_hispeed: 0,
+  d_hispeed: 0,
+  s_liflen: 0,
+  d_liflen: 0,
+  s_disp_judge: 0,
+  d_disp_judge: 0,
+  s_opstyle: 0,
+  d_opstyle: 0,
+  s_graph_score: 0,
+  d_graph_score: 0,
+  s_auto_scrach: 0,
+  d_auto_scrach: 0,
+  s_gauge_disp: 0,
+  d_gauge_disp: 0,
+  s_lane_brignt: 0,
+  d_lane_brignt: 0,
+  s_camera_layout: 0,
+  d_camera_layout: 0,
+  s_ghost_score: 0,
+  d_ghost_score: 0,
+  s_tsujigiri_disp: 0,
+  d_tsujigiri_disp: 0,
+  s_auto_adjust: 0,
+  d_auto_adjust: 0,
+  s_timing_split: 0,
+  d_timing_split: 0,
+  s_visualization: 0,
+  d_visualization: 0,
+  s_classic_hispeed: 0,
+  d_classic_hispeed: 0,
+  movie_thumbnail: 0,
+  s_laneobj_brignt: 0,
+  d_laneobj_brignt: 0,
+  s_bpm_notice: 0,
+  d_bpm_notice: 0,
+  s_sd_adjust: 0,
+  d_sd_adjust: 0,
+  s_disp_area_fix: 0,
+  d_disp_area_fix: 0,
+  s_always_disp_num: 0,
+  d_always_disp_num: 0,
 
   secret_flg1: Array<string>(3).fill("-1"),
   secret_flg2: Array<string>(3).fill("-1"),

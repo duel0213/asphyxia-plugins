@@ -1,4 +1,4 @@
-﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister, pcmethod } from "./handlers/pc";
+﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister, pcmethod, pcbuymusicretryticket } from "./handlers/pc";
 import { shopgetname, shopsavename, shopgetconvention, shopsetconvention, shopmethod } from "./handlers/shop";
 import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive, musicgetranksub, musicmethod } from "./handlers/music";
 import { grademethod, graderaised } from "./handlers/grade";
@@ -50,6 +50,7 @@ export function register() {
     R.Route(`IIDX31${method}`, handler);
     R.Route(`IIDX32${method}`, handler);
     R.Route(`IIDX33${method}`, handler);
+    R.Route(`IIDX34${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);
@@ -64,6 +65,8 @@ export function register() {
   MultiRoute("pc.getLaneGachaTicket", pcgetlanegacha);
   MultiRoute("pc.drawLaneGacha", pcdrawlanegacha);
   MultiRoute("pc.consumeLaneGachaTicket", true);
+  MultiRoute("pc.buyMusicRetryTicket", pcbuymusicretryticket);
+  MultiRoute("pc.consumeMusicRetryTicket", true);
 
   MultiRoute("shop.getname", shopgetname);
   MultiRoute("shop.savename", shopsavename);

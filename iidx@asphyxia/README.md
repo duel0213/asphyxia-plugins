@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **v0.1.18a**
+Plugin Version: **STAGING [618201]**
 
 ---
 
@@ -30,6 +30,7 @@ Supported Versions
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
   - beatmaniaIIDX 33 Sparkle Shower (2026081900)
+  - beatmaniaIIDX 34 ZINRAI (2026091600)
 
 ---
 
@@ -193,7 +194,7 @@ Changelogs
     - Migration from (previous version) menu will not work
       - Existing card with no current version user data will treat as new card on registration but it will use existing profile data
     - New card cannot be registered (~ HAPPY SKY)
-      - Need to invoke new card registration to core.
+      - Need to invoke new card registration to core
     - 9th Style will use seperate user data database as its using raw blob
   - Added ALL/STORE/RIVAL TOP pacemaker support
   - Added basic save support of STORY mode (Resort Anthem)
@@ -207,3 +208,8 @@ Changelogs
   - Fixed where CYBER LOADER event data get saved incorrectly (Sparkle Shower)
   - Fixed where Entry background brightness option doesn't get saved (Sparkle Shower)
   - Fixed where classic\_hispeed option doesn't get saved on WebUI
+
+**STAGING**
+  - Added Initial support for RAIZIN
+  - Fixed where CLEAR RATE, FULL COMBO RATE displays 0% or 100%
+  - Random Lane Ticket now stores ticket on database rather than give 100 temporarily batches on login
