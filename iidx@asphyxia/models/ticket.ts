@@ -20,4 +20,6 @@ export interface retry_ticket {
   arrange_id2: number;
   option: number;
   option2: number;
+
+  expire_date?: number;
 }
