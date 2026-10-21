@@ -1842,7 +1842,10 @@ export const pcget: EPR = async (info, data, send) => {
       }
     }
 
-    const retry_ticket = await DB.Find<retry_ticket>(refid, { collection: "retry_ticket", version: version });
+    let retry_ticket = await DB.Find<retry_ticket>(refid, { collection: "retry_ticket", version: version });
+    for (let a = 0; a < retry_ticket.length; a++) {
+      retry_ticket[a].expire_date = Math.floor((Date.now() / 1000) + 604800); // set expire date 7 days from now //
+    }
     const retry_ticket_sp = retry_ticket.filter((res) => res.play_side == 0);
     const retry_ticket_dp = retry_ticket.filter((res) => res.play_side == 1);
 
@@ -5620,7 +5623,7 @@ export const pcgetlanegacha: EPR = async (info, data, send) => {
       K.ATTR({
         ticket_id: String(res.ticket_id),
         arrange_id: String(res.arrange_id),
-        expire_date: String(4102326000),
+        expire_date: String(Math.floor((Date.now() / 1000) + 604800)), // set expire date 7 days from now //
       })
     );
   });

@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [618201]**
+Plugin Version: **STAGING [537def]**
 
 ---
 
@@ -39,9 +39,10 @@ Features
   - SKILL ANALYZER
   - EVENT (Partial)
   - ARENA (LOCAL only)
-  - RANDOME LANE TICKET
+  - RANDOM LANE TICKET
   - FAVORITE/SONG SELECTION NOTES
   - ORIGINAL FILTER
+  - MUSIC RETRY TICKET
 
 ---
 
@@ -211,5 +212,5 @@ Changelogs
 
 **STAGING**
   - Added Initial support for RAIZIN
-  - Fixed where CLEAR RATE, FULL COMBO RATE displays 0% or 100%
+  - Fixed where CLEAR RATE, FULL COMBO RATE only displays 0% or 100%
   - Random Lane Ticket now stores ticket on database rather than give 100 temporarily batches on login
