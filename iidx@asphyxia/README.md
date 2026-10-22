@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [537def]**
+Plugin Version: **STAGING [5703bd]**
 
 ---
 
@@ -213,4 +213,5 @@ Changelogs
 **STAGING**
   - Added Initial support for RAIZIN
   - Fixed where CLEAR RATE, FULL COMBO RATE only displays 0% or 100%
+  - Fixed where Note Size, Note Beam Size, First Note Preview may display wrong data on WebUI
   - Random Lane Ticket now stores ticket on database rather than give 100 temporarily batches on login
