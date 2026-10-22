@@ -31,7 +31,7 @@ $("#version").on("change", function () {
       $("#effect").val(data["custom"].effect);
       $("#bomb_size").val(data["custom"].bomb_size);
       $("#disable_hcn_color").prop("checked", data["custom"].disable_hcn_color);
-      $("#first_note_preview").prop("checked", Number(data["custom"].first_note_preview) === 1);
+      $("#first_note_preview").val(data["custom"].first_note_preview);
       $("#djl_v").prop("checked", data["custom"].djl_v);
 
       if (data["custom"].note_size == undefined) $("#note_size").val(0);

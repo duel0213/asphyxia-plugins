@@ -1,10 +1,12 @@
 //DATA//
-  profile: DB.FindOne(refid, { collection: "profile" })
-  pcdata: DB.FindOne(refid, { collection: "pcdata" })
-  custom: DB.FindOne(refid, { collection: "custom" })
-  lm_custom: DB.FindOne(refid, { collection: "lightning_custom" })
-
+  profile: DB.FindOne(refid, { collection: 'profile' })
+  pcdatas: DB.Find(refid, { collection: 'pcdata' })
+  customs:  DB.Find(refid, { collection: 'custom' })
+  lm_customs: DB.Find(refid, { collection: 'lightning_custom' })
 -
+  const pcdata = (pcdatas || []).sort((a, b) => b.updatedAt - a.updatedAt)[0];
+  const custom = (customs || []).filter((data) => data.version == pcdata.version)[0];
+  const lm_custom = (lm_customs || []).filter((data) => data.version == pcdata.version)[0];
   const version = [
     10,
     11,
@@ -190,7 +192,8 @@ div
                   const note_size_types = [
                     {val: 0, name: 'Default'},
                     {val: 1, name: 'Short'},
-                    {val: 2, name: 'Very Short'}
+                    {val: 2, name: 'Very Short'},
+                    {val: 3, name: 'Large'},
                   ]
                 each item in note_size_types
                   option(value=item.val, selected=(custom.note_size == item.val)) #{item.name}
@@ -226,6 +229,7 @@ div
                 - 
                   const beam_sizes = [
                     {val: 0, name: 'Default'},
+                    {val: 1, name: 'Short'},
                     {val: 2, name: 'Very Short'},
                     {val: 3, name: 'Long'}
                   ]
@@ -1347,11 +1351,11 @@ div
         .field
           label.label Charge Note Size
           .control
-              input.input(type="number" name="cn_size", id="cn_size", value=(custom.cn_size || "0"))
+            input.input(type="number" name="cn_size", id="cn_size", value=(custom.cn_size || "0"))
         .field
           label.label Charge Note Color
           .control
-              input.input(type="number" name="cn_color", id="cn_color", value=(custom.cn_color || "0"))
+            input.input(type="number" name="cn_color", id="cn_color", value=(custom.cn_color || "0"))
         .field
           label.label Disable Music Preview
           .control
