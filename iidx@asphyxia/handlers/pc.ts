@@ -15,7 +15,7 @@ import { extra_favorite } from "../models/favorite";
 import { activity, activity_mybest } from "../models/activity";
 import { extra_boss } from "../models/extraboss";
 import { djtraining } from "../models/djtraining";
-import { retry_ticket, lane_ticket } from "../models/ticket";
+import { lane_ticket, retry_ticket } from "../models/ticket";
 
 export const pcmethod: EPR = async (info, data, send) => {
   const command = GetCommand(data);
