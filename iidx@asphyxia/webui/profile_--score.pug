@@ -1959,7 +1959,44 @@ script.
   };
 
 -
-  const diffNames = ["SP Beginner", "SP Normal", "SP Hyper", "SP Another", "SP Leggendaria", "DP Normal", "DP Hyper", "DP Another", "DP Leggendaria"];
+  const diffNames = [
+    "SP Beginner",     // 0: SP Beginner
+    "SP Normal",       // 1: SP Normal
+    "SP Hyper",        // 2: SP Hyper
+    "SP Another",      // 3: SP Another
+    "SP Leggendaria",  // 4: SP Leggendaria
+    null,              // 5: Reserved / unused DP slot
+    "DP Normal",       // 6: DP Normal
+    "DP Hyper",        // 7: DP Hyper
+    "DP Another",      // 8: DP Another
+    "DP Leggendaria"   // 9: DP Leggendaria
+  ];
+
+  const diffColors = [
+    "#7fff7f", // 0: SP Beginner
+    "#0000ff", // 1: SP Normal
+    "#ffa500", // 2: SP Hyper
+    "#ff0000", // 3: SP Another
+    "#fd067c", // 4: SP Leggendaria
+    null,      // 5: Reserved / unused DP slot
+    "#0000ff", // 6: DP Normal
+    "#ffa500", // 7: DP Hyper
+    "#ff0000", // 8: DP Another
+    "#fd067c"  // 9: DP Leggendaria
+  ];
+
+  const diffTextColors = [
+    "#000000", // SP Beginner
+    "#ffffff", // SP Normal
+    "#000000", // SP Hyper
+    "#ffffff", // SP Another
+    "#ffffff", // SP Leggendaria
+    null,      // 5: Reserved / unused DP slot
+    "#ffffff", // DP Normal
+    "#000000", // DP Hyper
+    "#ffffff", // DP Another
+    "#ffffff"  // DP Leggendaria
+  ];
   
   const getLamp = (val) => {
     if (val === 7) return "FULL COMBO";
@@ -1980,6 +2017,18 @@ div
           i.mdi.mdi-format-list-bulleted
         | Score List
       .field.is-grouped
+        .control
+          .buttons.has-addons
+            button#score-style-sp.score-style-button.button.is-small.is-primary(
+              type="button"
+              data-style="sp"
+              aria-pressed="true"
+            ) SP
+            button#score-style-dp.score-style-button.button.is-small(
+              type="button"
+              data-style="dp"
+              aria-pressed="false"
+            ) DP
         .control
           .select.is-small
             select(id="score-sort-filter")
@@ -2004,19 +2053,27 @@ div
             th BP
         tbody#score-table-body
           each i in score
-            - for (let d = 0; d < 9; d++) {
+            - for (let d = 0; d < 10; d++) {
               - let lamp = i.cArray[d];
               - let ex = i.esArray[d];
               - let miss = i.mArray[d];
               
-              - if (lamp > 0 || ex > 0 || miss > -1) {
+              - if (diffNames[d] !== null && (lamp > 0 || ex > 0 || miss > -1)) {
                 - const updateTime = Array.isArray(i.playTimeArray) && Number(i.playTimeArray[d]) > 0 ? Number(i.playTimeArray[d]) : 0;
-                tr(data-mid=i.mid data-updated=updateTime data-lamp=lamp data-ex=ex)
+                tr(
+                  data-mid=i.mid
+                  data-play-style=(d <= 4 ? "sp" : "dp")
+                  data-updated=updateTime
+                  data-lamp=lamp
+                  data-ex=ex
+                )
                   //- A space for the title instead of the ID
                   td.music-title(data-mid=i.mid) 
                     strong #{i.mid}
                   td
-                    span.tag.is-info.is-light #{diffNames[d]}
+                    span.tag(
+                      style=`background-color: ${diffColors[d]}; color: ${diffTextColors[d]}; font-weight: 600;`
+                    ) #{diffNames[d]}
                   td 
                     strong #{getLamp(lamp)}
                   td #{ex}
@@ -2046,17 +2103,26 @@ script.
   $(document).ready(function() {
     let currentScorePage = 1;
     let scorePageSize = 10;
+    let selectedScoreStyle = 'sp';
     // Cache music title text attributes for each row
     $('tbody tr').each(function() {
       const mid = String($(this).data('mid'));
       const title = (window.musicDB && window.musicDB[mid]) ? window.musicDB[mid] : mid;
       $(this).attr('data-title', title);
     });
-
-        function renderScorePage() {
-      const $rows = $('#score-table-body').find('tr');
-      const totalRows = $rows.length;
-      const totalPages = Math.max(1, Math.ceil(totalRows / scorePageSize));
+    function getFilteredScoreRows() {
+      return $('#score-table-body').find('tr').filter(function() {
+        return String($(this).data('play-style')) === selectedScoreStyle;
+      });
+    }
+    function renderScorePage() {
+      const $allRows = $('#score-table-body').find('tr');
+      const $filteredRows = getFilteredScoreRows();
+      const totalRows = $filteredRows.length;
+      const totalPages = Math.max(
+        1,
+        Math.ceil(totalRows / scorePageSize)
+      );
 
       if (currentScorePage > totalPages) {
         currentScorePage = totalPages;
@@ -2066,14 +2132,21 @@ script.
         currentScorePage = 1;
       }
 
-      const startIndex = (currentScorePage - 1) * scorePageSize;
-      const endIndex = startIndex + scorePageSize;
+      const startIndex =
+        (currentScorePage - 1) * scorePageSize;
 
-      $rows.hide();
-      $rows.slice(startIndex, endIndex).show();
+      const endIndex =
+        startIndex + scorePageSize;
+
+      $allRows.hide();
+
+      $filteredRows
+        .slice(startIndex, endIndex)
+        .show();
 
       $('#score-page-info').text(
-        'Page ' + currentScorePage + ' / ' + totalPages
+        'Page ' + currentScorePage +
+        ' / ' + totalPages
       );
 
       $('#score-page-prev').prop(
@@ -2132,6 +2205,22 @@ script.
       currentScorePage = 1;
       sortScoreTable($(this).val());
     });
+    $('.score-style-button').on('click', function() {
+      selectedScoreStyle =
+        String($(this).data('style'));
+
+      currentScorePage = 1;
+
+      $('.score-style-button')
+        .removeClass('is-primary')
+        .attr('aria-pressed', 'false');
+
+      $(this)
+        .addClass('is-primary')
+        .attr('aria-pressed', 'true');
+
+      renderScorePage();
+    });
         $('#score-page-size').on('change', function() {
       scorePageSize = Number($(this).val()) || 10;
       currentScorePage = 1;
@@ -2146,7 +2235,7 @@ script.
     });
 
     $('#score-page-next').on('click', function() {
-      const totalRows = $('#score-table-body').find('tr').length;
+      const totalRows = getFilteredScoreRows().length;
       const totalPages = Math.max(
         1,
         Math.ceil(totalRows / scorePageSize)
