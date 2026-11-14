@@ -220,4 +220,6 @@ Changelogs
   - Random Lane Ticket now stores ticket on database rather than give 100 temporarily batches on login
 
 **STAGING**
-  - Added Initial support for RAIZIN
+  - Added Initial support for ZINRAI
+  - Added option for save score of nosave request
+    - nosave scores will be send with `_ns` suffix

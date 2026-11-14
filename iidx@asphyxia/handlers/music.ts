@@ -1,5 +1,5 @@
 import { IDtoRef, GetVersion, OldMidToNewMid, NewMidToOldMid, ReftoProfile, ReftoPcdata, ClidToPlaySide, ReftoQPRO, NumArrayToString, OldMidToVerMid, GetModel, GetCommand, NumArrayToHex, LampOut, LampIn } from "../util";
-import { score, score_top } from "../models/score";
+import { score, score_ns, score_top } from "../models/score";
 import { profile } from "../models/profile";
 import { shop_data } from "../models/shop";
 import { tutorial } from "../models/tutorial";
@@ -33,6 +33,7 @@ export const musicmethod: EPR = async (info, data, send) => {
 export const musicgetrank: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
+  const saveNoSave = (U.GetConfig("SaveNoSave") && version > 26);
 
   let refid = null;
   if (version < 11) refid = command[1].split('|')[0];
@@ -49,6 +50,12 @@ export const musicgetrank: EPR = async (info, data, send) => {
       collection: "score",
     })
   );
+  let music_data_ns = null;
+  if (saveNoSave) {
+    music_data_ns = await DB.Find(refid, {
+      collection: "score_ns",
+    })
+  }
 
   const rival_refids = [
     [Number($(data).attr().iidxid0), await IDtoRef(Number($(data).attr().iidxid0))],
@@ -59,7 +66,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
   ];
 
   let result = null;
-  let m = [], top = [], b = [], t = [];
+  let m = [], m_ns = [], top = [], b = [], b_ns = [], t = [];
   let score_data: number[];
   let indices, mapValue, temp_mid = 0;
   let arrayType = version < 33 ? "s16" as const : "s32" as const;
@@ -230,20 +237,51 @@ export const musicgetrank: EPR = async (info, data, send) => {
       if (res.cArray[0] != 0) b.push(K.ARRAY("u16", [res.mid, LampOut(version, res.cArray[0])]));
     });
 
+    if (saveNoSave) {
+      music_data_ns.forEach((res: score_ns) => {
+        if (_.isNil(res.cArray)) throw new Error("[music.getrank] There is unsupported entry in Database");
+
+        if (res.mid < 0) return; // HOW //
+
+        let mVersion = Math.floor(res.mid / 1000);
+        if (mVersion > version) return;
+
+        score_data = [-1, res.mid, ...indices.map(i => LampOut(version, res.cArray[i])), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+        m_ns.push(K.ARRAY(arrayType, score_data));
+
+        if (res.cArray[0] != 0) b_ns.push(K.ARRAY("u16", [res.mid, LampOut(version, res.cArray[0])]));
+      });
+    }
+
     for (let i = 0; i < 5; i++) {
+      // rival score //
       if (_.isNaN(rival_refids[i][0]) || _.isNil(rival_refids[i][0])) continue;
 
       const rival_score = await DB.Find<score>(String(rival_refids[i][1]),
         { collection: "score", }
       );
 
-      rival_score.forEach((res: score) => { // rival score //
+      rival_score.forEach((res: score) => {
         let mVersion = Math.floor(res.mid / 1000);
         if (mVersion > version) return;
 
         score_data = [i, res.mid, ...indices.map(i => LampOut(version, res.cArray[i])), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
         m.push(K.ARRAY(arrayType, score_data));
       });
+
+      if (saveNoSave) {
+        const rival_score_ns = await DB.Find<score_ns>(String(rival_refids[i][1]),
+          { collection: "score_ns", }
+        );
+
+        rival_score_ns.forEach((res: score_ns) => {
+          let mVersion = Math.floor(res.mid / 1000);
+          if (mVersion > version) return;
+
+          score_data = [i, res.mid, ...indices.map(i => LampOut(version, res.cArray[i])), ...indices.map(i => res.esArray[i]), ...indices.map(i => res.mArray[i])];
+          m_ns.push(K.ARRAY(arrayType, score_data));
+        });
+      }
     }
 
     const score_top = await DB.Find<score_top>({
@@ -295,12 +333,21 @@ export const musicgetrank: EPR = async (info, data, send) => {
       }
     }
 
-    return send.object({
+    let result = {
       style: K.ATTR({ type: String(cltype) }),
       m,
       b,
       top,
-    });
+    }
+
+    if (saveNoSave) {
+      result = Object.assign(result, {
+        m_ns,
+        b_ns,
+      });
+    }
+
+    return send.object(result);
   }
   else {
     return send.success();
@@ -315,6 +362,7 @@ export const musicgetrank: EPR = async (info, data, send) => {
 
 export const musicgetranksub: EPR = async (info, data, send) => {
   const version = GetVersion(info);
+  const saveNoSave = (U.GetConfig("SaveNoSave") && version > 26);
 
   const cltype = Number($(data).attr().cltype); // 0 -> SP, 1 -> DP //
   const rival_refids = [
@@ -325,7 +373,7 @@ export const musicgetranksub: EPR = async (info, data, send) => {
     [Number($(data).attr().iidxid4), await IDtoRef(Number($(data).attr().iidxid4))],
   ];
 
-  let m = [];
+  let m = [], m_ns = [];
   let score_data: number[];
   let indices = cltype === 0 ? [0, 1, 2, 3, 4] : [5, 6, 7, 8, 9];
 
@@ -343,18 +391,40 @@ export const musicgetranksub: EPR = async (info, data, send) => {
         for (let a = 0; a < indices.length; a++) {
           if (res.rArray[indices[a]] == -1) continue;
 
-          // [index?, rno?, ...] //
           score_data = [i, i, res.mid, indices[a], LampOut(version, res.cArray[indices[a]]), res.esArray[indices[a]], res.mArray[indices[a]]];
           m.push(K.ARRAY("s32", score_data));
         }
       });
+
+      if (saveNoSave) {
+        const rival_score_ns = await DB.Find<score_ns>(String(rival_refids[i][1]),
+          { collection: "score_ns", }
+        );
+
+        rival_score_ns.forEach((res: score_ns) => {
+          for (let a = 0; a < indices.length; a++) {
+            if (res.rArray[indices[a]] == -1) continue;
+
+            score_data = [i, i, res.mid, indices[a], LampOut(version, res.cArray[indices[a]]), res.esArray[indices[a]], res.mArray[indices[a]]];
+            m_ns.push(K.ARRAY("s32", score_data));
+          }
+        });
+      }
     }
   }
 
-  return send.object({
+  let result = {
     style: K.ATTR({ type: String(cltype) }),
     m,
-  });
+  }
+
+  if (saveNoSave) {
+    result = Object.assign(result, {
+      m_ns
+    });
+  }
+
+  return send.object(result);
 }
 
 export const musicgetralive: EPR = async (info, data, send) => {
@@ -1330,19 +1400,168 @@ export const musicbreg: EPR = async (info, data, send) => {
   return send.success();
 };
 
+export const musicnosave: EPR = async (info, data, send) => {
+  if (!U.GetConfig("SaveNoSave")) return send.deny();
+
+  const version = GetVersion(info); // 27+ //
+  if (version < 27) return send.deny();
+
+  const refid = await IDtoRef(Number($(data).str("iidx_id")));
+
+  const mid = Number($(data).number("music_id"));
+  let clid = Number($(data).number("class_id"));
+  const pgnum = Number($(data).attr("music_play_log").pgreat_num);
+  const gnum = Number($(data).attr("music_play_log").great_num);
+  const mnum = Number($(data).attr("music_play_log").miss_num);
+  const cflg = LampIn(version, Number($(data).attr("music_play_log").clear_flg));
+  const exscore = Number($(data).attr("music_play_log").ex_score);
+  let ghost = $(data).element("music_play_log").buffer("ghost").toString("base64");
+  let ghost_gauge = $(data).element("music_play_log").buffer("ghost_gauge").toString("base64");
+  const option = Number($(data).attr("music_play_log").option1);
+  const option_2 = Number($(data).attr("music_play_log").option2);
+  const rid = Number($(data).attr("music_play_log").dj_level);
+
+  if (rid > -1) console.log(`[music.nosave] rank_id : ${rid}`);
+  if (mid < 0) return send.deny();
+  if (version == -1) return send.deny();
+
+  const music_data: score_ns | null = await DB.FindOne<score_ns>(refid, {
+    collection: "score_ns",
+    mid: mid,
+  });
+
+  let pgArray = Array<number>(10).fill(0); // PGREAT //
+  let gArray = Array<number>(10).fill(0); // GREAT //
+  let mArray = Array<number>(10).fill(-1); // MISS //
+  let cArray = Array<number>(10).fill(0); // CLEAR FLAGS //
+  let rArray = Array<number>(10).fill(-1); // RANK ID //
+  let esArray = Array<number>(10).fill(0); // EXSCORE //
+  let optArray = Array<number>(10).fill(0); // USED OPTION (CastHour) //
+  let opt2Array = Array<number>(10).fill(0); // USED OPTION (CastHour) //
+  let playTimeArray = Array<number>(10).fill(0); // LAST PLAYED TIME BY DIFFICULTY //
+  let update = 0;
+
+  if (_.isNil(music_data)) {
+    pgArray[clid] = pgnum;
+    gArray[clid] = gnum;
+    mArray[clid] = mnum;
+    cArray[clid] = cflg;
+    rArray[clid] = rid;
+    esArray[clid] = exscore;
+    optArray[clid] = option;
+    opt2Array[clid] = option_2;
+  } else {
+    pgArray = music_data.pgArray;
+    gArray = music_data.gArray;
+    mArray = music_data.mArray;
+    cArray = music_data.cArray;
+    esArray = music_data.esArray;
+    optArray = music_data.optArray;
+    opt2Array = music_data.opt2Array;
+    rArray = music_data.rArray;
+    playTimeArray = music_data.playTimeArray;
+
+    const pExscore = esArray[clid];
+    if (exscore > pExscore) {
+      pgArray[clid] = pgnum;
+      gArray[clid] = gnum;
+      rArray[clid] = rid;
+      esArray[clid] = exscore;
+      optArray[clid] = option;
+      opt2Array[clid] = option_2;
+      update = 1;
+    } else {
+      ghost = music_data[clid];
+      if (version >= 27) ghost_gauge = music_data[clid + 10];
+    }
+
+    if (mnum == -1) mArray[clid] = Math.max(mArray[clid], mnum); // this seems asking for not updating miss count //
+    else mArray[clid] = mArray[clid] == -1 ? mnum : Math.min(mArray[clid], mnum);
+    cArray[clid] = Math.max(cArray[clid], cflg);
+  }
+
+  playTimeArray[clid] = Date.now();
+
+  await DB.Upsert<score_ns>(
+    refid,
+    {
+      collection: "score_ns",
+      mid: mid,
+    },
+    {
+      $set: {
+        pgArray,
+        gArray,
+        mArray,
+        cArray,
+        rArray,
+        esArray,
+        optArray,
+        opt2Array,
+        playTimeArray,
+
+        [clid]: ghost,
+        [clid + 10]: ghost_gauge,
+      }
+    }
+  );
+
+  return send.success();
+}
+
 export const musiccrate: EPR = async (info, data, send) => {
   const version = GetVersion(info);
   const command = GetCommand(data);
+  const saveNoSave = (U.GetConfig("SaveNoSave") && version > 26);
+
   const scores = await DB.Find<score>(null, {
     collection: "score",
   });
   const cltype = version < 13 ? Number(command[1]) : (_.isNil($(data).attr().cltype) ? 0 : Number($(data).attr().cltype));
+  const proc = version >= 34 ? Number($(data).attr().proc) : -1;
 
   let cFlgs: Record<number, number[]> = {},
     fcFlgs: Record<number, number[]> = {},
     hcFlgs: Record<number, number[]> = {},
     ehcFlgs: Record<number, number[]> = {},
     totalFlgs: Record<number, number[]> = {};
+
+  let scores_ns = null;
+  let cFlgs_ns: Record<number, number[]> = {},
+    fcFlgs_ns: Record<number, number[]> = {},
+    hcFlgs_ns: Record<number, number[]> = {},
+    ehcFlgs_ns: Record<number, number[]> = {},
+    totalFlgs_ns: Record<number, number[]> = {};
+  if (saveNoSave) {
+    scores_ns = await DB.Find<score_ns>(null, {
+      collection: "score_ns",
+    });
+    scores_ns.forEach((res) => {
+      if (_.isNil(res.cArray)) throw new Error("[music.crate] There is unsupported entry in Database");
+
+      let mVersion = Math.floor(res.mid / 1000);
+      if (mVersion > version) return;
+      if (res.mid < 0) return;
+
+      if (_.isNil(totalFlgs_ns[res.mid])) {
+        totalFlgs_ns[res.mid] = Array<number>(10).fill(0);
+        cFlgs_ns[res.mid] = Array<number>(10).fill(0);
+        fcFlgs_ns[res.mid] = Array<number>(10).fill(0);
+        hcFlgs_ns[res.mid] = Array<number>(10).fill(0);
+        ehcFlgs_ns[res.mid] = Array<number>(10).fill(0);
+      }
+
+      for (let a = 0; a < 10; a++) {
+        const cflg = LampOut(version, res.cArray[a]);
+        if (cflg > lamp.NO_PLAY) totalFlgs_ns[res.mid][a] += 1;
+
+        if (cflg > lamp.FAILED) cFlgs_ns[res.mid][a] += 1;
+        if (cflg > lamp.CLEAR) hcFlgs_ns[res.mid][a] += 1; // not sure this is correct implementation but for now if user cleared with EXH gauge, H gauge clear rate also goes up and so on //
+        if (cflg > lamp.HARD_CLEAR) ehcFlgs_ns[res.mid][a] += 1;
+        if (cflg > lamp.EX_HARD_CLEAR) fcFlgs_ns[res.mid][a] += 1;
+      }
+    });
+  }
 
   scores.forEach((res) => {
     if (_.isNil(res.cArray)) throw new Error("[music.crate] There is unsupported entry in Database");
@@ -1371,7 +1590,8 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   });
 
-  let result = {}, c = [], cdata = [], h = [];
+  let result = {}, c = [], cdata = [], h = [],
+    c_ns = [], h_ns = [];
   const rate = version > 23 ? 1000 : 100;
   for (const key in totalFlgs) {
     let cRate = version < 24 ? Array<number>(10).fill(0) : Array<number>(10).fill(-1);
@@ -1424,12 +1644,54 @@ export const musiccrate: EPR = async (info, data, send) => {
     }
   }
 
+  if (saveNoSave) {
+    for (const key in totalFlgs_ns) {
+      let cRate = version < 24 ? Array<number>(10).fill(0) : Array<number>(10).fill(-1);
+      let fcRate = version < 24 ? Array<number>(10).fill(0) : Array<number>(10).fill(-1);
+      let hcRate = version < 24 ? Array<number>(10).fill(0) : Array<number>(10).fill(-1);
+      let ehcRate = version < 24 ? Array<number>(10).fill(0) : Array<number>(10).fill(-1);
+
+      for (let a = 0; a < 10; a++) {
+        if (totalFlgs_ns[key][a] == 0) continue;
+
+        cRate[a] = Math.round((cFlgs_ns[key][a] / totalFlgs_ns[key][a]) * rate);
+        fcRate[a] = Math.round((fcFlgs_ns[key][a] / totalFlgs_ns[key][a]) * rate);
+
+        if (version >= 34) {
+          hcRate[a] = Math.round((hcFlgs_ns[key][a] / totalFlgs_ns[key][a]) * rate);
+          ehcRate[a] = Math.round((ehcFlgs_ns[key][a] / totalFlgs_ns[key][a]) * rate);
+        }
+      }
+
+      let rateArray = [...cRate, ...fcRate];
+      let rateResult = K.ARRAY("s32", rateArray, { mid: key });
+
+      if (version >= 34) {
+        h_ns.push(K.ARRAY("s32", [...hcRate, ...ehcRate], { mid: key }));
+      }
+
+      c_ns.push(rateResult);
+    }
+  }
+
   result = (version < 16) ? { cdata } : { c };
+  if (saveNoSave) {
+    result = Object.assign(result, {
+      c_ns
+    });
+  }
+
   if (version >= 34) {
     result = Object.assign(result, {
-      "@attr": { expire: "300", proc: $(data).attr().proc }, // it seems asking for c/fc then h/exh rates but lets just send both at same time with proc echo //
+      "@attr": { expire: "300", proc: String(proc) }, // it seems asking for c/fc then h/exh rates but lets just send both at same time with proc echo //
       h
     });
+
+    if (saveNoSave) {
+      result = Object.assign(result, {
+        h_ns
+      });
+    }
   }
 
   let sendOption: EamuseSendOption = {};

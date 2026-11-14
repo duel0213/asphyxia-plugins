@@ -26,6 +26,23 @@ export interface score_top {
   clflgs: number[];
 }
 
+export interface score_ns {
+  collection: "score_ns";
+
+  mid: number;
+
+  pgArray: number[];
+  gArray: number[];
+  mArray: number[];
+  cArray: number[];
+  rArray: number[];
+  esArray: number[];
+
+  optArray: number[];
+  opt2Array: number[];
+  playTimeArray?: number[];
+}
+
 export interface old_score {
   music_id: number;
 

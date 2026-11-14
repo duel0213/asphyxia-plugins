@@ -1,6 +1,6 @@
 ﻿import { pccommon, pcreg, pcget, pcgetname, pctakeover, pcvisit, pcsave, pcoldget, pcgetlanegacha, pcdrawlanegacha, pcshopregister, pcmethod, pcbuymusicretryticket } from "./handlers/pc";
 import { shopgetname, shopsavename, shopgetconvention, shopsetconvention, shopmethod } from "./handlers/shop";
-import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive, musicgetranksub, musicmethod } from "./handlers/music";
+import { musicreg, musicgetrank, musicappoint, musicarenacpu, musiccrate, musicbreg, musicgetralive, musicgetranksub, musicmethod, musicnosave } from "./handlers/music";
 import { grademethod, graderaised } from "./handlers/grade";
 import { gssysteminfo } from "./handlers/gamesystem";
 import { updateRivalSettings, updateCustomSettings, importScoreData, exportScoreData } from "./handlers/webui";
@@ -80,6 +80,7 @@ export function register() {
   MultiRoute("music.appoint", musicappoint);
   MultiRoute("music.reg", musicreg);
   MultiRoute("music.breg", musicbreg);
+  MultiRoute("music.nosave", musicnosave);
   MultiRoute("music.arenaCPU", musicarenacpu);
 
   MultiRoute("grade.raised", graderaised);
@@ -193,6 +194,12 @@ export function register() {
     name: "ARENA Phase",
     type: "integer",
     default: 2, // ADVERTISE //
+  });
+  R.Config("SaveNoSave", {
+    name: "Save nosave",
+    desc: "Save music.nosave score", // maybe useful for DOUBLE BATTLE score //
+    type: "boolean",
+    default: false,
   });
   // BISTROVER ~ (common) //
   R.Config("MovieUpload", {
