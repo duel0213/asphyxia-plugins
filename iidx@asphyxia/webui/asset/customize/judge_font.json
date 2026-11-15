@@ -1,0 +1,88 @@
+﻿{
+  "default": [
+    {
+      "val": 0,
+      "name": "Default"
+    },
+    {
+      "val": 1,
+      "name": "デジタル (digital)"
+    },
+    {
+      "val": 2,
+      "name": "スマート (smart)"
+    },
+    {
+      "val": 3,
+      "name": "メタリックブルー (metallic blue)"
+    },
+    {
+      "val": 4,
+      "name": "テクノ (techno)"
+    },
+    {
+      "val": 5,
+      "name": "ワイヤー (wire)"
+    },
+    {
+      "val": 6,
+      "name": "ABYSS"
+    },
+    {
+      "val": 7,
+      "name": "SPADA"
+    },
+    {
+      "val": 8,
+      "name": "ANCIENT"
+    },
+    {
+      "val": 9,
+      "name": "オンリーワンジャッジ (only one judge)"
+    },
+    {
+      "val": 10,
+      "name": "電光掲示板風 (dot matrix)"
+    },
+    {
+      "val": 11,
+      "name": "SINOBUZ"
+    },
+    {
+      "val": 12,
+      "name": "セグメント (segment)"
+    },
+    {
+      "val": 13,
+      "name": "Rootage"
+    },
+    {
+      "val": 14,
+      "name": "HEROIC VERSE"
+    },
+    {
+      "val": 15,
+      "name": "BISTROVER JUDGE"
+    },
+    {
+      "val": 16,
+      "name": "CastHour"
+    },
+    {
+      "val": 17,
+      "name": "RESIDENT"
+    },
+    {
+      "val": 18,
+      "name": "EPOLIS"
+    },
+    {
+      "val": 19,
+      "name": "Pinky Crush"
+    },
+    {
+      "val": 20,
+      "name": "Sparkle Shower"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+﻿{
+  "default": [
+    {
+      "val": 0,
+      "name": "Default"
+    },
+    {
+      "val": 1,
+      "name": "オレンジ (orange)"
+    },
+    {
+      "val": 2,
+      "name": "ピンク (pink)"
+    },
+    {
+      "val": 3,
+      "name": "モノクロ (monochrome)"
+    },
+    {
+      "val": 4,
+      "name": "ライトニング (lightning)"
+    },
+    {
+      "val": 5,
+      "name": "オンリーワンビーム (only one beam)"
+    },
+    {
+      "val": 6,
+      "name": "コピュライト (copula-light)"
+    },
+    {
+      "val": 7,
+      "name": "CBビーム (CB Beam)"
+    },
+    {
+      "val": 8,
+      "name": "HEROIC VERSE"
+    },
+    {
+      "val": 9,
+      "name": "BISTROVER BURNER"
+    },
+    {
+      "val": 10,
+      "name": "フレネルビーム (Fresnel beam)"
+    },
+    {
+      "val": 11,
+      "name": "RESIDENT"
+    },
+    {
+      "val": 12,
+      "name": "EPOLIS"
+    },
+    {
+      "val": 13,
+      "name": "Pinky Crush"
+    },
+    {
+      "val": 14,
+      "name": "Sparkle Shower"
+    }
+  ]
+}

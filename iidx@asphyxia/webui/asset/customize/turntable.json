@@ -1,0 +1,188 @@
+﻿{
+  "default": [
+    {
+      "val": 0,
+      "name": "Default"
+    },
+    {
+      "val": 1,
+      "name": "Tran"
+    },
+    {
+      "val": 2,
+      "name": "JOJO"
+    },
+    {
+      "val": 3,
+      "name": "delta"
+    },
+    {
+      "val": 4,
+      "name": "orange disc"
+    },
+    {
+      "val": 5,
+      "name": "DistorteD"
+    },
+    {
+      "val": 6,
+      "name": "GOLD"
+    },
+    {
+      "val": 7,
+      "name": "DJ TROOPERS"
+    },
+    {
+      "val": 8,
+      "name": "EMPRESS"
+    },
+    {
+      "val": 9,
+      "name": "SIRIUS"
+    },
+    {
+      "val": 10,
+      "name": "Resort Anthem"
+    },
+    {
+      "val": 11,
+      "name": "Lincle"
+    },
+    {
+      "val": 12,
+      "name": "tricoro"
+    },
+    {
+      "val": 13,
+      "name": "SPADA"
+    },
+    {
+      "val": 14,
+      "name": "灼熱 (shakunetsu)"
+    },
+    {
+      "val": 15,
+      "name": "only one record"
+    },
+    {
+      "val": 16,
+      "name": "PENDUAL"
+    },
+    {
+      "val": 17,
+      "name": "copula"
+    },
+    {
+      "val": 18,
+      "name": "SINOBUZ"
+    },
+    {
+      "val": 19,
+      "name": "キャノンボーラーズ (CB)"
+    },
+    {
+      "val": 20,
+      "name": "Rootage"
+    },
+    {
+      "val": 21,
+      "name": "HEROIC VERSE"
+    },
+    {
+      "val": 22,
+      "name": "Turntable 22"
+    },
+    {
+      "val": 23,
+      "name": "Turntable 23"
+    },
+    {
+      "val": 24,
+      "name": "Turntable 24"
+    },
+    {
+      "val": 25,
+      "name": "Turntable 25"
+    },
+    {
+      "val": 26,
+      "name": "Turntable 26"
+    },
+    {
+      "val": 27,
+      "name": "Turntable 27"
+    },
+    {
+      "val": 28,
+      "name": "Turntable 28"
+    },
+    {
+      "val": 29,
+      "name": "いちご (strawberry)"
+    },
+    {
+      "val": 30,
+      "name": "CastHour"
+    },
+    {
+      "val": 31,
+      "name": "Turntable 31"
+    },
+    {
+      "val": 32,
+      "name": "Turntable 32"
+    },
+    {
+      "val": 33,
+      "name": "Turntable 33"
+    },
+    {
+      "val": 34,
+      "name": "Turntable 34"
+    },
+    {
+      "val": 35,
+      "name": "Turntable 35"
+    },
+    {
+      "val": 36,
+      "name": "Turntable 36"
+    },
+    {
+      "val": 37,
+      "name": "Turntable 37"
+    },
+    {
+      "val": 38,
+      "name": "Turntable 38"
+    },
+    {
+      "val": 39,
+      "name": "Turntable 39"
+    },
+    {
+      "val": 40,
+      "name": "Turntable 40"
+    },
+    {
+      "val": 41,
+      "name": "RESIDENT"
+    },
+    {
+      "val": 42,
+      "name": "Turntable 42"
+    },
+    {
+      "val": 43,
+      "name": "EPOLIS"
+    },
+    {
+      "val": 44,
+      "name": "Pinky Crush"
+    },
+    {
+      "val": 45,
+      "name": "Sparkle Shower"
+    }
+  ]
+}

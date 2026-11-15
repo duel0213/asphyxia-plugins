@@ -1,92 +1,173 @@
-$("#version").on("change", function () {
+const customizationList = [
+  { field: "turntable", file: "turntable" },
+  { field: "note_skin", file: "note_skin" },
+  { field: "note_burst", file: "note_burst" },
+  { field: "note_beam", file: "note_beam" },
+  { field: "lane_cover", file: "lane_cover" },
+  { field: "lift_cover", file: "lane_cover" },
+  { field: "pacemaker_cover", file: "lane_cover" },
+  { field: "judge_font", file: "judge_font" },
+  { field: "full_combo_splash", file: "fullcombo_splash" },
+];
+const customizeOptions = {};
+let customizeOptionsLoaded = false;
+let pendingCustomize = {
+  version: $("#version").val(),
+  values: null,
+};
+
+Promise.all(
+  customizationList.map((item) =>
+    $.getJSON("static/asset/customize/" + item.file + ".json").then((config) => {
+      customizeOptions[item.field] = config;
+    })
+  )
+)
+.then(() => {
+  customizeOptionsLoaded = true;
   $.ajax({
     type: "post",
     url: "/emit/iidxGetSetting",
     data: {
       refid: refid,
-      version: this.value,
+      version: pendingCustomize.version,
     },
     dataType: "text",
     success: function (result) {
       let data = JSON.parse(result);
+      renderSelectedCustomizeOptions(pendingCustomize.version, data);
+    },
+    error: function () {
+      alert("Unable to process data");
+    }
+  });
+})
+.catch((error) => {
+  console.error("Could not load customization JSON:", error);
+});
 
-      if (data["custom"] == null) {
-        alert("Theres no customize data available on this version!");
-        return;
-      }
+function renderSelectedCustomizeOptions(version, values) {
+  if (values == null) {
+    alert("Theres no customization data available on this version!");
+    return;
+  }
 
-      $("#frame").val(data["custom"].frame);
-      $("#turntable").val(data["custom"].turntable);
-      $("#note_burst").val(data["custom"].note_burst);
-      $("#menu_music").val(data["custom"].menu_music);
-      $("#lane_cover").val(data["custom"].lane_cover);
-      $("#category_vox").val(data["custom"].category_vox);
-      $("#note_skin").val(data["custom"].note_skin);
-      $("#full_combo_splash").val(data["custom"].full_combo_splash);
-      $("#note_beam").val(data["custom"].note_beam);
-      $("#judge_font").val(data["custom"].judge_font);
-      $("#disable_musicpreview").prop("checked", data["custom"].disable_musicpreview);
-      $("#pacemaker_cover").val(data["custom"].pacemaker_cover);
-      $("#vefx_lock").prop("checked", data["custom"].vefx_lock);
-      $("#effect").val(data["custom"].effect);
-      $("#bomb_size").val(data["custom"].bomb_size);
-      $("#disable_hcn_color").prop("checked", data["custom"].disable_hcn_color);
-      $("#first_note_preview").val(data["custom"].first_note_preview);
-      $("#djl_v").prop("checked", data["custom"].djl_v);
+  renderCustomizeListOptions(version, {
+    "turntable": values["custom"].turntable,
+    "note_skin": values["custom"].note_skin,
+    "note_burst": values["custom"].note_burst,
+    "note_beam": values["custom"].note_beam,
+    "lane_cover": values["custom"].lane_cover,
+    "lift_cover": values["custom"].lift_cover,
+    "pacemaker_cover": values["custom"].pacemaker_cover,
+    "judge_font": values["custom"].judge_font,
+    "full_combo_splash": values["custom"].full_combo_splash,
+  });
 
-      if (data["custom"].note_size == undefined) $("#note_size").val(0);
-      else $("#note_size").val(data["custom"].note_size);
-      if (data["custom"].lift_cover == undefined) $("#lift_cover").val(0);
-      else $("#lift_cover").val(data["custom"].lift_cover);
-      if (data["custom"].note_beam_size == undefined) $("#note_beam_size").val(0);
-      else $("#note_beam_size").val(data["custom"].note_beam_size);
-      if (data["custom"].cn_color == undefined) $("#cn_color").val(0);
-      else $("#cn_color").val(data["custom"].cn_color);
-      if (data["custom"].cn_size == undefined) $("#cn_size").val(0);
-      else $("#cn_size").val(data["custom"].cn_size);
+  $("#frame").val(values["custom"].frame);
+  $("#menu_music").val(values["custom"].menu_music);
+  $("#category_vox").val(values["custom"].category_vox);
+  $("#disable_musicpreview").prop("checked", values["custom"].disable_musicpreview);
+  $("#vefx_lock").prop("checked", values["custom"].vefx_lock);
+  $("#effect").val(values["custom"].effect);
+  $("#bomb_size").val(values["custom"].bomb_size);
+  $("#disable_hcn_color").prop("checked", values["custom"].disable_hcn_color);
+  $("#first_note_preview").val(values["custom"].first_note_preview);
+  $("#djl_v").prop("checked", data["custom"].djl_v);
 
-      $("#rank_folder").prop("checked", data["custom"].rank_folder);
-      $("#clear_folder").prop("checked", data["custom"].clear_folder);
-      $("#diff_folder").prop("checked", data["custom"].diff_folder);
-      $("#alpha_folder").prop("checked", data["custom"].alpha_folder);
-      $("#rival_folder").prop("checked", data["custom"].rival_folder);
-      $("#rival_battle_folder").prop("checked", data["custom"].rival_battle_folder);
-      $("#rival_info").prop("checked", data["custom"].rival_info);
-      $("#hide_playcount").prop("checked", data["custom"].hide_playcount);
-      $("#disable_graph_cutin").prop("checked", data["custom"].disable_graph_cutin);
-      $("#classic_hispeed").prop("checked", data["custom"].classic_hispeed);
-      $("#rival_played_folder").prop("checked", data["custom"].rival_played_folder);
-      $("#hide_iidxid").prop("checked", data["custom"].hide_iidxid);
+  if (values["custom"].note_size == undefined) $("#note_size").val(0);
+  else $("#note_size").val(values["custom"].note_size);
+  if (values["custom"].note_beam_size == undefined) $("#note_beam_size").val(0);
+  else $("#note_beam_size").val(values["custom"].note_beam_size);
+  if (values["custom"].cn_color == undefined) $("#cn_color").val(0);
+  else $("#cn_color").val(values["custom"].cn_color);
+  if (values["custom"].cn_size == undefined) $("#cn_size").val(0);
+  else $("#cn_size").val(values["custom"].cn_size);
 
-      if (data["custom"].disable_beginner_option == undefined) $("#disable_beginner_option").prop("checked", false);
-      else $("#disable_beginner_option").prop("checked", data["custom"].disable_beginner_option);
+  $("#rank_folder").prop("checked", values["custom"].rank_folder);
+  $("#clear_folder").prop("checked", values["custom"].clear_folder);
+  $("#diff_folder").prop("checked", values["custom"].diff_folder);
+  $("#alpha_folder").prop("checked", values["custom"].alpha_folder);
+  $("#rival_folder").prop("checked", values["custom"].rival_folder);
+  $("#rival_battle_folder").prop("checked", values["custom"].rival_battle_folder);
+  $("#rival_info").prop("checked", values["custom"].rival_info);
+  $("#hide_playcount").prop("checked", values["custom"].hide_playcount);
+  $("#disable_graph_cutin").prop("checked", values["custom"].disable_graph_cutin);
+  $("#classic_hispeed").prop("checked", values["custom"].classic_hispeed);
+  $("#rival_played_folder").prop("checked", values["custom"].rival_played_folder);
+  $("#hide_iidxid").prop("checked", values["custom"].hide_iidxid);
 
-      $("#qpro_head").val(data["custom"].qpro_head);
-      $("#qpro_hair").val(data["custom"].qpro_hair);
-      $("#qpro_hand").val(data["custom"].qpro_hand);
-      $("#qpro_face").val(data["custom"].qpro_face);
-      $("#qpro_body").val(data["custom"].qpro_body);
+  if (values["custom"].disable_beginner_option == undefined) $("#disable_beginner_option").prop("checked", false);
+  else $("#disable_beginner_option").prop("checked", values["custom"].disable_beginner_option);
 
-      if (data["custom"].qpro_back == undefined) $("#qpro_back").val(0);
-      else $("#qpro_back").val(data["custom"].qpro_back);
+  $("#qpro_head").val(values["custom"].qpro_head);
+  $("#qpro_hair").val(values["custom"].qpro_hair);
+  $("#qpro_hand").val(values["custom"].qpro_hand);
+  $("#qpro_face").val(values["custom"].qpro_face);
+  $("#qpro_body").val(values["custom"].qpro_body);
 
-      if (data["lm_custom"] == null) {
-        $("#lm_skin").val(0);
-        $("#lm_bg").val(0);
-        $("#lm_bg_2").val(0);
-        $("#lm_entry_bg").val(0);
-        $("#lm_entry_bg_bright").val(0);
-      } else {
-        $("#lm_skin").val(data["lm_custom"].premium_skin);
-        $("#lm_bg").val(data["lm_custom"].premium_bg);
+  if (values["custom"].qpro_back == undefined) $("#qpro_back").val(0);
+  else $("#qpro_back").val(values["custom"].qpro_back);
 
-        if (data["lm_custom"].premium_bg_concent == undefined) $("#lm_bg_2").val(0);
-        else $("#lm_bg_2").val(data["lm_custom"].premium_bg_concent);
-        if (data["lm_custom"].entry_bg == undefined) $("#lm_entry_bg").val(0);
-        else $("#lm_entry_bg").val(data["lm_custom"].entry_bg);
-        if (data["lm_custom"].entry_bg_brightness == undefined) $("#lm_entry_bg_bright").val(0);
-        else $("#lm_entry_bg_bright").val(data["lm_custom"].entry_bg_brightness);
-      }
+  if (values["lm_custom"] == null) {
+    $("#lm_skin").val(0);
+    $("#lm_bg").val(0);
+    $("#lm_bg_2").val(0);
+    $("#lm_entry_bg").val(0);
+    $("#lm_entry_bg_bright").val(0);
+  } else {
+    $("#lm_skin").val(values["lm_custom"].premium_skin);
+    $("#lm_bg").val(values["lm_custom"].premium_bg);
+
+    if (values["lm_custom"].premium_bg_concent == undefined) $("#lm_bg_2").val(0);
+    else $("#lm_bg_2").val(values["lm_custom"].premium_bg_concent);
+    if (values["lm_custom"].entry_bg == undefined) $("#lm_entry_bg").val(0);
+    else $("#lm_entry_bg").val(values["lm_custom"].entry_bg);
+    if (values["lm_custom"].entry_bg_brightness == undefined) $("#lm_entry_bg_bright").val(0);
+    else $("#lm_entry_bg_bright").val(values["lm_custom"].entry_bg_brightness);
+  }
+}
+
+function renderCustomizeListOptions(version, values) {
+  pendingCustomizeRender = { version: String(version), values };
+
+  if (!customizeOptionsLoaded) return;
+
+  customizationList.forEach((item) => {
+    const $select = $("#" + item.field);
+    const selectedValue =
+      values && values[item.field] != undefined
+        ? values[item.field]
+        : $select.val();
+
+    const config = customizeOptions[item.field];
+    const options = config[String(version)] || config.default || [];
+
+    $select.empty();
+
+    options.forEach((option) => {
+      $("<option>")
+        .val(option.val)
+        .text(option.name)
+        .prop("selected", Number(option.val) == Number(selectedValue))
+        .appendTo($select);
+    });
+  });
+}
+
+$("#version").on("change", function () {
+  const selectedVersion = this.value;
+  $.ajax({
+    type: "post",
+    url: "/emit/iidxGetSetting",
+    data: {
+      refid: refid,
+      version: selectedVersion,
+    },
+    dataType: "text",
+    success: function (result) {
+      let data = JSON.parse(result);
+      renderSelectedCustomizeOptions(this.value, data);
     },
     error: function () {
       alert("Unable to process data");

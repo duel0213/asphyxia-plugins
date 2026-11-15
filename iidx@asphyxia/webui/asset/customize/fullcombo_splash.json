@@ -1,0 +1,104 @@
+﻿{
+  "default": [
+    {
+      "val": 0,
+      "name": "Default"
+    },
+    {
+      "val": 1,
+      "name": "IIDX RED"
+    },
+    {
+      "val": 2,
+      "name": "HAPPY SKY"
+    },
+    {
+      "val": 3,
+      "name": "DistorteD"
+    },
+    {
+      "val": 4,
+      "name": "GOLD"
+    },
+    {
+      "val": 5,
+      "name": "DJ TROOPERS"
+    },
+    {
+      "val": 6,
+      "name": "EMPRESS"
+    },
+    {
+      "val": 7,
+      "name": "SIRIUS"
+    },
+    {
+      "val": 8,
+      "name": "Resort Anthem"
+    },
+    {
+      "val": 9,
+      "name": "Lincle"
+    },
+    {
+      "val": 10,
+      "name": "tricoro"
+    },
+    {
+      "val": 11,
+      "name": "SPADA"
+    },
+    {
+      "val": 12,
+      "name": "オンリーワンフルコンボ (only one full combo)"
+    },
+    {
+      "val": 13,
+      "name": "PENDUAL"
+    },
+    {
+      "val": 14,
+      "name": "copula"
+    },
+    {
+      "val": 15,
+      "name": "SINOBUZ"
+    },
+    {
+      "val": 16,
+      "name": "キャノンフィニッシュ (cannon finish)"
+    },
+    {
+      "val": 17,
+      "name": "Rootage"
+    },
+    {
+      "val": 18,
+      "name": "HEROIC VERSE"
+    },
+    {
+      "val": 19,
+      "name": "BISTROVER SLASH"
+    },
+    {
+      "val": 20,
+      "name": "CastHour"
+    },
+    {
+      "val": 21,
+      "name": "RESIDENT"
+    },
+    {
+      "val": 22,
+      "name": "EPOLIS"
+    },
+    {
+      "val": 23,
+      "name": "Pinky Crush"
+    },
+    {
+      "val": 24,
+      "name": "Sparkle Shower"
+    }
+  ]
+}

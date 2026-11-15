@@ -1,6 +1,6 @@
 # beatmaniaIIDX
 
-Plugin Version: **STAGING [5703bd]**
+Plugin Version: **STAGING [766052]**
 
 ---
 
@@ -223,3 +223,8 @@ Changelogs
   - Added Initial support for ZINRAI
   - Added option for save score of nosave request
     - nosave scores will be send with `_ns` suffix
+  - Added an SP/DP filter to the WebUI score page (@COLV9)
+  - Added distinct identification colors for each difficulty on the WebUI score page (@COLV9)
+  - Fixed DP difficulty labels on the WebUI score page (@COLV9)
+  - Customization lists are no longer baked in pug file
+
