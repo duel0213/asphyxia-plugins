@@ -1,0 +1,48 @@
+﻿{
+  "default": [
+    {
+      "val": 0,
+      "name": "Default"
+    },
+    {
+      "val": 1,
+      "name": "Gorgeous"
+    },
+    {
+      "val": 2,
+      "name": "Aqua"
+    },
+    {
+      "val": 3,
+      "name": "Gyaru"
+    },
+    {
+      "val": 4,
+      "name": "Photon"
+    },
+    {
+      "val": 5,
+      "name": "Pastel"
+    },
+    {
+      "val": 6,
+      "name": "Simple"
+    },
+    {
+      "val": 7,
+      "name": "Light"
+    },
+    {
+      "val": 8,
+      "name": "Tricoro"
+    },
+    {
+      "val": 9,
+      "name": "Bubble"
+    },
+    {
+      "val": 10,
+      "name": "Fruity"
+    }
+  ]
+}
