@@ -216,3 +216,6 @@ Changelogs
     - Added options to display 10, 30, or 50 records per page
   - Updated music title and customization lists (@COLV9) 
   - Random Lane Ticket now stores ticket on database rather than give 100 temporarily batches on login
+  - Fixed DP difficulty labels on the WebUI score page.
+  - Added an SP/DP filter to the WebUI score page.
+  - Added distinct identification colors for each difficulty on the WebUI score page.
