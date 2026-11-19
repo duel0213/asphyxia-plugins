@@ -30,6 +30,7 @@ Supported Versions
   - beatmaniaIIDX 31 EPOLIS (2024082600)
   - beatmaniaIIDX 32 Pinky Crush (2025082500)
   - beatmaniaIIDX 33 Sparkle Shower (2026081900)
+  - beatmaniaIIDX 34 Zinrai (2026091600)
 
 ---
 
@@ -219,3 +220,4 @@ Changelogs
   - Fixed DP difficulty labels on the WebUI score page.
   - Added an SP/DP filter to the WebUI score page.
   - Added distinct identification colors for each difficulty on the WebUI score page.
+  - Added Initial support for Zinrai

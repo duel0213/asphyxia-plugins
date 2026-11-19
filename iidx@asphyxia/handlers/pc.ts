@@ -1,4 +1,4 @@
-import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, FDD_pcdata, ECO_pcdata, E11_pcdata, D01_pcdata } from "../models/pcdata";
+import { pcdata, KDZ_pcdata, IIDX27_pcdata, IIDX28_pcdata, IIDX29_pcdata, IIDX30_pcdata, JDZ_pcdata, LDJ_pcdata, IIDX21_pcdata, IIDX22_pcdata, IIDX23_pcdata, IIDX24_pcdata, IIDX25_pcdata, IIDX26_pcdata, JDJ_pcdata, HDD_pcdata, I00_pcdata, GLD_pcdata, IIDX31_pcdata, IIDX32_pcdata, IIDX33_pcdata, IIDX34_pcdata, FDD_pcdata, ECO_pcdata, E11_pcdata, D01_pcdata } from "../models/pcdata";
 import { grade } from "../models/grade";
 import { custom, default_custom } from "../models/custom";
 import { IDtoCode, IDtoRef, GetVersion, ReftoProfile, ReftoPcdata, ReftoQPRO, appendSettingConverter, NumArrayToString, GetModel, GetCommand, NumArrayToHex, ClidToPlaySide } from "../util";
@@ -397,6 +397,7 @@ export const pccommon: EPR = async (info, data, send) => {
         fix_real: {},
       });
       break;
+    case 34:
     case 33:
       result = Object.assign(result, {
         movie_agreement: K.ATTR({ version: String(1) }),
@@ -574,6 +575,12 @@ export const pcreg: EPR = async (info, data, send) => {
       break;
     case 32:
       pcdata = IIDX32_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
+    case 34:
+      pcdata = IIDX34_pcdata;
       lightning_playdata = lm_playdata;
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
@@ -789,7 +796,7 @@ export const pcget: EPR = async (info, data, send) => {
       pcdata.event_last_select_id = 0;
     }
 
-    if (version == 33) { // temp //
+    if (version >= 33) { // temp //
       if (_.isNil(custom.cn_color)) {
         custom.cn_color = 0;
         custom.cn_size = 0;
@@ -1354,6 +1361,7 @@ export const pcget: EPR = async (info, data, send) => {
         pinky_ug_hall = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "pinkyunderground_hall" });
         pinky_ug_qpro = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "pinkyunderground_hall_qpro" });
         break;
+      case 34:
       case 33:
         sparkle_fl_room = await DB.Find(refid, { collection: "event_1", version: version, event_data: "sparkle_fruit_lab" });
         sparkle_fl_crop = await DB.Find(refid, { collection: "event_1_sub", version: version, event_data: "sparkle_fruit_lab_crop" });
@@ -1884,6 +1892,7 @@ export const pcget: EPR = async (info, data, send) => {
           pinky_ug_qpro,
         });
         break;
+      case 34:
       case 33:
         result = Object.assign(result, {
           sparkle_fl_room,
@@ -1899,6 +1908,7 @@ export const pcget: EPR = async (info, data, send) => {
     }
 
     switch (version) {
+      case 34:
       case 33:
         result = Object.assign(result, {
           djtraining_sp,
@@ -2062,6 +2072,12 @@ export const pctakeover: EPR = async (info, data, send) => {
       lightning_settings = lm_settings_new;
       lightning_custom = lm_customdata;
       break;
+    case 34:
+      pcdata = IIDX34_pcdata;
+      lightning_playdata = lm_playdata;
+      lightning_settings = lm_settings_new;
+      lightning_custom = lm_customdata;
+      break;
     case 33:
       pcdata = IIDX33_pcdata;
       lightning_playdata = lm_playdata;
@@ -2212,12 +2228,12 @@ export const pcsave: EPR = async (info, data, send) => {
         if (version < 33) {
           lm_settings.brightness = Number($(data).attr("lightning_setting").brightness);
         }
-        else {
+        else if (version < 34) {
           lm_settings.brightness = Number($(data).attr("lightning_setting").brightness_bg);
         }
 
         if (version >= 33) {
-          lm_settings.brightness_concent = Number($(data).attr("lightning_setting").brightness_concentration);
+          if (version < 34) lm_settings.brightness_concent = Number($(data).attr("lightning_setting").brightness_concentration);
           lm_settings.assistant_disp_type = Number($(data).attr("lightning_setting").assistant_disp_type);
           lm_settings.assistant_last_tab = Number($(data).attr("lightning_setting").assistant_last_tab);
           lm_settings.assistant_chara = Number($(data).attr("lightning_setting").assistant_chara);
@@ -4244,6 +4260,16 @@ export const pcsave: EPR = async (info, data, send) => {
     pcdata.d_tsujigiri_disp = Number($(data).attr().d_tsujigiri_disp);
 
     switch (version) {
+      case 34:
+        pcdata.mdetail = Number($(data).attr().mdetail ?? 0);
+        pcdata.s_bpm_notice = Number($(data).attr().s_bpm_notice ?? 0);
+        pcdata.d_bpm_notice = Number($(data).attr().d_bpm_notice ?? 0);
+        pcdata.s_sd_adjust = Number($(data).attr().s_sd_adjust ?? 0);
+        pcdata.d_sd_adjust = Number($(data).attr().d_sd_adjust ?? 0);
+        pcdata.s_disp_area_fix = Number($(data).attr().s_disp_area_fix ?? 0);
+        pcdata.d_disp_area_fix = Number($(data).attr().d_disp_area_fix ?? 0);
+        pcdata.s_always_disp_num = Number($(data).attr().s_always_disp_num ?? 0);
+        pcdata.d_always_disp_num = Number($(data).attr().d_always_disp_num ?? 0);
       case 33:
         pcdata.naviflg = Number($(data).attr().naviflg);
         pcdata.bgnasst = Number($(data).attr().bgnasst);
@@ -4824,6 +4850,7 @@ export const pcsave: EPR = async (info, data, send) => {
           });
           break;
 
+        case 34:
         case 33:
           pcdata.event_play_num += 1;
           pcdata.event_last_select_id = Number($(data).attr("event_1").last_select_room_id);
@@ -4997,7 +5024,7 @@ export const pcsave: EPR = async (info, data, send) => {
       }
     }
 
-    if (version == 33) {
+    if (version >= 33) {
       let vocaloEvt = $(data).element("event_v");
       if (!_.isNil(vocaloEvt)) {
         DB.Upsert(

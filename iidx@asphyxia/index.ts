@@ -50,6 +50,7 @@ export function register() {
     R.Route(`IIDX31${method}`, handler);
     R.Route(`IIDX32${method}`, handler);
     R.Route(`IIDX33${method}`, handler);
+    R.Route(`IIDX34${method}`, handler);
   };
 
   MultiRoute("pc.common", pccommon);
@@ -78,6 +79,7 @@ export function register() {
   MultiRoute("music.reg", musicreg);
   MultiRoute("music.breg", musicbreg);
   MultiRoute("music.arenaCPU", musicarenacpu);
+  R.Route("IIDX34music.retry", true); // Chart Retry (IIDX 34): the retry state is held by the game, just acknowledge
 
   MultiRoute("grade.raised", graderaised);
 

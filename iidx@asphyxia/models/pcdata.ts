@@ -1910,3 +1910,5 @@ export const IIDX33_pcdata = {
   event_play_num: 0,
   event_last_select_id: 0,
 }
+
+export const IIDX34_pcdata = Object.assign(JSON.parse(JSON.stringify(IIDX33_pcdata)), { version: 34, mdetail: 0, s_bpm_notice: 0, d_bpm_notice: 0, s_sd_adjust: 0, d_sd_adjust: 0, s_disp_area_fix: 0, d_disp_area_fix: 0, s_always_disp_num: 0, d_always_disp_num: 0 });
